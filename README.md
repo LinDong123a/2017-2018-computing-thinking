@@ -12,12 +12,11 @@
 
 ### Ubuntu+NodeJS+Tenuki.js
 
-1.
+1.docker pull smartkit/godpaper-go-nodejs
 
-2.
+2.docker run -p 3000:3000 smartkit/godpaper-go-nodejs
 
-3.
-
+3.http://localhost:3000/client.html
 
 ### Ubuntu+Python+Tensorflow
 
