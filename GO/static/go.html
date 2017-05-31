@@ -22,8 +22,8 @@
 		}
 		.user_information{
 			position: absolute;
-			right: 0px;
-			top:0px;
+			right: 0;
+			top:0;
 			color: black;
 			font-family: 微软雅黑;
 		}
@@ -35,6 +35,17 @@
 		}
 		div div a:hover{
 			color: black;
+		}
+		.control
+		{
+			width: 300px;
+			height: 40px;
+			font-family: SimSun;
+			font-size: 15px;
+			color: black;
+			text-align: center;
+			margin: 10px auto;
+
 		}
 	</style>
 	<link href="{{url_for("static", filename="css/stylesheet.css")}}" rel="stylesheet" type="text/css">
@@ -49,6 +60,14 @@
 		function mouseout()
 		{
 			document.getElementById("haha").src = "{{ url_for("static",filename = "img/Group.png")}}"
+		}
+		function mouseOver2()
+		{
+			document.getElementById("haha2").src = "{{ url_for("static",filename = "img/GroupBlack.png")}}"
+		}
+		function mouseout2()
+		{
+			document.getElementById("haha2").src = "{{ url_for("static",filename = "img/Group.png")}}"
 		}
 	</script>
 
@@ -92,10 +111,18 @@
 				<!--<img src="Rectangle 2.png" class="rec1">
 				<img src="Rectangle 2.png" class="rec2">-->
 				<br>
+				开始玩家对战
 				<a href="javascript:" onclick="submit_id()">
 					<img src="{{url_for("static",filename="img/Group.png")}}"
 					width="36" height="36" id="haha" onmouseover="mouseOver()" onmouseout="mouseout()"
 					style="float:inherit;margin-left: 18px;margin-top: 10px"></a>
+
+				开始人机对战
+				<a href="javascript:" onclick="begin_ai_game()">
+					<img src="{{url_for("static",filename="img/Group.png")}}"
+					width="36" height="36" id="haha2" onmouseover="mouseOver2()" onmouseout="mouseout2()"
+					style="float:inherit;margin-left: 18px;margin-top: 10px"></a>
+
 				<!--<input type="submit" value="创建或加入游戏" class="bt1" style="background-color:transparent;background-image:url("Group.png");"  width="45" height="45" alt="" >-->
 			</form>
 		</div>
@@ -108,6 +135,13 @@
 			<div id="gamemessage">
 
 			</div>
+
+
+			<form id="sendmessage" target="rfFrame" style="color: black; font-family: SimSun; font-size: 15px;">
+				<input type="text" name="game_message" id="game_message" size="15" placeholder="输入要发送的消息">
+				<input type="submit" value="发送消息" style="color: black;">
+			</form>
+
 		</div>
 		<!-- TODO 显示系统消息-->
 		<div class="systemmessage">
@@ -119,21 +153,23 @@
 
 			</div>
 		</div>
+
+
 		<iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>
 
 
 
 		<div class="tenuki-board tenuki-board-textured" style="align-content: center;margin: auto"></div>
+		<div class="control">
+			<button class="btn" onclick="send_pass()">PASS</button>
+			<button class="btn" onclick="send_undo()">悔棋</button>
+			<button class="btn" onclick="send_tie()">求和</button>
+			<button class="btn" onclick="send_fail()">认输</button>
 
-
-
-		<div>
-
-			<form id="sendmessage" target="rfFrame">
-				<input type="text" name="game_message" id="game_message">
-				<input type="submit" value="发送消息">
-			</form>
 		</div>
+		<a style="margin: auto;color: #DEDEDE;" href="https://github.com/chenyijie2016/GO" target="_blank">项目地址</a>
+
+
 
 	</div>
 
@@ -149,31 +185,48 @@
 
 <script>
 	var DEBUG = true;
-	var only_one_undo = true;
-	var canplace = false;
+	var string = 'abcdefghijklmnopqrstuvwxyz';
+	var side_me; // 记录我方黑白棋状态
+	var side_now; //设置当前下棋的一方
+	var game_ready = false;
+	var peer_play = false;
+	var have_undoed = false;
+	var AI_mode = false;
+
 	var boardElement = document.querySelector(".tenuki-board");
 	var game = new tenuki.Game(boardElement);
 	game.setup();
-
-
-	var string = 'abcdefghijklmnoprstuvwxyz';
-	var game_started = 0;
-	var side_me; // 记录我方黑白棋状态
-	var now_side; //设置当前下棋的一方
-    
     //每一次棋盘重绘之后都会执行下面的回调函数
     //即每次playAt后会执行
     //注意，每次悔棋(undo)也会执行下面的函数！！！！！
 	game.callbacks.postRender = function(game) {
 
-		console.log(game.currentState())
         //game.currentState() -- 游戏当前状态
+	    if (DEBUG) {
+            console.log(game.currentState())
+		}
 
-		if (game.currentState().pass) {
+		if (game.currentState().pass)
+		{
 			console.log(game.currentState().color + " passed");
 		}
 
-		if (game.currentState().playedPoint) {
+        if (have_undoed)
+        {
+            have_undoed = false;
+            return;
+        }
+
+        // illegal click
+        if (!game_ready || side_me != side_now && !AI_mode)//AI模式下此功能有bug，临时解决之
+        {
+            have_undoed = true;
+            game.undo();
+            return;
+        }
+
+		if (game.currentState().playedPoint)
+		{
 
 			console.log(game.currentState().color + " played " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x);
             /*
@@ -184,107 +237,50 @@
 			var x = game.currentState().playedPoint.x;
 			var y = game.currentState().playedPoint.y;
 
-
-			if (game_started == 0)
-			{
-				game.undo();
-				return;
-			}
-            //如果游戏还没有开始，此时落子后自动undo
-			if (DEBUG)
-			{
-				console.log('能否落子(校验前):' + canplace);
-			}
-            //TODO 添加检验代码使得在非法情况下的落子可以被忽略
             
-            //一个推荐的方法是使用undo
-            
-            //比较麻烦的原因是无论哪方落子都会触发该函数，并且该函数无法分辨落子
-            //是由点击棋盘还是使用内置函数产生的
-            //但是使用undo后也会触发该函数，需要额外的判断
-            //
+            //my own play
+			if (!peer_play)
+			{
+                var msg;
+                if(DEBUG)
+                {
+	                console.log('我方势力',side_me);
+                }
 
-			/*if(canplace == false && only_one_undo)
-			{
-				//only_one_undo = false;
-				console.log('当前不可落子');
-				game.undo();
-				return;
-			}*/
-            /*
-			if(game.currentState().color != side_me)
-			{
-				if(canplace == false)
-				{
-					game.undo()
-					return;
-				}
+                if (side_me == 'black')
+                {
+                    msg='B';
+                    side_now = 'white';
+                }
+                else
+                {
+                    msg='W';
+                    side_now = 'black';
+                }
+                msg += '[' +string[y] + string[x] + ']';
+
+                if(!AI_mode)
+                {
+	                play_chess_human(msg);
+                }
+                else
+                {
+                	play_chess_ai(msg);
+                }
+
+                setsystemmessage('');
+                return;
 			}
+			//peer played, so set false
 			else
 			{
-				canplace = false;
-			}
-
-			if (DEBUG)
-			{
-				console.log('能否落子(校验后):' + canplace);
-			}
-            */
-            
-            
-            //下面是发送落子消息到服务端
-			var msg;
-
-			if (side_me == 'black')
-			{
-				msg='B';
-			}
-			else
-			{
-				msg='W';
-			}
-			msg += '[' +string[y] + string[x] + ']';
-
-			sendmsg(msg);
+			    peer_play = false;
+            }
 
 		}
 	};
-/*
-	function start_go(side)
-	{
-		game.setup({
-			player: side,
-			gameOptions: {
-				boardSize: 19
-			},
-			hooks: {
-				submitPlay: function(playedY, playedX, result) {
-					if (side_me == 'black')
-					{
-						sendmsg('B[' + string[playedY] + string[playedX] + ']');
-					}
-					else
-					{
-						sendmsg('W[' + string[playedY] + string[playedX] + ']');
-					}
-					game._game.playAt(playedY, playedX);
-				},
 
-				submitMarkDeadAt: function(y, x, stones, result) {
-
-				},
-
-				submitPass: function(result) {
-
-				}
-			}
-		});;
-	}
-*/
-
-
-
-
+	//登出
 	function logout()
 	{
 		document.cookie="user_id=;";
@@ -293,7 +289,7 @@
 		alert('logout');
 	}
 	
-
+	//检查是否已经登录
 	function check_login(cookie)
 	{
 
@@ -303,6 +299,7 @@
 		}
 		return false;
 	}
+	//从cookie获取用户ID
 	function get_user_id(cookies)
 	{
 		var i;
@@ -315,6 +312,7 @@
 			}
 		}
 	}
+	//检查cookies
 	function checkcookies(allcookies)
 	{
 
@@ -366,6 +364,7 @@
 				alert('成功创建游戏，ID为:' + msg.game_id);
 				side_me = msg.side;
 				game_started = 0;
+				game_ready = false;
 
 			}
 			if (msg.game_id == $('#game_id').val() && msg.user_id != $('#user_id').val() && msg.begin == 1)
@@ -373,29 +372,24 @@
 				alert('另一个用户成功连接,游戏开始!');
 				$('#gameinfo').text($('#user_id').val() + '(黑)和' + msg.user_id + '(白)的对决');
 				$('div#player_side').text('你执黑棋');
-				game_started = 1;
-				now_side='black';
+				game_ready = true;
+				side_now='black';
 				side_me = 'black';
-
-				canplace = true;
-				//start_go('black');
-				//game.setSide('black');
 			}
 			if (msg.game_id == $('#game_id').val() && msg.user_id == $('#user_id').val() && msg.begin == 1)
 			{
 				alert('成功连接游戏,游戏开始!');
 				$('#gameinfo').text(msg.emeny + '(黑)和' + $('#user_id').val() + '(白)的对决');
 				side_me = 'white';
-				now_side = 'black';
-				//start_go('white');
-				game_started = 1;
-				//game.setSide('white');
-				canplace = false;
+				side_now = 'black';
+				game_ready = true;
 				$('div#player_side').text('你执白棋');
 
 			}
 		}
 	);
+
+	//开始游戏错误信息
 	socket.on('start_error', function (msg)
 	{
 		if (DEBUG)
@@ -407,6 +401,8 @@
 			alert('加入游戏失败,该游戏ID已被使用');
 		}
 	});
+
+	//人人对战收到的落子信息
 	socket.on('play_game_client', function (msg)
 		{
 			//alert('接受到信息');
@@ -426,30 +422,40 @@
 					console.log(msg)
 				}
 
-				game.playAt(n_x,n_y);
-				canplace = true;
-				//game.receivePlay(n_x,n_y);
-
-				setsystemmessage('敌方落子:[' + letter_x + ',' + letter_y + ']\n现在轮到我方落子');
-
 				if (place.charAt(0) == 'B')
 				{
-					now_side = "white";
+					side_now = "white";
 				}
 				else
 				{
-					now_side = "black";
+					side_now = "black";
 				}
 				if(DEBUG)
 				{
 					console.log('改变当前势力');
-					console.log(now_side);
+					console.log(side_now);
+				}
+                if (side_me == side_now)
+				{
+                    setsystemmessage('敌方落子:[' + letter_x + ',' + letter_y + ']\n现在轮到我方落子');
 				}
 
+
+				if (n_x == 19 && n_y == 19)
+				{
+					game.pass();
+					setsystemmessage('敌方放弃落子\n现在轮到我方落子')
+				}
+				else
+				{
+					peer_play = true;
+					game.playAt(n_x, n_y);
+				}
 
 			}
 		}
 	);
+
 	socket.on('game_info', function (msg)
 	{
 		if (DEBUG)
@@ -473,9 +479,75 @@
 		}
 	});
 
-	//发送落子消息
+	//与AI对战的游戏开始事件
+	socket.on('ai_game_start', function (msg)
+	{
+		game_started = 1;
+		AI_mode = true;
+		game_ready = true;
+		side_me = 'black';
+		$('#gameinfo').text($('#user_id').val()+'(黑)与MuGo(白)的对局');
+		alert('对局开始');
+	});
 
-	function sendmsg(msg)
+
+	//接受AI落子信息
+	socket.on('ai_game_client', function (msg)
+	{
+
+		var place = msg.msg;
+		var letter_x = place.charAt(2);
+		var letter_y = place.charAt(3);
+		var n_x = string.indexOf(letter_x);
+		var n_y = string.indexOf(letter_y);
+		if(DEBUG)
+		{
+			console.log('AI落子信息', msg);
+			console.log(n_x, ' ', n_y);
+		}
+		peer_play = true;
+		game.playAt(n_x,n_y);
+		setsystemmessage('敌方落子:[' + letter_x + ',' + letter_y + ']\n现在轮到我方落子');
+
+	});
+	//发送弃权信息
+	function send_pass()
+	{
+		if(game_ready)
+		{
+			setsystemmessage('PASS');
+			if (side_me == 'black')
+			{
+				if (AI_mode)
+				{
+					play_chess_ai('B[tt]');
+				}
+				else
+				{
+					play_chess_human('B[tt]');
+				}
+			}
+			else
+			{
+				if (AI_mode)
+				{
+					play_chess_ai('W[tt]');
+				}
+				else
+				{
+					play_chess_human('W[tt]');
+				}
+			}
+
+			game.pass()
+		}
+	}
+
+
+
+	//发送落子消息(用户间对战)
+
+	function play_chess_human(msg)
 	{
 		if (DEBUG)
 		{
@@ -483,7 +555,17 @@
 		}
 		socket.emit('play_game_server', {user_id: $('#user_id').val(), game_id: $('#game_id').val(), msg: msg})
 	}
+	//发送人机对战落子信息
+	function play_chess_ai(msg)
+	{
+		if(DEBUG)
+		{
+			console.log('发送人机对战消息');
+		}
+		socket.emit('AI_event', {user_id: $('#user_id').val(), game_id: $('#game_id').val(), msg: msg, method: 'play'});
+	}
 
+	//获取对局信息
 	function get_game_info()
 	{
 		socket.emit('get_wait_game', {});
@@ -507,6 +589,29 @@
 			socket.emit('game_start', {user_id: $('#user_id').val(), game_id: $('#game_id').val()});
 		}
 	}
+
+	function begin_ai_game()
+	{
+		if($('#user_id').val() == '')
+		{
+			alert('您还尚未登录,请登录后再操作!');
+			return
+		}
+
+		if ($('#game_id').val() == '')
+		{
+			alert('必须输入游戏id');
+		}
+		else
+		{
+			console.log($('#user_id').val() + $('#game_id').val());
+			socket.emit('AI_event', {user_id: $('#user_id').val(), game_id: $('#game_id').val(), method: 'create'});
+		}
+
+
+	}
+
+
 	//发送对话消息
 	$('form#sendmessage').submit(
 		function submit_message()
@@ -525,12 +630,14 @@
 			}
 		}
 	);
+
 	//显示收到的消息，可以用更美观的方式实现
 	//TODO
 	function setmessage(msg)
 	{
 		$('div#gamemessage').append('<br>' + $('<div/>').text(msg).html());
 	}
+	//设置系统消息
 	function setsystemmessage(msg)
 	{
 		$('div#system_message').text(msg);
