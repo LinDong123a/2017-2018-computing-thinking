@@ -26,7 +26,7 @@
 
 3.
 
-### Ubuntu+Minikub
+### Ubuntu+Minikube
 
 #### Inside VirtualBox
 1.
