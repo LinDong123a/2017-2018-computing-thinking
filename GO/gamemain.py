@@ -28,7 +28,7 @@ def create_sgf(item):
     f.write('PB[' + item['player1'] + ']\n')
     f.write('PW[' + item['player2'] + ']\n')
     f.write('DT[' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ']\n')
-    f.write('EV[' + '棋局ID ' + item['game_id'] + ']\n')
+    f.write(('EV[' + 'Game ID ' + item['game_id'] + ']\n'))
     f.close()
 
 
@@ -122,3 +122,11 @@ def get_user_information(user_):
 
 def modify_user_information(msg):
     return user.modify_user_information(msg)
+
+
+def game_over(msg):
+    """
+    处理游戏结束信息
+    :param msg: 
+    """
+    return gf.game_over(msg)
