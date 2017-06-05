@@ -28,17 +28,23 @@
 
 ### Ubuntu+Minikub
 
+#### Inside VirtualBox
 1.
 
 2.
 
 3.
+#### Outside VirtualBox
+1.
 
+2.
+
+3.
 
 ### Ubuntu+MultiChain
 
-1.
+1.git clone https://github.com/yangboz/docker-multichain && cd docker-multichain
 
-2.
+2.sudo docker-compose up
 
-3.
+3.http://127.0.0.1:2750/
