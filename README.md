@@ -97,5 +97,9 @@ https://github.com/kelseyhightower/compose2kube
 
 2.Ubuntu 16.4 virtualization problem- MIniKub: https://github.com/kubernetes/minikube/issues/1507
 
+3.Virtualbox+Vagrant problem: Starting local Kubernetes v1.6.4 cluster...
+
+"Starting VM...
+E0607 15:29:14.273063    2855 start.go:127] Error starting host: Error getting state for host: unexpected EOF."
 
 
