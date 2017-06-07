@@ -28,6 +28,15 @@
 
 4.https://github.com/brilee/MuGo
 
+
+### Ubuntu16.04+Python3.5+Tensorflow1.1+MuGo
+
+1.docker pull smartkit/godpaper-tensorflow-weiqi
+
+2.docker run -p 8080:8080 smartkit/godpaper-tensorflow-weiqi
+
+4.http://127.0.0.1:8080/
+
 ### Ubuntu+Minikube
 
 #### Inside VirtualBox
