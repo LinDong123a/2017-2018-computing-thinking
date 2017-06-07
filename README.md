@@ -18,13 +18,15 @@
 
 3.http://localhost:3000/client.html
 
-### Ubuntu+Python+Tensorflow
+### Ubuntu+Python+Tensorflow+MuGo
 
-1.docker pull smartkit/godpaper-go-tensorflow
+1.docker pull smartkit/godpaper-tensorflow-mugo
 
-2.
+2.docker run -it smartkit/godpaper-tensorflow-mugo-201706 bash
 
-3.
+3.pip install -r requirements.txt
+
+4.https://github.com/brilee/MuGo
 
 ### Ubuntu+Minikube
 
