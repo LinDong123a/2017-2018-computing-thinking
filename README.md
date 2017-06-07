@@ -95,5 +95,7 @@ https://github.com/kelseyhightower/compose2kube
 1.Issue:# -*- coding: utf-8 -*-  '0x1\' issue on Python2.7.
 1.Fix:upgrade to Python3.5;
 
+2.Ubuntu 16.4 virtualization problem- MIniKub: https://github.com/kubernetes/minikube/issues/1507
+
 
 
