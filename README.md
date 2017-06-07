@@ -29,7 +29,7 @@
 4.https://github.com/brilee/MuGo
 
 
-### Ubuntu16.04+Python3.5+Tensorflow1.1+MuGo
+### Ubuntu16.04+Python3.5+Tensorflow1.1+WeiQi
 
 1.docker pull smartkit/godpaper-tensorflow-weiqi
 
