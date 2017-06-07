@@ -41,10 +41,18 @@
 
 #### Inside VirtualBox
 1.
+VirtualBox does not support nested virtualization, so the guest VM will not support VMX or SVM even though the host machine does. You can't run a VM inside a VM
+
+If you really need to run Kubernetes in a VM, VMware Workstation and Player seem to support nested virtualization.
+
+#### Inside VMware
+1.
 
 2.
 
 3.
+
+
 #### Outside VirtualBox
 1.
 
