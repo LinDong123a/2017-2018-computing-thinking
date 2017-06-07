@@ -110,4 +110,7 @@ https://github.com/kelseyhightower/compose2kube
 "Starting VM...
 E0607 15:29:14.273063    2855 start.go:127] Error starting host: Error getting state for host: unexpected EOF."
 
+4.Client not finding Socket.IO serve inside Docker
+https://github.com/miguelgrinberg/python-socketio/issues/55
+
 
