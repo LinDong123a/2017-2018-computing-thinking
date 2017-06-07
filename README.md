@@ -18,7 +18,7 @@
 
 3.http://localhost:3000/client.html
 
-### Ubuntu+Python+Tensorflow+MuGo
+### Ubuntu16.04+Python3.5+Tensorflow1.1+MuGo
 
 1.docker pull smartkit/godpaper-tensorflow-mugo
 
