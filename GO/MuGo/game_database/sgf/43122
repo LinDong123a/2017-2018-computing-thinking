@@ -1,0 +1,363 @@
+play B D16
+play W Q16
+
+play B D4
+play W Q3
+
+play B R6
+play W R4
+
+play B Q17
+play W R17
+
+play B O17
+play W P17
+
+play B Q18
+play W P18
+
+play B R18
+play W P16
+
+play B S17
+play W R16
+
+play B S16
+play W S15
+
+play B S18
+play W R14
+
+play B M17
+play W N16
+
+play B N17
+play W O16
+
+play B O18
+play W P19
+
+play B Q19
+play W M16
+
+play B K17
+play W L16
+
+play B K15
+play W K16
+
+play B L17
+play W J16
+
+play B F16
+play W J17
+
+play B J18
+play W H18
+
+play B K18
+play W G17
+
+play B F17
+play W F18
+
+play B J15
+play W G16
+
+play B F15
+play W D18
+
+play B C17
+play W C18
+
+play B E18
+play W E19
+
+play B E17
+play W B17
+
+play B B16
+play W B18
+
+play B A16
+play W D17
+
+play B C16
+play W C6
+
+play B D8
+play W E6
+
+play B E10
+play W F3
+
+play B E3
+play W F4
+
+play B C5
+play W D6
+
+play B F12
+play W C3
+
+play B B5
+play W B6
+
+play B D5
+play W E2
+
+play B D3
+play W D2
+
+play B B3
+play W B2
+
+play B A2
+play W B4
+
+play B A3
+play W A4
+
+play B A5
+play W A1
+
+play B A6
+play W C8
+
+play B B7
+play W C7
+
+play B B8
+play W C9
+
+play B C10
+play W B9
+
+play B A9
+play W B10
+
+play B A10
+play W A11
+
+play B A8
+play W A7
+
+play B B11
+play W B12
+
+play B C11
+play W C12
+
+play B D12
+play W D13
+
+play B C13
+play W B13
+
+play B C14
+play W D11
+
+play B E12
+play W D10
+
+play B E11
+play W B14
+
+play B C15
+play W G15
+
+play B G14
+play W H14
+
+play B H13
+play W J14
+
+play B F13
+play W J13
+
+play B K14
+play W K13
+
+play B M14
+play W L13
+
+play B O14
+play W N13
+
+play B N14
+play W L14
+
+play B Q12
+play W P13
+
+play B O13
+play W P12
+
+play B O12
+play W P11
+
+play B Q11
+play W Q10
+
+play B R10
+play W P10
+
+play B R9
+play W Q13
+
+play B R12
+play W S11
+
+play B R11
+play W S12
+
+play B R13
+play W S13
+
+play B S10
+play W Q8
+
+play B R8
+play W Q7
+
+play B R7
+play W Q6
+
+play B N11
+play W M10
+
+play B M13
+play W N10
+
+play B L11
+play W M11
+
+play B M12
+play W L12
+
+play B K11
+play W J11
+
+play B K9
+play W J10
+
+play B J8
+play W K10
+
+play B L10
+play W L9
+
+play B M9
+play W L8
+
+play B K6
+play W M8
+
+play B N9
+play W O10
+
+play B E7
+play W F6
+
+play B T16
+play W T15
+
+play B P15
+play W Q15
+
+play B P14
+play W Q14
+
+play B T10
+play W T11
+
+play B S4
+play W S3
+
+play B R5
+play W Q5
+
+play B O7
+play W O8
+
+play B M6
+play W N7
+
+play B O6
+play W N6
+
+play B O5
+play W N5
+
+play B N4
+play W M5
+
+play B L6
+play W O4
+
+play B Q9
+play W P9
+
+play B M4
+play W L5
+
+play B J4
+play W L4
+
+play B L3
+play W K3
+
+play B K4
+play W M3
+
+play B L2
+play W N3
+
+play B J3
+play W K2
+
+play B J2
+play W K1
+
+play B L1
+play W J1
+
+play B H1
+play W G2
+
+play B G3
+play W G4
+
+play B H3
+play W H6
+
+play B J6
+play W H7
+
+play B H8
+play W G8
+
+play B F7
+play W G7
+
+play B E9
+play W G9
+
+play B G10
+play W H9
+
+play B H10
+play W J9
+
+play B H12
+play W J12
+
+play B H11
+play W J7
+
+play B K8
+play W K7
+
+play B A17
+play W A18
+
