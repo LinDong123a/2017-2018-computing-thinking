@@ -5,19 +5,22 @@ import argh
 import os
 import sys
 import gtp as gtp_lib
+import traceback
+import sys
 
 from policy import PolicyNetwork
 from strategies import RandomPlayer, PolicyNetworkBestMovePlayer, PolicyNetworkRandomMovePlayer, MCTS
 from load_data_sets import DataSet, parse_data_sets
 
 string = 'abcdefghijklmnopqrstuvwxyz'
-read_file = "./AI_FILE/savedmodel"
+read_file = os.getcwd() + "/AI_FILE/savedmodel"
 data_file = "yyf.sgf"
 
 data_file_path = 'game_database/sgf/'
 
 
 def AI(msg):
+    print("AI(msg) called.")
     global read_file  # Extract information
 
     data_file = data_file_path + msg['game_id']
@@ -26,13 +29,31 @@ def AI(msg):
 
     # Initialize the policy network
     n = PolicyNetwork(use_cpu=True)
-    instance = PolicyNetworkBestMovePlayer(n, read_file)
-    gtp_engine = gtp_lib.Engine(instance)
-    # sys.stderr.write("GTP Enginene ready\n")
+    print("PolicyNetwork init.")
+    print("n,read_file:",n,read_file)
+    try:
+        instance = PolicyNetworkBestMovePlayer(n, read_file)
+    except Exception:
+        print(traceback.format_exc())
+    #instance = PolicyNetworkRandomMovePlayer(n, read_file)
+    print("PolicyNetwork instanced.",instance)
+    try:
+        gtp_engine = gtp_lib.Engine(instance)
+    except Exception:
+        print(traceback.format_exc())
+    print("GTP Engine get ready.",gtp_engine)
+    #sys.stderr.write("GTP Enginene ready\n")
     AI_cmd = parse_AI_instruction(color)
-
+    print("AI_cmd parsed.")
     # To see if it has started playing chess and logging
+    try:
+        data_file_exist = os.path.exists(data_file)
+    except Exception:
+        print(traceback.format_exc())
+    print("os.path.exists?",data_file_exist) 
+    #sys.setdefaultencoding('utf-8')
     if os.path.exists(data_file):
+        print("os.path.exists(data_file)!")
         rfile = open(data_file, 'r')
         cmd_list = rfile.readlines()
         for cmd in cmd_list:

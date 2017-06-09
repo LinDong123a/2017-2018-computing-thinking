@@ -56,10 +56,13 @@ def select_weighted_random(position, move_probabilities):
 
 class GtpInterface(object):
     def __init__(self):
+        print("GtpInterface.__init__().")
         self.size = 9
         self.position = None
         self.komi = 6.5
-        self.clear()
+        print("GtpInterface(object):",self,object)
+        #self.clear()
+        super(PolicyNetworkBestMovePlayer, self).clear()
 
     def set_size(self, n):
         self.size = n
@@ -104,12 +107,17 @@ class RandomPlayer(GtpInterface):
 
 class PolicyNetworkBestMovePlayer(GtpInterface):
     def __init__(self, policy_network, read_file):
+        print(self,"__init__")
         self.policy_network = policy_network
         self.read_file = read_file
-        super().__init__()
+        print(self,"read_file:",read_file)
+        #super().__init__()
+        GtpInterface.__init__(self)
+        #super(PolicyNetworkBestMovePlayer, self).__init__()
 
     def clear(self):
-        super().clear()
+        #super().clear()
+        super(PolicyNetworkBestMovePlayer, self).clear()
         self.refresh_network()
 
     def refresh_network(self):

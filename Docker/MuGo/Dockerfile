@@ -18,9 +18,10 @@ RUN apt-get -y install python3.5 python3-pip
 COPY . /app
 WORKDIR /app
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 #Preprocess SGFs
-ENTRYPOINT ["python"]
+ENTRYPOINT ["python3"]
+#ENTRYPOINT ["/bin/bash"]
 EXPOSE 6000
 CMD ["server.py"]
