@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
-from flask.ext.cors import CORS
 
 import gamemain
 
@@ -201,6 +200,5 @@ def game_over(msg):
         print('game over message', msg)
     emit('game_over', msg, broadcast=True)
 
-cors = CORS(app,resources={r"/*":{"origins":"*"}})
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0')
+    socketio.run(app, host='0.0.0.0',port=8080)
