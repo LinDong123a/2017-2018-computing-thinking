@@ -42,6 +42,11 @@
 
 4.http://127.0.0.1:8080/
 
+### Ubuntu16.04+PHP+Wordpress+WeiQi
+
+@see: https://github.com/yangboz/bitnami-docker-wordpress
+
+
 ### Ubuntu+Minikube
 
 #### Inside VirtualBox
@@ -59,11 +64,11 @@ If you really need to run Kubernetes in a VM, VMware Workstation and Player seem
 
 
 #### Outside VirtualBox
-1.
+1.minikube start
 
-2.
+2.minikube dashboard
 
-3.
+3.kubectl/minikube
 
 ### Ubuntu+MultiChain
 
@@ -72,6 +77,8 @@ If you really need to run Kubernetes in a VM, VMware Workstation and Player seem
 2.sudo docker-compose up
 
 3.http://127.0.0.1:2750/
+
+### 
 
 ### References
 
@@ -102,6 +109,8 @@ MacOSX:https://gist.github.com/kevin-smets/b91a34cea662d0c523968472a81788f7
 Docker Compose to Kubernate:
 
 https://github.com/kelseyhightower/compose2kube
+
+Wgo.js Wordpress plugin: http://guzumi.de/wgo-plugin/
 
 ### Troubleshots
 
