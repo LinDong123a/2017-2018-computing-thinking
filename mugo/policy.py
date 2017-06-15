@@ -129,8 +129,8 @@ class PolicyNetwork(object):
 
     def save_variables(self, save_file):
         if save_file is not None:
-            if not os.path.isdir(os.dirname(save_file)):
-                os.mkdir(os.dirname(save_file))
+            #if not os.path.isdir(os.dirname(save_file)):
+            #    os.mkdir(os.dirname(save_file))
             print("Saving checkpoint to %s" % save_file, file=sys.stderr)
             self.saver.save(self.session, save_file)
             saver = tf.train.Saver()

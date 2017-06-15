@@ -13,7 +13,7 @@ from strategies import RandomPlayer, PolicyNetworkBestMovePlayer, PolicyNetworkR
 from load_data_sets import DataSet, parse_data_sets
 
 string = 'abcdefghijklmnopqrstuvwxyz'
-read_file = os.getcwd() + "/AI_FILE/savedmodel"
+read_file = os.getcwd() + "/BI/savedmodel"
 data_file = "yyf.sgf"
 
 data_file_path = 'game_database/sgf/'
