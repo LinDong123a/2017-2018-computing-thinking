@@ -1,1 +1,3 @@
-docker exec -it mongodb sh
+### References
+
+https://github.com/yangboz/mongodb
