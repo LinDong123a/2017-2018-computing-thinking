@@ -22,6 +22,4 @@ RUN pip3 install -r requirements.txt
 
 #Preprocess SGFs
 ENTRYPOINT ["python3"]
-#ENTRYPOINT ["/bin/bash"]
-EXPOSE 6000
-CMD ["server.py"]
+CMD ["main.py preprocess /app/data/2017"]

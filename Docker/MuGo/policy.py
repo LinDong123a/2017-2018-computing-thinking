@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 '''
 Neural network architecture.
 The input to the policy network is a 19 x 19 x 48 image stack consisting of
@@ -33,10 +31,8 @@ import utils
 
 EPSILON = 1e-35
 
-
 class PolicyNetwork(object):
     def __init__(self, features=features.DEFAULT_FEATURES, k=32, num_int_conv_layers=3, use_cpu=False):
-        tf.reset_default_graph()
         self.num_input_planes = sum(f.planes for f in features)
         self.features = features
         self.k = k
@@ -58,7 +54,7 @@ class PolicyNetwork(object):
         x = tf.placeholder(tf.float32, [None, go.N, go.N, self.num_input_planes])
         y = tf.placeholder(tf.float32, shape=[None, go.N ** 2])
 
-        # convenience functions for initializing weights and biases
+        #convenience functions for initializing weights and biases
         def _weight_variable(shape, name):
             # If shape is [5, 5, 20, 32], then each of the 32 output planes
             # has 5 * 5 * 20 inputs.
@@ -68,7 +64,7 @@ class PolicyNetwork(object):
             return tf.Variable(tf.truncated_normal(shape, stddev=stddev), name=name)
 
         def _conv2d(x, W):
-            return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding="SAME")
+            return tf.nn.conv2d(x, W, strides=[1,1,1,1], padding="SAME")
 
         # initial conv layer is 5x5
         W_conv_init = _weight_variable([5, 5, self.num_input_planes, self.k], name="W_conv_init")
@@ -79,7 +75,7 @@ class PolicyNetwork(object):
         h_conv_intermediate = []
         _current_h_conv = h_conv_init
         for i in range(self.num_int_conv_layers):
-            with tf.name_scope("layer" + str(i)):
+            with tf.name_scope("layer"+str(i)):
                 W_conv_intermediate.append(_weight_variable([3, 3, self.k, self.k], name="W_conv"))
                 h_conv_intermediate.append(tf.nn.relu(_conv2d(_current_h_conv, W_conv_intermediate[-1]), name="h_conv"))
                 _current_h_conv = h_conv_intermediate[-1]
@@ -95,15 +91,14 @@ class PolicyNetwork(object):
 
         # The step size was initialized to 0.003 and was halved every 80 million training steps
         _learning_rate = tf.train.exponential_decay(3e-3, global_step,
-                                                    8e7, 0.5)
-        train_step = tf.train.GradientDescentOptimizer(_learning_rate).minimize(log_likelihood_cost,
-                                                                                global_step=global_step)
+                                           8e7, 0.5)
+        train_step = tf.train.GradientDescentOptimizer(_learning_rate).minimize(log_likelihood_cost, global_step=global_step)
         was_correct = tf.equal(tf.argmax(output, 1), tf.argmax(y, 1))
         accuracy = tf.reduce_mean(tf.cast(was_correct, tf.float32))
 
         weight_summaries = tf.summary.merge([
             tf.summary.histogram(weight_var.name, weight_var)
-            for weight_var in [W_conv_init] + W_conv_intermediate + [W_conv_final, b_conv_final]],
+            for weight_var in [W_conv_init] +  W_conv_intermediate + [W_conv_final, b_conv_final]],
             name="weight_summaries"
         )
         activation_summaries = tf.summary.merge([
@@ -120,8 +115,7 @@ class PolicyNetwork(object):
 
     def initialize_logging(self, tensorboard_logdir):
         self.test_summary_writer = tf.summary.FileWriter(os.path.join(tensorboard_logdir, "test"), self.session.graph)
-        self.training_summary_writer = tf.summary.FileWriter(os.path.join(tensorboard_logdir, "training"),
-                                                             self.session.graph)
+        self.training_summary_writer = tf.summary.FileWriter(os.path.join(tensorboard_logdir, "training"), self.session.graph)
 
     def initialize_variables(self, save_file=None):
         self.session.run(tf.global_variables_initializer())
@@ -133,8 +127,7 @@ class PolicyNetwork(object):
 
     def save_variables(self, save_file):
         if save_file is not None:
-            #print("Saving checkpoint to %s" % save_file, file=sys.stderr)
-            print("Saving checkpoint to %s" % save_file)
+            print("Saving checkpoint to %s" % save_file, file=sys.stderr)
             self.saver.save(self.session, save_file)
 
     def train(self, training_data, batch_size=32):
@@ -155,6 +148,7 @@ class PolicyNetwork(object):
                 feed_dict={self.x: batch_x, self.y: batch_y})
             self.training_summary_writer.add_summary(activation_summaries, global_step)
             self.training_summary_writer.add_summary(accuracy_summaries, global_step)
+
 
     def run(self, position):
         'Return a sorted list of (probability, move) tuples'
@@ -180,7 +174,6 @@ class PolicyNetwork(object):
         if self.test_summary_writer is not None:
             self.test_summary_writer.add_summary(weight_summaries, global_step)
             self.test_summary_writer.add_summary(accuracy_summaries, global_step)
-
 
 class StatisticsCollector(object):
     '''
@@ -214,5 +207,5 @@ class StatisticsCollector(object):
         self.accuracies = []
         self.costs = []
         summary = self.session.run(self.accuracy_summaries,
-                                   feed_dict={self.accuracy: avg_acc, self.cost: avg_cost})
+            feed_dict={self.accuracy:avg_acc, self.cost: avg_cost})
         return avg_acc, avg_cost, summary

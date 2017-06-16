@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import math
 import random
 import sys
@@ -10,11 +8,9 @@ import gtp
 import go
 import utils
 
-
 def sorted_moves(probability_array):
     coords = [(a, b) for a in range(go.N) for b in range(go.N)]
     return sorted(coords, key=lambda c: probability_array[c], reverse=True)
-
 
 def translate_gtp_colors(gtp_color):
     if gtp_color == gtp.BLACK:
@@ -24,17 +20,14 @@ def translate_gtp_colors(gtp_color):
     else:
         return go.EMPTY
 
-
 def is_move_reasonable(position, move):
     return position.is_move_legal(move) and go.is_eyeish(position.board, move) != position.to_play
-
 
 def select_most_likely(position, move_probabilities):
     for move in sorted_moves(move_probabilities):
         if is_move_reasonable(position, move):
             return move
     return None
-
 
 def select_weighted_random(position, move_probabilities):
     selection = random.random()
@@ -56,13 +49,10 @@ def select_weighted_random(position, move_probabilities):
 
 class GtpInterface(object):
     def __init__(self):
-        print("GtpInterface.__init__().")
         self.size = 9
         self.position = None
         self.komi = 6.5
-        print("GtpInterface(object):",self,object)
-        #self.clear()
-        super(PolicyNetworkBestMovePlayer, self).clear()
+        self.clear()
 
     def set_size(self, n):
         self.size = n
@@ -94,7 +84,6 @@ class GtpInterface(object):
     def suggest_move(self, position):
         raise NotImplementedError
 
-
 class RandomPlayer(GtpInterface):
     def suggest_move(self, position):
         possible_moves = go.ALL_COORDS[:]
@@ -104,20 +93,14 @@ class RandomPlayer(GtpInterface):
                 return move
         return None
 
-
 class PolicyNetworkBestMovePlayer(GtpInterface):
     def __init__(self, policy_network, read_file):
-        print(self,"__init__")
         self.policy_network = policy_network
         self.read_file = read_file
-        print(self,"read_file:",read_file)
-        #super().__init__()
-        GtpInterface.__init__(self)
-        #super(PolicyNetworkBestMovePlayer, self).__init__()
+        super().__init__()
 
     def clear(self):
-        #super().clear()
-        super(PolicyNetworkBestMovePlayer, self).clear()
+        super().clear()
         self.refresh_network()
 
     def refresh_network(self):
@@ -131,7 +114,6 @@ class PolicyNetworkBestMovePlayer(GtpInterface):
             return None
         move_probabilities = self.policy_network.run(position)
         return select_most_likely(position, move_probabilities)
-
 
 class PolicyNetworkRandomMovePlayer(GtpInterface):
     def __init__(self, policy_network, read_file):
@@ -155,10 +137,8 @@ class PolicyNetworkRandomMovePlayer(GtpInterface):
         move_probabilities = self.policy_network.run(position)
         return select_weighted_random(position, move_probabilities)
 
-
 # Exploration constant
 c_PUCT = 5
-
 
 class MCTSNode():
     '''
@@ -169,7 +149,6 @@ class MCTSNode():
     as well as followup moves/probabilities via the policy network.
     Each of these followup moves is instantiated as a plain MCTSNode.
     '''
-
     @staticmethod
     def root_node(position, move_probabilities):
         node = MCTSNode(None, None, 0)
@@ -178,18 +157,17 @@ class MCTSNode():
         return node
 
     def __init__(self, parent, move, prior):
-        self.parent = parent  # pointer to another MCTSNode
-        self.move = move  # the move that led to this node
+        self.parent = parent # pointer to another MCTSNode
+        self.move = move # the move that led to this node
         self.prior = prior
-        self.position = None  # lazily computed upon expansion
-        self.children = {}  # map of moves to resulting MCTSNode
-        self.Q = self.parent.Q if self.parent is not None else 0  # average of all outcomes involving this node
-        self.U = prior  # monte carlo exploration bonus
-        self.N = 0  # number of times node was visited
+        self.position = None # lazily computed upon expansion
+        self.children = {} # map of moves to resulting MCTSNode
+        self.Q = self.parent.Q if self.parent is not None else 0 # average of all outcomes involving this node
+        self.U = prior # monte carlo exploration bonus
+        self.N = 0 # number of times node was visited
 
     def __repr__(self):
-        return "<MCTSNode move=%s prior=%s score=%s is_expanded=%s>" % (
-        self.move, self.prior, self.action_score, self.is_expanded())
+        return "<MCTSNode move=%s prior=%s score=%s is_expanded=%s>" % (self.move, self.prior, self.action_score, self.is_expanded())
 
     @property
     def action_score(self):
@@ -207,7 +185,7 @@ class MCTSNode():
 
     def expand(self, move_probabilities):
         self.children = {move: MCTSNode(self, move, prob)
-                         for move, prob in np.ndenumerate(move_probabilities)}
+            for move, prob in np.ndenumerate(move_probabilities)}
         # Pass should always be an option! Say, for example, seki.
         self.children[None] = MCTSNode(self, None, 0)
 
@@ -261,27 +239,23 @@ class MCTS(GtpInterface):
         return max(root.children.keys(), key=lambda move, root=root: root.children[move].N)
 
     def tree_search(self, root):
-        #print("tree search", file=sys.stderr)
-        print("tree search")
+        print("tree search", file=sys.stderr)
         # selection
         chosen_leaf = root.select_leaf()
         # expansion
         position = chosen_leaf.compute_position()
         if position is None:
-            #print("illegal move!", file=sys.stderr)
-            print("illegal move!")
+            print("illegal move!", file=sys.stderr)
             # See go.Position.play_move for notes on detecting legality
             del chosen_leaf.parent.children[chosen_leaf.move]
             return
-        #print("Investigating following position:\n%s" % (chosen_leaf.position,), file=sys.stderr)
-        print("Investigating following position:\n%s" % (chosen_leaf.position,))
+        print("Investigating following position:\n%s" % (chosen_leaf.position,), file=sys.stderr)
         move_probs = self.policy_network.run(position)
         chosen_leaf.expand(move_probs)
         # evaluation
         value = self.estimate_value(root, chosen_leaf)
         # backup
-        #print("value: %s" % value, file=sys.stderr)
-        print("value: %s" % value)
+        print("value: %s" % value, file=sys.stderr)
         chosen_leaf.backup_value(value)
 
     def estimate_value(self, root, chosen_leaf):
@@ -295,8 +269,7 @@ class MCTS(GtpInterface):
             if len(current.recent) > 2 and current.recent[-1].move == current.recent[-2].move == None:
                 break
         else:
-            #print("max rollout depth exceeded!", file=sys.stderr)
-            print("max rollout depth exceeded!")
+            print("max rollout depth exceeded!", file=sys.stderr)
 
         perspective = 1 if leaf_position.to_play == root.position.to_play else -1
         return current.score() * perspective
