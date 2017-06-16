@@ -1,7 +1,7 @@
 
-##V1.Docker+MessageBroker
+## V1.Docker+MessageBroker
 
-###ActiveMQ:
+### ActiveMQ:
 
 1.docker pull smartkit/godpaper-go-message-broker-activemq
 
@@ -9,4 +9,4 @@
 
 3.
 
-###References
+### References
