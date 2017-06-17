@@ -1,0 +1,11 @@
+
+.gradle/3.4.1/
+build/dependency-cache/
+build/resources/main/static/
+build/resources/main/templates/
+build/tmp/compileJava/
+build/tmp/compileTestJava/
+src/main/resources/static/
+src/main/resources/templates/
+target/generated-sources/
+target/generated-test-sources/
