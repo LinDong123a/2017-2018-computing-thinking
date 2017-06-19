@@ -47,5 +47,5 @@ dependencies {
 	testCompile 'com.github.junitrunner:junitrunner-spring:0.0.2'
 	testCompile 'org.springframework.boot:spring-boot-test:1.5.3.RELEASE'
 	testCompile 'org.springframework:spring-test:4.3.8.RELEASE'
-	
+	compile 'org.apache.activemq:activemq-all:5.14.0'
 }

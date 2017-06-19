@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface UserService {
         List<User> createRandomUsers(int numbers);
+
 }

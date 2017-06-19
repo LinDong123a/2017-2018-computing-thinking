@@ -1,5 +1,7 @@
 package info.smartkit.godpaper.go.controller;
 
+import info.smartkit.godpaper.go.activemq.ActivemqSender;
+import info.smartkit.godpaper.go.activemq.ActivemqVariables;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.UserService;
@@ -22,6 +24,9 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public User createOne(@RequestBody User user){
         User result = repository.save(user);
+        //produce message topic by uuid
+        ActivemqSender sender = new ActivemqSender(ActivemqVariables.channelName+result.getId());
+        sender.sendMessage("echo");//For CREATE.
         return result;
     }
 
@@ -37,7 +42,7 @@ public class UserController {
         return repository.findOne(userId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/")
+    @RequestMapping(method = RequestMethod.GET)
     public List<User> list(){
         return repository.findAll();
     }

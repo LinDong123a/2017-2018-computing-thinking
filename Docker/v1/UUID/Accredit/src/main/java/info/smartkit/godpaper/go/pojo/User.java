@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.pojo;
 
+import info.smartkit.godpaper.go.activemq.ActivemqVariables;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,6 +14,12 @@ public class User {
     private String id;
     private String email;
     private String fullName;
+
+    public String getTopicName() {
+        return ActivemqVariables.channelName+id;
+    }
+
+    private String topicName;
 
     public User(String id, String email, String fullName) {
         this.id = id;
@@ -47,13 +54,8 @@ public class User {
         this.fullName = fullName;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' +
-                '}';
+    @Override public String toString() {
+        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", fullName='" + fullName + '\'' + ", topicName='" + topicName + '\'' + '}';
     }
 }
 

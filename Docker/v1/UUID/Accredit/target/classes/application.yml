@@ -1,0 +1,28 @@
+#@see http://hoserdude.com/2014/06/19/spring-boot-configurationproperties-and-profile-management-using-yaml/
+spring:
+  profiles.active: dev
+---
+spring:
+  profiles: dev
+  data.mongodb.uri: mongodb://localhost:27017/toyhouse
+server:
+  contextPath: /accredit
+  port: 8095
+jms:
+  brokerUrl: tcp://localhost:61616
+  pubSubDomain: true
+  queueName: QUEUE/toyhouse
+  channelName: A/
+---
+spring:
+  profiles: test
+jms:
+  brokerUrl: tcp://123.57.78.65:61616
+  pubSubDomain: true
+---
+spring:
+  profiles: stage
+jms:
+  brokerUrl: tcp://123.56.112.163:61616
+  pubSubDomain: true
+  channelName: A/
