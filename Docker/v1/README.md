@@ -1,5 +1,5 @@
 
-##V1.Docker+CI/CD+Microservices(ActiveMQ+Mongodb+SpringBoot+BlockChain)
+##V1.Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.3+Mongodb2+SpringBoot1.52+BlockChain+gradle@2.14)+Kubernetes
 
 ###ActiveMQv5.14.2+Mongodbv2.17+SpringBoot1.5.3+BlockChain
 
