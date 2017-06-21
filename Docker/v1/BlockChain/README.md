@@ -5,7 +5,7 @@ https://www.ibm.com/developerworks/library/j-chaincode-for-java-developers/index
 
 基本原理
 
-区块链的基本原理理解起来并不难。基本概念包括：
+区块链的基本原理,基本概念包括：
 
 交易（Transaction）：一次操作，导致账本状态的一次改变，如添加一条记录；
 
