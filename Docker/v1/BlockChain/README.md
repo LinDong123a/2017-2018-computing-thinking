@@ -3,6 +3,8 @@
 
 https://www.ibm.com/developerworks/library/j-chaincode-for-java-developers/index.html
 
+http://radiostud.io/eight-blockchain-platforms-comparison/
+
 基本原理
 
 区块链的基本原理,基本概念包括：
