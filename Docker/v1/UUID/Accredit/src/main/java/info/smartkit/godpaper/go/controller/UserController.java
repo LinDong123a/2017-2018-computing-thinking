@@ -4,7 +4,9 @@ import info.smartkit.godpaper.go.activemq.ActivemqSender;
 import info.smartkit.godpaper.go.activemq.ActivemqVariables;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
+import info.smartkit.godpaper.go.service.ChainCodeService;
 import info.smartkit.godpaper.go.service.UserService;
+import info.smartkit.godpaper.go.settings.ChainProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,9 @@ public class UserController {
     @Autowired UserRepository repository;
 
     @Autowired UserService service;
+    @Autowired ChainCodeService chainCodeService;
+    //
+    @Autowired ChainProperties chainProperties;
 
     @RequestMapping(method = RequestMethod.POST)
     public User createOne(@RequestBody User user){
@@ -27,6 +32,9 @@ public class UserController {
         //produce message topic by uuid
         ActivemqSender sender = new ActivemqSender(ActivemqVariables.channelName+result.getId());
         sender.sendMessage("echo");//For CREATE.
+        //ChainCode register
+        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
+        //
         return result;
     }
 

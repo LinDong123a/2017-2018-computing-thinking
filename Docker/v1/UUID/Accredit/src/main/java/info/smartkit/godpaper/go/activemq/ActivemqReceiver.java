@@ -9,9 +9,8 @@ import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import info.smartkit.godpaper.go.settings.JMSSetting;
+import info.smartkit.godpaper.go.settings.JmsProperties;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.language.Bean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class ActivemqReceiver
     private static Logger LOG = LogManager.getLogger(ActivemqReceiver.class);
 
     @Autowired
-    private JMSSetting jmsSetting;
+    private JmsProperties jmsSetting;
 
     private String queueName;
 

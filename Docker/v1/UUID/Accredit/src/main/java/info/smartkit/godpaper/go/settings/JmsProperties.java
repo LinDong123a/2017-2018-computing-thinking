@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "jms")
-public class JMSSetting
+public class JmsProperties
 {
 
-    private static Logger LOG = LogManager.getLogger(JMSSetting.class);
+    private static Logger LOG = LogManager.getLogger(JmsProperties.class);
 
     private String brokerUrl;
 

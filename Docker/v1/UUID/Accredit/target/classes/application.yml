@@ -13,16 +13,14 @@ jms:
   pubSubDomain: true
   queueName: QUEUE/toyhouse
   channelName: A/
+chain:
+    baseUrl: http://localhost:7050
+    enrollSecret: 6avZQLwcUe9b
+    chainName: "toyhouse_go"
 ---
 spring:
   profiles: test
-jms:
-  brokerUrl: tcp://123.57.78.65:61616
-  pubSubDomain: true
 ---
 spring:
   profiles: stage
-jms:
-  brokerUrl: tcp://123.56.112.163:61616
-  pubSubDomain: true
-  channelName: A/
+

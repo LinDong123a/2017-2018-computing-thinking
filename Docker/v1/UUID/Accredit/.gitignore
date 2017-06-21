@@ -9,3 +9,4 @@ src/main/resources/static/
 src/main/resources/templates/
 target/generated-sources/
 target/generated-test-sources/
+target/classes/
