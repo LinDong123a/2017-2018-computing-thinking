@@ -1,0 +1,12 @@
+<ion-view title="Game Lobby" id="page2">
+  <ion-content padding="true" class="has-header">
+    <ion-list id="gameLobby-list">
+      <ion-list>
+        <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList">
+          <i class="icon ion-android-laptop"></i>
+          <h2>{{lobby.title}}</h2>
+        </ion-item>
+
+      </ion-list>
+  </ion-content>
+</ion-view>
