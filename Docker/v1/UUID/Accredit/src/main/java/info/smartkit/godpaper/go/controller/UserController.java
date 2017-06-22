@@ -7,6 +7,7 @@ import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.ChainCodeService;
 import info.smartkit.godpaper.go.service.UserService;
 import info.smartkit.godpaper.go.settings.ChainProperties;
+import info.smartkit.godpaper.go.settings.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,11 +48,21 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET, value="/{userId}")
     public User get(@PathVariable String userId){
-        return repository.findOne(userId);
+            return repository.findOne(userId);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public List<User> list(){
-        return repository.findAll();
+            return repository.findAll();
     }
+
+    @RequestMapping(method = RequestMethod.GET, value="/tenant")
+    public User tenant(){
+            User standbyOne = repository.findByStatus(UserStatus.STANDBY.getIndex()).get(0);
+            //update status
+            standbyOne.setStatus(UserStatus.TENANTED.getIndex());
+            //
+            return repository.save(standbyOne);
+    }
+
 }

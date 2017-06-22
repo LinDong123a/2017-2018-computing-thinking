@@ -8,6 +8,7 @@ import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.GamerService;
+import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -56,7 +57,12 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET)
-        public List<Gamer> list(){
+        public List<Gamer> listAll(){
                 return repository.findAll();
+        }
+
+        @RequestMapping(method = RequestMethod.GET, value="/saved")
+        public List<Gamer> listSaved(){
+                return repository.findByStatus(GameStatus.SAVED.getIndex());
         }
 }

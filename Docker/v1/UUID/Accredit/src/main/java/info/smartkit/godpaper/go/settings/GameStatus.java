@@ -5,7 +5,7 @@ package info.smartkit.godpaper.go.settings;
  */
 public enum GameStatus {
 
-        STANDBY("standby", -1), PAIRED("paired", 0), PLAYING("playing", 1);
+        STANDBY("standby", -1), PAIRED("paired", 0), PLAYING("playing", 1), SAVED("saved", 2);
 
         GameStatus(String name, int index) {
                 this.name = name;

@@ -16,35 +16,6 @@ function ($scope, $stateParams,$ionicModal,LobbyService,$stomp) {
         animation: 'slide-in-up'
     });
 
-  $scope.connectHeaders = {};
-  $stomp
-    .connect('http://localhost:61613',  $scope.connectHeaders)
-
-    // frame = CONNECTED headers
-    .then(function (frame) {
-      var subscription = $stomp.subscribe('/A/*', function (payload, headers, res) {
-        console.log("subscription response:",payload,headers,res);
-        $scope.payload = payload
-      }, {
-        'headers': 'are awesome'
-      })
-
-      // // Unsubscribe
-      // subscription.unsubscribe()
-      //
-      // // Send message
-      // $stomp.send('/dest', {
-      //   message: 'body'
-      // }, {
-      //   priority: 9,
-      //   custom: 42 // Custom Headers
-      // })
-      //
-      // // Disconnect
-      // $stomp.disconnect().then(function () {
-      //   $log.info('disconnected')
-      // })
-    })
   $scope.pairAll = function () {
     LobbyService.pairAll(function(data){
       console.log("LobbyService.getAll(:",  data);

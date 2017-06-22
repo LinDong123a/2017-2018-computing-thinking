@@ -69,6 +69,8 @@ public class ActivemqReceiver
                 // System.out.println("Message is : " + text.getText());
                 LOG.info("Received activemq message is : " + text.getText() + ",queueName:"
                     + ActivemqVariables.queueName);
+                //SGF related
+
             }
         } catch (JMSException e) {
             e.printStackTrace();

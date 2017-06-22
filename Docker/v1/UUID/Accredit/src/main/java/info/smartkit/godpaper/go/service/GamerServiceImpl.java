@@ -51,19 +51,22 @@ public class GamerServiceImpl implements GamerService {
                         Gamer curGamer =  pairedGames.get(i);
                         User player1 = curGamer.getPlayer1();
                         User player2 = curGamer.getPlayer2();
+                        String gameTitle = "#vs#"+player1.getId()+"_"+player2.getId();
                         //
                         ActivemqSender sender2Player1 = new ActivemqSender(player1.getTopicName());
-                        sender2Player1.sendMessage("vs#"+player2.getId());//Math info message.
+                        sender2Player1.sendMessage(gameTitle);//Math info message.
                         //
                         ActivemqSender sender2Player2 = new ActivemqSender(player1.getTopicName());
-                        sender2Player1.sendMessage("vs#"+player1.getId());//Math info message.
+                        sender2Player1.sendMessage(gameTitle);//Math info message.
                         //
                         ActivemqReceiver activemqReceiver = new ActivemqReceiver(curGamer.getName());
                         activemqReceiver.receiveMessage();
                         //Game turn now
                         player1.setStatus(UserStatus.PLAYING.getIndex());
                         player2.setStatus(UserStatus.STANDBY.getIndex());
-                        //Save status
+                        //
+                        //Save game status
+                        curGamer.setStatus(GameStatus.SAVED.getIndex());
                         Gamer savedGamer = gamerRepository.save(curGamer);
                         LOG.info("savedGamer:"+savedGamer.toString());
                 }

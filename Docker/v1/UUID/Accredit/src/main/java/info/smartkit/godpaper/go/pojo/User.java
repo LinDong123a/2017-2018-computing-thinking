@@ -50,7 +50,7 @@ public class User {
         this.status = status;
     }
 
-    private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby
+    private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby,2:tenanted
 
     public String getTopicName() {
         return ActivemqVariables.channelName+id;

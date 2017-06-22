@@ -30,26 +30,39 @@ import paho.mqtt.client as mqtt
 import simpleAI
 import json
 
+# create EventResource with custom actions
+from simple_rest_client.resource import Resource
+# create EventResource with custom actions
+class UserResource(Resource):
+     actions = {
+         'list': {'method': 'GET', 'url': 'user'},
+         'tenant': {'method': 'GET', 'url': 'user/tenant'},
+}
+
 if __name__ == '__main__':
     #First off,UUID REST client post,@see: http://python-simple-rest-client.readthedocs.io/en/0.1.1/quickstart.html
     # create api instance
     api = API(api_root_url = v_restful_url,params = {},headers = {},timeout = 2,append_slash = False,json_encode_body = True)
     # add users resource
-    api.add_resource(resource_name=v_resource_name_user)
+    api.add_resource(resource_name=v_resource_name_user,resource_class=UserResource)
     # show resource actions
     logging.info("api.user.actions:%s",api.user.actions)
     # GET list testing
-    getListResponse = api.user.list(body=None, params={}, headers={})
-    logging.info("GET user list:%s",getListResponse)
-    # POST one creating
-    body = {'email': 'bot@toyhouse.cc', 'fullName': 'bot.toyhouse.cc'}
+    # getListResponse = api.user.list(body=None, params={}, headers={})
+    # logging.info("GET user list:%s",getListResponse)
+    # # POST one creating
+    # body = {'email': 'bot@toyhouse.cc', 'fullName': 'bot.toyhouse.cc'}
     # jsonBody = json.dumps(body)
-    postResponse = api.user.create(body=body, params={}, headers={'Content-type': 'application/json'})
-    logging.info("postResponse.body:%s",postResponse.body)
+    # postResponse = api.user.create(body=body, params={}, headers={'Content-type': 'application/json'})
+    # logging.info("postResponse.body:%s", postResponse.body)
+    # Tenant one without creating
+    tenantResponse = api.user.tenant(body=None, params={}, headers={})
+    logging.info("GET tenant user:%s", tenantResponse)
+
 #
     # variables
-    v_queue_name = postResponse.body['topicName']
-    v_player_id = postResponse.body['id']
+    v_queue_name = tenantResponse.body['topicName']
+    v_player_id = tenantResponse.body['id']
     logging.info("v_queue_name:%s",v_queue_name)
     logging.info("v_player_id:%s", v_player_id)
 
@@ -73,10 +86,8 @@ if __name__ == '__main__':
         # opponent info
         tag_vs = "#vs#"
         if message.find(tag_vs)!=-1:
-            opponent_id = message.split(tag_vs)[1]
-            logging.info("opponentId:%s",opponent_id)
-            v_game_id = v_player_id + "_" + opponent_id
-            logging.info("at game id:%s", v_game_id)
+            v_game_id = message.split(tag_vs)[1]
+            logging.info("game id:%s", v_game_id)
             # subscribe the game topic
             client.subscribe(v_game_id)
             # testing
