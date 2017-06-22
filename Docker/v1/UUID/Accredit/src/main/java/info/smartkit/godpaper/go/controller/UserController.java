@@ -33,7 +33,7 @@ public class UserController {
         ActivemqSender sender = new ActivemqSender(ActivemqVariables.channelName+result.getId());
         sender.sendMessage("echo");//For CREATE.
         //ChainCode register
-        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
+//        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
         //
         return result;
     }

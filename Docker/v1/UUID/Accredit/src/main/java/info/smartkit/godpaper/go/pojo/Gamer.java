@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.pojo;
 
+import info.smartkit.godpaper.go.settings.UserStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,15 +13,23 @@ import java.util.Date;
 @Document(collection = "gamers")
 public class Gamer {
         @Override public String toString() {
-                return "Gamer{" + "id='" + id + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + '}';
+                return "Gamer{" + "id='" + id + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + '}';
         }
 
-        public String getId() {
+        public String getName() {
                 return player1.getId()+"_"+player2.getId();
         }
 
         public void setId(String id) {
                 this.id = id;
+        }
+
+        public String getId() {
+                return id;
+        }
+
+        public Date getCreated() {
+                return created;
         }
 
         @Id
@@ -64,5 +73,15 @@ public class Gamer {
 
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         private Date created = new Date();
+
+        public int getStatus() {
+                return status;
+        }
+
+        public void setStatus(int status) {
+                this.status = status;
+        }
+
+        private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby
 
 }

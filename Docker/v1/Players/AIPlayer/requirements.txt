@@ -6,6 +6,6 @@ tensorflow>=1.1
 protobuf==3.1.0.post1
 six==1.10.0
 gevent
-stompest
+paho-mqtt
 simple-rest-client
 configparser

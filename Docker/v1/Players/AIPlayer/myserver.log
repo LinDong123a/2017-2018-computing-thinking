@@ -1,0 +1,8 @@
+2017-06-22 18:40:49,733 Connecting to localhost:61616 ...
+2017-06-22 18:40:49,734 Connection established
+2017-06-22 18:40:49,749 Reconnect failed [Connection closed [No more data]]
+2017-06-22 18:42:18,222 {'destroy': {'method': 'DELETE', 'url': 'user/{}'}, 'update': {'method': 'PUT', 'url': 'user/{}'}, 'list': {'method': 'GET', 'url': 'user'}, 'create': {'method': 'POST', 'url': 'user'}, 'retrieve': {'method': 'GET', 'url': 'user/{}'}, 'partial_update': {'method': 'PATCH', 'url': 'user/{}'}}
+2017-06-22 18:42:18,940 postResponse.body:
+2017-06-22 18:42:38,944 Connecting to localhost:61616 ...
+2017-06-22 18:42:38,945 Connection established
+2017-06-22 18:42:38,956 Reconnect failed [Connection closed [No more data]]
