@@ -16,3 +16,5 @@ http://radiostud.io/eight-blockchain-platforms-comparison/
 链（Chain）：由一个个区块按照发生顺序串联而成，是整个状态变化的日志记录。
 
 如果把区块链作为一个状态机，则每次交易就是试图改变一次状态，而每次共识生成的区块，就是参与者对于区块中所有交易内容导致状态改变的结果进行确认。
+
+https://github.com/yeasy/blockchain_guide/blob/master/born/what.md
