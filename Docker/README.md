@@ -11,6 +11,8 @@
 >2.docker run -p 8080:8080 smartkit/godpaper-tensorflow-weiqi
 
 ```
+source activate python35
+
 cd WeiQi & python server.py
 ```
 
