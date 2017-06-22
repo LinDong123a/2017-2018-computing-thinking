@@ -30,9 +30,9 @@
 
 ### Ubuntu16.04+Python3.5+Tensorflow1.1+AI
 
-1.docker pull smartkit/godpaper-go-aitensorflow
+1.docker pull smartkit/godpaper-go-ai-tensorflow
 
-2.docker run -p 6000:6000 smartkit/godpaper-go-aitensorflow
+2.docker run -p 6000:6000 smartkit/godpaper-go-ai-tensorflow
 
 ### Ubuntu16.04+Python3.5+Tensorflow1.1+WeiQi
 
