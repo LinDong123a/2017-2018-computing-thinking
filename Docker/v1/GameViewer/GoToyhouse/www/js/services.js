@@ -1,21 +1,21 @@
 angular.module('app.services', [])
 
-.factory('LobbyService', [function(){
-  var people = []; //Private Variable
+.factory('LobbyService', ['$http',function($http){
+  var gamers = []; //Private Variable
   return {
-    getAll: function() {
-      // return $http.get("path/to/resource").then(function(response){
-      //   people = response;
-      //   return response;
-      // });
-      return [
-        {title: "UUID001 VS UUID 002",id:"uuid001"},
-        {title: "UUID003 VS UUID 004",id:"uuid002"},
-        {title: "UUID005 VS UUID 006",id:"uuid003"}
-      ];
-    }
-  }
-
+    pairAll: function(callback){
+      $http.get("http://localhost:8095/accredit/game/pair").success(function(data) {
+        console.log("paired gamers:",data);
+        callback(data);
+      });
+    },
+    playAll: function(callback){
+      $http.get("http://localhost:8095/accredit/game/play").success(function(data) {
+        console.log("played gamers:",data);
+        callback(data);
+      });
+    },
+  };
 }])
 
 .service('TableService', [function(){
@@ -23,7 +23,7 @@ angular.module('app.services', [])
   return {
     getOne: function()
     {
-      return  { sgf :"(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[gokifu.com]BC[cn]WC[cn]PB[Gu Li]BR[9p]PW[Shi Yue]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];B[qd];"};
+      return  { sgf :"(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[gokifu.com]BC[cn]WC[cn]PB[Gu Li]BR[9p]PW[Shi Yue]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];B[qd];W[dd];B[pq];W[dq];B[fc]"};
     }
-  }
+  };
 }]);

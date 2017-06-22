@@ -1,12 +1,10 @@
 angular.module('app.controllers', [])
 
-.controller('gameLobbyCtrl', ['$scope', '$stateParams', '$ionicModal','LobbyService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope', '$stateParams', '$ionicModal','LobbyService','$stomp',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams,$ionicModal,LobbyService) {
-  //Mock services
-  $scope.lobbyList = LobbyService.getAll();
-  console.log("$scope.lobbyList:",  $scope.lobbyList);
+function ($scope, $stateParams,$ionicModal,LobbyService,$stomp) {
+  //
 	// Load the modal from the given template URL
     $ionicModal.fromTemplateUrl('templates/modal-game-lobby.html', function($ionicModal) {
       $scope.modal_game_lobby = $ionicModal;
@@ -17,6 +15,49 @@ function ($scope, $stateParams,$ionicModal,LobbyService) {
         // The animation we want to use for the modal entrance
         animation: 'slide-in-up'
     });
+
+  $scope.connectHeaders = {};
+  $stomp
+    .connect('http://localhost:61613',  $scope.connectHeaders)
+
+    // frame = CONNECTED headers
+    .then(function (frame) {
+      var subscription = $stomp.subscribe('/A/*', function (payload, headers, res) {
+        console.log("subscription response:",payload,headers,res);
+        $scope.payload = payload
+      }, {
+        'headers': 'are awesome'
+      })
+
+      // // Unsubscribe
+      // subscription.unsubscribe()
+      //
+      // // Send message
+      // $stomp.send('/dest', {
+      //   message: 'body'
+      // }, {
+      //   priority: 9,
+      //   custom: 42 // Custom Headers
+      // })
+      //
+      // // Disconnect
+      // $stomp.disconnect().then(function () {
+      //   $log.info('disconnected')
+      // })
+    })
+  $scope.pairAll = function () {
+    LobbyService.pairAll(function(data){
+      console.log("LobbyService.getAll(:",  data);
+      $scope.lobbyList  = data;
+      console.log("$scope.lobbyList:",  $scope.lobbyList);
+    });
+  }
+  $scope.playAll = function($gameID){
+    console.log("game start toggle:",$gameID);
+    LobbyService.playAll(function(data){
+      console.log("LobbyService.playAll:",  data);
+    });
+  }
 
 }])
 

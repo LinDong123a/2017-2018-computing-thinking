@@ -1,5 +1,7 @@
 package info.smartkit.godpaper.go.service;
 
+import info.smartkit.godpaper.go.activemq.ActivemqSender;
+import info.smartkit.godpaper.go.activemq.ActivemqVariables;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import org.apache.commons.lang.RandomStringUtils;
@@ -22,6 +24,10 @@ public class UserServiceImpl implements UserService{
                         user.setEmail(RandomStringUtils.randomAlphanumeric(7).toLowerCase().concat("@toyhouse.cc"));
                         user.setFullName(RandomStringUtils.randomAlphanumeric(4).toUpperCase().concat(".").concat(RandomStringUtils.randomAlphanumeric(5).toUpperCase()));
                         User saved = repository.save(user);
+                        //produce message topic by uuid,for private message.
+                        ActivemqSender sender = new ActivemqSender(saved.getId());
+                        sender.sendMessage("echo");//For CREATE.
+                        //
                         users.add(saved);
                 }
                 return users;

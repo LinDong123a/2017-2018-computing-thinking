@@ -1,8 +1,12 @@
 package info.smartkit.godpaper.go.pojo;
 
 import info.smartkit.godpaper.go.activemq.ActivemqVariables;
+import info.smartkit.godpaper.go.settings.UserStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 /**
  * Created by smartkit on 16/06/2017.
@@ -14,6 +18,38 @@ public class User {
     private String id;
     private String email;
     private String fullName;
+
+    public User(String id, String email, String fullName, int rank, int status) {
+        this.id = id;
+        this.email = email;
+        this.fullName = fullName;
+        this.rank = rank;
+        this.status = status;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    @Override public String toString() {
+        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", fullName='" + fullName + '\'' + ", rank=" + rank + ", status=" + status + ", topicName='" + topicName + '\'' + ", created=" + created + '}';
+    }
+
+    private int rank=0;//rank of game;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby
 
     public String getTopicName() {
         return ActivemqVariables.channelName+id;
@@ -54,8 +90,8 @@ public class User {
         this.fullName = fullName;
     }
 
-    @Override public String toString() {
-        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", fullName='" + fullName + '\'' + ", topicName='" + topicName + '\'' + '}';
-    }
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date created = new Date();
+
 }
 

@@ -1,10 +1,20 @@
 <ion-view title="Game Lobby" id="page2">
+  <ion-nav-buttons side="right">
+    <button class="button ion-android-alarm-clock" ng-click="playAll()"> PLAY
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="left">
+
+    <button class="button ion-android-laptop" ng-click="pairAll()"> PAIR
+    </button>
+  </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
     <ion-list id="gameLobby-list">
       <ion-list>
         <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList">
           <i class="icon ion-android-laptop"></i>
-          <h2>{{lobby.title}}</h2>
+          <h2>{{lobby.player1.fullName}} VS {{lobby.player2.fullName}}</h2>
+          <ion-option-button class="button-assertive" ng-click="startOne(lobby.id)">START</ion-option-button>
         </ion-item>
 
       </ion-list>
