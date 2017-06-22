@@ -36,9 +36,19 @@
 
 ### Ubuntu16.04+Python3.5+Tensorflow1.1+WeiQi
 
-1.docker pull smartkit/godpaper-tensorflow-weiqi
+### Ubuntu16.04+Python3.5+Tensorflow1.1+WeiQi
 
-2.docker run -p 8080:8080 smartkit/godpaper-tensorflow-weiqi
+>1.docker pull smartkit/godpaper-tensorflow-weiqi
+
+>2.docker run -p 8080:8080 smartkit/godpaper-tensorflow-weiqi
+
+```
+source activate python35
+
+pip install -r requirements
+
+cd WeiQi & python server.py
+```
 
 4.http://127.0.0.1:8080/
 
