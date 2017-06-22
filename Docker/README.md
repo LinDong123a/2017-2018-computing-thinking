@@ -13,6 +13,8 @@
 ```
 source activate python35
 
+pip install -r requirements
+
 cd WeiQi & python server.py
 ```
 
