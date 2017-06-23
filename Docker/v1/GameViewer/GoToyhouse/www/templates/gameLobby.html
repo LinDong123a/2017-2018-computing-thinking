@@ -14,7 +14,7 @@
         <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList">
           <i class="icon ion-android-laptop"></i>
           <h2>{{lobby.player1.fullName}} VS {{lobby.player2.fullName}}</h2>
-          <ion-option-button class="button-assertive" ng-click="startOne(lobby.id)">START</ion-option-button>
+          <p>{{lobby.player1.id}} VS {{lobby.player2.id}}</p>
         </ion-item>
 
       </ion-list>

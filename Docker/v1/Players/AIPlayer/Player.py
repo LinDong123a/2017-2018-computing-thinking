@@ -74,8 +74,9 @@ if __name__ == '__main__':
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         client.subscribe(v_queue_name)
-        # testing
-        client.publish(v_queue_name, "#vs#594a4c8b6516899e6a30e17f")
+        logging.info("subscribe to:%s",v_queue_name)
+        # # testing
+        # client.publish(v_queue_name, "#vs#594a4c8b6516899e6a30e17f")
 
 
     # The callback for when a PUBLISH message is received from the server.
@@ -86,31 +87,33 @@ if __name__ == '__main__':
         # opponent info
         tag_vs = "#vs#"
         if message.find(tag_vs)!=-1:
-            v_game_id = message.split(tag_vs)[1]
+            v_game_id = message
+            # v_player_id = message.split(tag_vs)[0]
+            # v_opponent_id = message.split(tag_vs)[1]
             logging.info("game id:%s", v_game_id)
             # subscribe the game topic
             client.subscribe(v_game_id)
-            # testing
-            client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#B[cm]")
+            # # testing
+            # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#B[cm]")
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#")
         # game table turn info from game topic
         tag_play = "#play#"
         if message.find(tag_play)!=-1:
             logging.info("play msg raw:%s",message)
-            player_id = message.split(tag_play)[0]
+            cur_player_id = message.split(tag_vs)[0]
             play_msg = message.split(tag_play)[1]#'B[cm]'
-            logging.info("play message:player_id:%s,play_msg:%s", player_id,play_msg)
+            logging.info("play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
             # opponent only
-            if player_id != v_player_id:
-                logging.info("playing id:%s",v_player_id)
+            if cur_player_id != v_player_id:
+                logging.info("current playing id:%s",v_player_id)
                 # assemble game message.
                 global v_game_id
                 message_json = {'game_id': v_game_id,
-                           'user_id': player_id,
+                           'user_id': cur_player_id,
                            'msg': play_msg}
                 # msg response
                 result = simpleAI.AI(message_json)
-                result['user_id'] = player_id
+                result['user_id'] = cur_player_id
                 # result['method'] = 'play'
                 logging.info('simpleAI response:%s', result)
                 # publish message
@@ -135,6 +138,7 @@ if __name__ == '__main__':
     client.on_log = on_log
 
     client.connect(v_broker_url, v_broker_port, 60)
+    client.subscribe(v_queue_name,2)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.

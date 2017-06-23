@@ -12,6 +12,7 @@ import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,19 +36,17 @@ public class GameController {
                 return result;
         }
         @RequestMapping(method = RequestMethod.GET,value="/pair")
-        public List<Gamer> pairAll()
-        {
-                List<User> standbyUsers = userRepository.findByStatus(UserStatus.STANDBY.getIndex());
-                LOG.info("standbyUsers:"+standbyUsers.toString());
+        public List<Gamer> pairAll() throws MqttException {
+                List<User> tenantedUsers = userRepository.findByStatus(UserStatus.TENANTED.getIndex());
+                LOG.info("tenantedUsers:"+tenantedUsers.toString());
                 //
-                List<Gamer> pairedGames = service.pairAll(standbyUsers);
+                List<Gamer> pairedGames = service.pairAll(tenantedUsers);
                 LOG.info("pairedGames:"+pairedGames.toString());
                 return pairedGames;
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play")
-        public List<Gamer> playAll()
-        {
+        public List<Gamer> playAll() throws MqttException {
                 return service.playAll();
         }
 

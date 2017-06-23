@@ -23,8 +23,8 @@ function ($scope, $stateParams,$ionicModal,LobbyService,$stomp) {
       console.log("$scope.lobbyList:",  $scope.lobbyList);
     });
   }
-  $scope.playAll = function($gameID){
-    console.log("game start toggle:",$gameID);
+  $scope.playAll = function(){
+    console.log("game start!:");
     LobbyService.playAll(function(data){
       console.log("LobbyService.playAll:",  data);
     });

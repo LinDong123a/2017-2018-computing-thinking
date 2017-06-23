@@ -1,12 +1,12 @@
 package info.smartkit.godpaper.go.settings;
 
 /**
- * Created by smartkit on 22/06/2017.
+ * Created by smartkit on 23/06/2017.
  */
-public enum UserStatus {
-        unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
+public enum MqttQoS {
+        MOST_ONCE("atMostOnce", 0), LEAST_ONCE("atLeastOnce", 1), EXCATLY_ONCE("excatly once", 2);
 
-        UserStatus(String name, int index) {
+        MqttQoS(String name, int index) {
                 this.name = name;
                 this.index = index;
         }
@@ -31,6 +31,7 @@ public enum UserStatus {
         }
 
         @Override public String toString() {
-                return "UserStatus{" + "name='" + name + '\'' + ", index=" + index + '}';
+                return "MqttQoS{" + "name='" + name + '\'' + ", index=" + index + '}';
         }
 }
+

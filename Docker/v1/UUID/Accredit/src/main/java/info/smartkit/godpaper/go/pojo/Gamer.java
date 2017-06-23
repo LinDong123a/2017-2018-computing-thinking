@@ -17,7 +17,7 @@ public class Gamer {
         }
 
         public String getName() {
-                return player1.getId()+"_"+player2.getId();
+                return player1.getId()+"#vs#"+player2.getId();
         }
 
         public void setId(String id) {
