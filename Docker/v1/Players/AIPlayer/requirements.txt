@@ -9,3 +9,4 @@ gevent
 paho-mqtt
 simple-rest-client
 configparser
+docker_links==0.1.0

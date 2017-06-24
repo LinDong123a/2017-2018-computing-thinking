@@ -26,19 +26,22 @@ public class GamerServiceImpl implements GamerService {
         @Autowired GamerRepository gamerRepository;
         @Autowired MqttService mqttService;
 
+        final String TAG_VS = "_vs_";
+        final String TAG_PLAY = "_play_";
+
         @Override public List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException {
                 int arraySize = tenantedUsers.size();
                 List<User> firstPart = tenantedUsers.subList(0,arraySize/2);
                 List<User> secondPart = tenantedUsers.subList(arraySize/2,arraySize);
                 List<Gamer> gamers = new ArrayList<>(arraySize/2);
                 for (int i=0;i<arraySize/2;i++) {
-                        Gamer gamer  = new Gamer(firstPart.get(i),secondPart.get(i),null);
+                        Gamer gamer  = new Gamer(firstPart.get(i),secondPart.get(i),"");
                         //db save first.
                         Gamer saved = gamerRepository.save(gamer);
                         //produce message topic by uuid,for public message.
                         User player1 = firstPart.get(i);
                         User player2 = secondPart.get(i);
-                        String vsTitle =  player1.getTopicName()+"#vs#"+player2.getTopicName();
+                        String vsTitle =  player1.getTopicName()+TAG_VS+player2.getTopicName();
 //                        ActivemqSender sender2Player1 = new ActivemqSender(player1.getTopicName());
 //                        sender2Player1.sendMessage("echo");//For CREATE.CREATE
                         mqttService.subscribe(player1.getTopicName());
@@ -62,7 +65,7 @@ public class GamerServiceImpl implements GamerService {
                         Gamer curGamer =  pairedGames.get(i);
                         playOneGamer(curGamer.getId());
                 }
-                List<Gamer> updatedPairedGames = gamerRepository.findByStatus(GameStatus.PAIRED.getIndex());
+                List<Gamer> updatedPairedGames = gamerRepository.findByStatus(GameStatus.PLAYING.getIndex());
                 return updatedPairedGames;
         }
 
@@ -74,7 +77,7 @@ public class GamerServiceImpl implements GamerService {
                 Gamer curGamer = gamerRepository.findOne(gamerId);
                 User player1 = curGamer.getPlayer1();
                 User player2 = curGamer.getPlayer2();
-                String playMessage = player1.getId()+"#play#";
+                String playMessage = player1.getId()+TAG_VS;
                 //Game turn now
                 //FIRST HAND
                 mqttService.subscribe(player1.getTopicName());
@@ -88,7 +91,7 @@ public class GamerServiceImpl implements GamerService {
                 //
                 //
                 //Save game status
-                curGamer.setStatus(GameStatus.SAVED.getIndex());
+                curGamer.setStatus(GameStatus.PLAYING.getIndex());
                 Gamer savedGamer = gamerRepository.save(curGamer);
                 LOG.info("savedGamer:"+savedGamer.toString());
                 return curGamer;

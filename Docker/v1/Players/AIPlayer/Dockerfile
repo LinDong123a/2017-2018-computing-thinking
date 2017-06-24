@@ -19,9 +19,9 @@ COPY . /app
 WORKDIR /app
 
 RUN pip3 install -r requirements.txt
-
+RUN python docker-links-python/setup.py install
 #Preprocess SGFs
 ENTRYPOINT ["python3"]
 #ENTRYPOINT ["/bin/bash"]
 EXPOSE 6000
-CMD ["server.py"]
+CMD ["Player.py"]

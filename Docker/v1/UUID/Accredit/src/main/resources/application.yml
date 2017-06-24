@@ -4,14 +4,14 @@ spring:
 ---
 spring:
   profiles: dev
-  data.mongodb.uri: mongodb://localhost:27017/toyhouse
+  data.mongodb.uri: mongodb://localhost:32771/toyhouse
 server:
   contextPath: /accredit
   port: 8095
 mqtt:
   brokerUrl: tcp://localhost:1883
   qos: 2
-  clientId: A/
+  clientId: TH_
 chain:
     baseUrl: http://localhost:7050
     enrollSecret: 6avZQLwcUe9b

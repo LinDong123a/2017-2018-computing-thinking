@@ -14,7 +14,7 @@ angular.module('app.services', [])
         console.log("played gamers:",data);
         callback(data);
       });
-    },
+    }
   };
 }])
 

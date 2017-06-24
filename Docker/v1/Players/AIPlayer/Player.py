@@ -20,6 +20,14 @@ v_restful_url = cf.get("api","restful_url")
 print("v_restful_url:",v_restful_url)
 v_resource_name_user = cf.get("api","resource_name_user")
 print("v_resource_name_user:",v_resource_name_user)
+# if docker_links
+
+import os
+import json
+from urllib.parse import urlparse
+# import docker_links
+# links = docker_links.parse_links(os.environ)
+# print("docker_links:",json.dumps(links, indent=4))
 # import UUID-API
 from simple_rest_client.api import API
 
@@ -28,7 +36,7 @@ from simple_rest_client.api import API
 import paho.mqtt.client as mqtt
 
 import simpleAI
-import json
+
 
 # create EventResource with custom actions
 from simple_rest_client.resource import Resource
@@ -69,12 +77,12 @@ if __name__ == '__main__':
     # paho-mqtt
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
-        logging.info("Connected with result code:%s ",rc)
+        logging.info("MQTT Connected with result code:%s ",rc)
 
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         client.subscribe(v_queue_name)
-        logging.info("subscribe to:%s",v_queue_name)
+        logging.info("MQTT subscribe to:%s",v_queue_name)
         # # testing
         # client.publish(v_queue_name, "#vs#594a4c8b6516899e6a30e17f")
 
@@ -82,30 +90,37 @@ if __name__ == '__main__':
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
         #
-        logging.info("on_message,"+msg.topic + " " + str(msg.payload))
+        logging.info("MQTT on_message,"+msg.topic + " " + str(msg.payload))
         message = str(msg.payload)
         # opponent info
-        tag_vs = "#vs#"
+        tag_vs = "_vs_"
+        tag_play = "_play_"
         if message.find(tag_vs)!=-1:
             v_game_id = message
             # v_player_id = message.split(tag_vs)[0]
             # v_opponent_id = message.split(tag_vs)[1]
-            logging.info("game id:%s", v_game_id)
+            logging.info("VS game id:%s", v_game_id)
             # subscribe the game topic
             client.subscribe(v_game_id)
-            # # testing
+            # if First hand
+            first_hand_player_id = message.split(tag_vs)[0]
+            logging.info("VS first_hand_player_id:%s", first_hand_player_id)
+            if first_hand_player_id == v_player_id:
+            ## with open database:
+                client.publish(v_game_id, v_player_id+tag_play+"#B[cm]")
+
+            #  testing
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#B[cm]")
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#")
         # game table turn info from game topic
-        tag_play = "#play#"
         if message.find(tag_play)!=-1:
-            logging.info("play msg raw:%s",message)
+            logging.info("PLAY play msg raw:%s",message)
             cur_player_id = message.split(tag_vs)[0]
             play_msg = message.split(tag_play)[1]#'B[cm]'
-            logging.info("play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
+            logging.info("PLY current play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
             # opponent only
             if cur_player_id != v_player_id:
-                logging.info("current playing id:%s",v_player_id)
+                logging.info("current playing id:%s",cur_player_id)
                 # assemble game message.
                 global v_game_id
                 message_json = {'game_id': v_game_id,
@@ -113,17 +128,18 @@ if __name__ == '__main__':
                            'msg': play_msg}
                 # msg response
                 result = simpleAI.AI(message_json)
-                result['user_id'] = cur_player_id
+                result['user_id'] = v_player_id
                 # result['method'] = 'play'
-                logging.info('simpleAI response:%s', result)
+                logging.info('PLAY simpleAI response:%s', result)
                 # publish message
-                client.publish(v_game_id,json.dumps(result))
+                client.publish(v_game_id, v_player_id + tag_play + result['msg'])
+                # client.publish(v_game_id,json.dumps(result))
 
 
     # The callback for when this client publishes to the server.
     def on_publish(client, userdata, mid):
         ##
-        logging.info("message published:%s",str(userdata))
+        logging.info("MQTT message published:%s",str(userdata))
 
 
     def on_log(client, userdata, level, buf):

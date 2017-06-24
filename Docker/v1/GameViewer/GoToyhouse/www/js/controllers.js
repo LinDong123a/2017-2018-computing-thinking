@@ -1,6 +1,6 @@
 angular.module('app.controllers', [])
 
-.controller('gameLobbyCtrl', ['$scope', '$stateParams', '$ionicModal','LobbyService','$stomp',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope', '$stateParams', '$ionicModal','LobbyService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams,$ionicModal,LobbyService,$stomp) {
@@ -28,6 +28,12 @@ function ($scope, $stateParams,$ionicModal,LobbyService,$stomp) {
     LobbyService.playAll(function(data){
       console.log("LobbyService.playAll:",  data);
     });
+  }
+  $scope.createUser = function(){
+
+  }
+  $scope.tenantUser = function(){
+
   }
 
 }])
