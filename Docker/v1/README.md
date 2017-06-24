@@ -17,8 +17,13 @@ Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.
 
 #### 2.smartkit/godpaper-go-mongodb
 
+1.docker run -P -d --name mongodb smartkit/godpaper-go-mongodb
 
+2.
 
 #### 3.smartkit/godpaper-go-uuid-accredit
 
+1. docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartkit/godpaper-go-uuid-accredit
 
+
+2. API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
