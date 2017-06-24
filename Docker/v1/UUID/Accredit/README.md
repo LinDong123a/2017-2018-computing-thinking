@@ -1,7 +1,7 @@
 One logical business object → One microservice  → One git repository folder  → One Mongo collection
 
 
-1. gradle build
+1. gradle -b build.gradle build -x test
 
 2. docker build -t smartkit/godpaper-go-accredit .
 
