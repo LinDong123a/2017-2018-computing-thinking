@@ -3,7 +3,7 @@ One logical business object → One microservice  → One git repository folder 
 
 1. gradle -b build.gradle build -x test
 
-2. docker build -t smartkit/godpaper-go-accredit .
+2. docker build -t smartkit/godpaper-go-uuid-accredit .
 
 3. http://localhost:8095/accredit/swagger-ui.htm
 
