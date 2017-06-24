@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface GamerRepository extends MongoRepository<Gamer,String> {
         List<Gamer> findByStatus(int status);
+        List<Gamer> findByName(String name);
 }

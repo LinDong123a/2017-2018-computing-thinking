@@ -32,6 +32,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 mqttClient = new MqttClient(brokerUrl, clientId, persistence);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
+                connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
                 LOG.info("MQTT Connecting to broker: "+brokerUrl);
                 mqttClient.connect(connOpts);
                 LOG.info("MQTT client Connected.");
@@ -48,7 +49,9 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
         }
 
         @Override public void publish(String topic, String content, int qos) throws MqttException {
-
+                if(mqttClient==null){
+                        this.connect(mqttProperties.getBrokerUrl(),topic);
+                }
                 LOG.info("MQTT Publishing message: "+content);
                 MqttMessage message = new MqttMessage(content.getBytes());
                 message.setQos(qos);
@@ -60,25 +63,27 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
         }
 
         @Override public void connectionLost(Throwable throwable) {
-                LOG.warn("MQTT connection lost.");
+                LOG.warn("MQTT connection lost:"+throwable.toString());
+                throwable.printStackTrace();
                 //reconnect?
         }
 
-        @Override public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                LOG.info("MQTT essageArrived:"+mqttMessage.toString());
-                LOG.info("MQTT messageArrived payload:"+mqttMessage.getPayload().toString());
-                //TODO: switch by gamer id and update SGF info
-                List<Gamer> playingGamers = gamerRepository.findByStatus(GameStatus.PLAYING.getIndex());
-//                String[] playingGamersIDs =
-                for(Gamer gamer : playingGamers){
-                        if(gamer.getName().equals(mqttMessage.getPayload().toString())){
-                                LOG.info("NOW!! gamer.setSgf(mqttMessage.toString())");
-//                                LOG.info(gamer.setSgf(mqttMessage.toString()));
-                        }
+        @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+                LOG.info("MQTT messageArrived,topic:"+topic+",message:"+mqttMessage.toString());
+                String playingMessage = mqttMessage.getPayload().toString();
+                LOG.info("MQTT messageArrived payload:"+playingMessage);
+                List<Gamer> playingGamers = gamerRepository.findByName(topic);
+                if(playingGamers.size()>0) {
+                        String gamerName = playingMessage.split("_play_")[0];
+                        String gamerMessage = playingMessage.split("_play_")[1];
+                        //TODO: switch by gamer id and update SGF info
+                        Gamer playingGamer = gamerRepository.findByName(gamerName).get(0);
+                        playingGamer.setSgf(gamerMessage);
+                        LOG.info("NOW!! gamer.setSgf(mqttMessage.toString())");
                 }
         }
 
         @Override public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                LOG.info("deliveryComplete.");
+//                LOG.info("MQTT deliveryComplete.");
         }
 }

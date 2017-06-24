@@ -102,13 +102,6 @@ if __name__ == '__main__':
             logging.info("VS game id:%s", v_game_id)
             # subscribe the game topic
             client.subscribe(v_game_id)
-            # if First hand
-            first_hand_player_id = message.split(tag_vs)[0]
-            logging.info("VS first_hand_player_id:%s", first_hand_player_id)
-            if first_hand_player_id == v_player_id:
-            ## with open database:
-                client.publish(v_game_id, v_player_id+tag_play+"#B[cm]")
-
             #  testing
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#B[cm]")
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#")
@@ -117,7 +110,13 @@ if __name__ == '__main__':
             logging.info("PLAY play msg raw:%s",message)
             cur_player_id = message.split(tag_vs)[0]
             play_msg = message.split(tag_play)[1]#'B[cm]'
-            logging.info("PLY current play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
+            logging.info("PLAY current play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
+            # first hand
+            if cur_player_id == v_player_id:
+                ## fixture with open database:
+                client.publish(v_game_id, v_player_id + tag_play + "#B[cm]")
+            ## next round
+
             # opponent only
             if cur_player_id != v_player_id:
                 logging.info("current playing id:%s",cur_player_id)

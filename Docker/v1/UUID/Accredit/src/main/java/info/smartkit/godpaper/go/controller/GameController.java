@@ -67,4 +67,33 @@ public class GameController {
         public List<Gamer> listSaved(){
                 return repository.findByStatus(GameStatus.SAVED.getIndex());
         }
+
+
+        @RequestMapping(method = RequestMethod.DELETE, value="/{gamerId}")
+        public void delete(@PathVariable String gamerId){
+                //Dismiss gamer's user
+                Gamer gamer = repository.findOne(gamerId);
+                User player1 = gamer.getPlayer1();
+                player1.setStatus(UserStatus.unTENANTED.getIndex());
+                userRepository.save(player1);
+                User player2 = gamer.getPlayer2();
+                player2.setStatus(UserStatus.unTENANTED.getIndex());
+                userRepository.save(player2);
+                //
+                repository.delete(gamerId);
+        }
+        @RequestMapping(method = RequestMethod.DELETE, value="/")
+        public void delete(){
+                List<Gamer> allGamers = repository.findAll();
+                for(Gamer gamer : allGamers){
+                        User player1 = gamer.getPlayer1();
+                        player1.setStatus(UserStatus.unTENANTED.getIndex());
+                        userRepository.save(player1);
+                        User player2 = gamer.getPlayer2();
+                        player2.setStatus(UserStatus.unTENANTED.getIndex());
+                        userRepository.save(player2);
+                }
+                //
+                repository.deleteAll();
+        }
 }

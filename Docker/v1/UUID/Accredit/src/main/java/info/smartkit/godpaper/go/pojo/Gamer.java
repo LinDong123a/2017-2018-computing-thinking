@@ -14,7 +14,7 @@ import java.util.Date;
 public class Gamer {
 
         public String getName() {
-                return player1.getId()+"#vs#"+player2.getId();
+                return player1.getId()+"_vs_"+player2.getId();
         }
 
         public void setId(String id) {
@@ -31,10 +31,17 @@ public class Gamer {
 
         @Id
         private String id;
+
+        public void setName(String name) {
+                this.name = name;
+        }
+
+        private String name;
         public Gamer() {
         }
 
-        public Gamer(User player1, User player2, String sgf) {
+        public Gamer(String name, User player1, User player2, String sgf) {
+                this.name = name;
                 this.player1 = player1;
                 this.player2 = player2;
                 this.sgf = sgf;
