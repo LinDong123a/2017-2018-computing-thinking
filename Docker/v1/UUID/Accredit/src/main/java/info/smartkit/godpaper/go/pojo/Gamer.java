@@ -12,9 +12,6 @@ import java.util.Date;
  */
 @Document(collection = "gamers")
 public class Gamer {
-        @Override public String toString() {
-                return "Gamer{" + "id='" + id + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + '}';
-        }
 
         public String getName() {
                 return player1.getId()+"#vs#"+player2.getId();
@@ -84,4 +81,7 @@ public class Gamer {
 
         private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby
 
+        @Override public String toString() {
+                return "Gamer{" + "id='" + id + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + '}';
+        }
 }

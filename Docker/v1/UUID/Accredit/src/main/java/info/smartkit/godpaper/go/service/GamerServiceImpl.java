@@ -1,7 +1,5 @@
 package info.smartkit.godpaper.go.service;
 
-import info.smartkit.godpaper.go.activemq.ActivemqReceiver;
-import info.smartkit.godpaper.go.activemq.ActivemqSender;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
@@ -62,36 +60,37 @@ public class GamerServiceImpl implements GamerService {
                 //find each player, send play notification
                 for(int i=0;i<pairedGames.size();i++) {
                         Gamer curGamer =  pairedGames.get(i);
-                        User player1 = curGamer.getPlayer1();
-                        User player2 = curGamer.getPlayer2();
-                        String playMessage = player1.getId()+"#play#";
-                        //FIRST HAND
-
-                        //
-//                        ActivemqSender sender2Player1 = new ActivemqSender(player1.getTopicName());
-//                        sender2Player1.sendMessage(gameTitle);//Math info message.
-                        mqttService.subscribe(player1.getTopicName());
-                        mqttService.publish(player1.getTopicName(),playMessage, MqttQoS.EXCATLY_ONCE.getIndex());
-                        //
-//                        ActivemqSender sender2Player2 = new ActivemqSender(player1.getTopicName());
-//                        sender2Player2.sendMessage(gameTitle);//Math info message.
-                        mqttService.subscribe(player2.getTopicName());
-                        mqttService.publish(player2.getTopicName(),playMessage, MqttQoS.EXCATLY_ONCE.getIndex());
-                        //
-//                        ActivemqReceiver activemqReceiver = new ActivemqReceiver(curGamer.getName());
-//                        activemqReceiver.receiveMessage();
-                        //Game turn now
-                        player1.setStatus(UserStatus.PLAYING.getIndex());
-                        player2.setStatus(UserStatus.STANDBY.getIndex());
-                        //
-
-                        //
-                        //Save game status
-                        curGamer.setStatus(GameStatus.SAVED.getIndex());
-                        Gamer savedGamer = gamerRepository.save(curGamer);
-                        LOG.info("savedGamer:"+savedGamer.toString());
+                        playOneGamer(curGamer.getId());
                 }
                 List<Gamer> updatedPairedGames = gamerRepository.findByStatus(GameStatus.PAIRED.getIndex());
                 return updatedPairedGames;
+        }
+
+        @Override public Gamer playOne(String gamerId) throws MqttException {
+                return playOneGamer(gamerId);
+        }
+
+        private Gamer playOneGamer(String gamerId) throws MqttException{
+                Gamer curGamer = gamerRepository.findOne(gamerId);
+                User player1 = curGamer.getPlayer1();
+                User player2 = curGamer.getPlayer2();
+                String playMessage = player1.getId()+"#play#";
+                //Game turn now
+                //FIRST HAND
+                mqttService.subscribe(player1.getTopicName());
+                mqttService.publish(player1.getTopicName(),playMessage, MqttQoS.EXCATLY_ONCE.getIndex());
+                //Second Hand
+                mqttService.subscribe(player2.getTopicName());
+                mqttService.publish(player2.getTopicName(),playMessage, MqttQoS.EXCATLY_ONCE.getIndex());
+                //Update game status
+                player1.setStatus(UserStatus.PLAYING.getIndex());
+                player2.setStatus(UserStatus.STANDBY.getIndex());
+                //
+                //
+                //Save game status
+                curGamer.setStatus(GameStatus.SAVED.getIndex());
+                Gamer savedGamer = gamerRepository.save(curGamer);
+                LOG.info("savedGamer:"+savedGamer.toString());
+                return curGamer;
         }
 }

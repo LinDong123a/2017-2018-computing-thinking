@@ -1,9 +1,8 @@
 package info.smartkit.godpaper.go.pojo;
 
-import info.smartkit.godpaper.go.activemq.ActivemqVariables;
+import info.smartkit.godpaper.go.settings.MqttVariables;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -53,7 +52,7 @@ public class User {
     private int status= UserStatus.unTENANTED.getIndex();//0:untenanted,3:playing,2:standby,2:tenanted
 
     public String getTopicName() {
-        return ActivemqVariables.channelName+id;
+        return MqttVariables.clientId+id;
     }
 
 

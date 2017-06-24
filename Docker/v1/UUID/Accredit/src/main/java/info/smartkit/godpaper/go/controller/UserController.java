@@ -1,7 +1,5 @@
 package info.smartkit.godpaper.go.controller;
 
-import info.smartkit.godpaper.go.activemq.ActivemqSender;
-import info.smartkit.godpaper.go.activemq.ActivemqVariables;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.ChainCodeService;
@@ -13,7 +11,6 @@ import info.smartkit.godpaper.go.settings.UserStatus;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,11 +37,6 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public User createOne(@RequestBody User user){
         User result = repository.save(user);
-        //produce message topic by uuid
-        ActivemqSender sender = new ActivemqSender(ActivemqVariables.channelName+result.getId());
-        sender.sendMessage("echo");//For CREATE.
-        //ChainCode register
-//        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
         //
         return result;
     }
@@ -86,12 +78,13 @@ public class UserController {
             User updated = repository.save(untenantedOne);
             LOG.info("tenantedUser:"+updated.toString());
             //MqttClient tenant
+            //produce message topic by uuid
             mqttService.connect(mqttProperties.getBrokerUrl(), updated.getTopicName());
-            //
+            //and subscribe
             mqttService.subscribe(updated.getTopicName());
             //
-//            TimeUnit.SECONDS.sleep(1);
-//            mqttService.publish(updated.getTopicName(),"echo", MqttQoS.LEAST_ONCE.getIndex());
+            //ChainCode register
+            //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
             return updated;
     }
 

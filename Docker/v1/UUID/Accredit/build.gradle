@@ -4,6 +4,7 @@ buildscript {
 		springRestDocsVersion = '1.0.0.RELEASE'
 	}
 	repositories {
+		mavenLocal()
 		mavenCentral()
 	}
 	dependencies {
@@ -26,11 +27,14 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
 
 dependencies {
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
 	compile('org.apache.httpcomponents:httpclient:4.5.1')
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("io.springfox:springfox-swagger2:2.0.2")
@@ -47,11 +51,10 @@ dependencies {
 	testCompile 'com.github.junitrunner:junitrunner-spring:0.0.2'
 	testCompile 'org.springframework.boot:spring-boot-test:1.5.3.RELEASE'
 	testCompile 'org.springframework:spring-test:4.3.8.RELEASE'
-	compile 'org.apache.activemq:activemq-all:5.14.0'
 	compile 'io.grpc:grpc-all:0.13.2'
 	compile 'commons-cli:commons-cli:1.3.1'
 	compile 'org.hyperledger:shim-client:1.0'
-	compile project(':hyperledger-java-client:0.1.3')
+	compile 'me.grapebaba:hyperledger-java-client:0.1.3'
 	compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
 	compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
 }

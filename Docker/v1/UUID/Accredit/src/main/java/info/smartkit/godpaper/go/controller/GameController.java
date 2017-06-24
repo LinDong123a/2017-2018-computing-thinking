@@ -1,8 +1,6 @@
 package info.smartkit.godpaper.go.controller;
 
-import info.smartkit.UUIDAccreditApplication;
-import info.smartkit.godpaper.go.activemq.ActivemqSender;
-import info.smartkit.godpaper.go.activemq.ActivemqVariables;
+
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
@@ -48,6 +46,11 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET,value="/play")
         public List<Gamer> playAll() throws MqttException {
                 return service.playAll();
+        }
+
+        @RequestMapping(method = RequestMethod.GET,value="/play/{gamerId}")
+        public Gamer playOne(@PathVariable String gamerId) throws MqttException {
+                return service.playOne(gamerId);
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/{gamerId}")

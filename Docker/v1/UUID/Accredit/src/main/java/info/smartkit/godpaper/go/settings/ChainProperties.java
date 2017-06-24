@@ -1,11 +1,9 @@
 package info.smartkit.godpaper.go.settings;
 
-import info.smartkit.godpaper.go.activemq.ActivemqVariables;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**

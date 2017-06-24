@@ -26,6 +26,8 @@ public class MqttProperties {
 
         public void setClientId(String clientId) {
                 this.clientId = clientId;
+                //
+                MqttVariables.clientId = clientId;
         }
 
         public int getQos() {

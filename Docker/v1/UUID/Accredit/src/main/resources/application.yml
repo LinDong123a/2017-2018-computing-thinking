@@ -8,15 +8,10 @@ spring:
 server:
   contextPath: /accredit
   port: 8095
-jms:
-  brokerUrl: tcp://localhost:61616
-  pubSubDomain: true
-  queueName: QUEUE/toyhouse
-  channelName: A/
 mqtt:
   brokerUrl: tcp://localhost:1883
   qos: 2
-  clientId: JAVA/toyhouse
+  clientId: A/
 chain:
     baseUrl: http://localhost:7050
     enrollSecret: 6avZQLwcUe9b

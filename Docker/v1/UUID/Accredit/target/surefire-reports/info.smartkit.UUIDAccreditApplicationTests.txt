@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: info.smartkit.UUIDAccreditApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0 sec <<< FAILURE! - in info.smartkit.UUIDAccreditApplicationTests
-initializationError(info.smartkit.UUIDAccreditApplicationTests)  Time elapsed: 0 sec  <<< ERROR!
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.012 sec <<< FAILURE! - in info.smartkit.UUIDAccreditApplicationTests
+initializationError(info.smartkit.UUIDAccreditApplicationTests)  Time elapsed: 0.01 sec  <<< ERROR!
 java.lang.IllegalStateException: Could not load TestContextBootstrapper [null]. Specify @BootstrapWith's 'value' attribute or make the default bootstrapper class available.
 	at org.springframework.test.context.BootstrapUtils.resolveTestContextBootstrapper(BootstrapUtils.java:143)
 	at org.springframework.test.context.TestContextManager.<init>(TestContextManager.java:105)
