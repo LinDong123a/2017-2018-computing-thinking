@@ -4,7 +4,7 @@
 
 1.docker run -P -d --name mongodb smartkit/godpaper-go-mongodb
 
-2.docker run -p 8095:8095 -d --name accredit --link mongodb smartkit/godpaper-go-uuid-accredit
+2.docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartkit/godpaper-go-uuid-accredit
 
 ####Build
 
