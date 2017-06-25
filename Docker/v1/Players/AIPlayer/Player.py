@@ -18,8 +18,8 @@ v_tag_vs = cf.get("mqtt","tag_vs")
 print("v_tag_vs:",v_tag_vs)
 v_tag_play = cf.get("mqtt","tag_play")
 print("v_tag_play:",v_tag_play)
-v_queue_name = cf.get("mqtt","queue_name")
-print("v_queue_name default:",v_queue_name)
+v_client_id = cf.get("mqtt","client_id")
+print("v_client_id:",v_client_id)
 v_restful_url = cf.get("api","restful_url")
 print("v_restful_url:",v_restful_url)
 v_resource_name_user = cf.get("api","resource_name_user")
@@ -40,6 +40,7 @@ from simple_rest_client.api import API
 import paho.mqtt.client as mqtt
 
 import simpleAI
+import plainAI
 
 
 # create EventResource with custom actions
@@ -69,14 +70,19 @@ if __name__ == '__main__':
     # logging.info("postResponse.body:%s", postResponse.body)
     # Tenant one without creating
     tenantResponse = api.user.tenant(body=None, params={}, headers={})
-    logging.info("GET tenant user:%s", tenantResponse)
+    logging.info("GET tenant user:%s", tenantResponse.body)
 
 #
     # variables
     v_queue_name = tenantResponse.body['topicName']
+    # v_player_id = tenantResponse.body['topicName']
     v_player_id = tenantResponse.body['id']
     logging.info("v_queue_name:%s",v_queue_name)
     logging.info("v_player_id:%s", v_player_id)
+    v_game_id = ''
+    v_player1_id = ''
+    v_player2_id = ''
+    message_json_s = []
 
     # paho-mqtt
     # The callback for when the client receives a CONNACK response from the server.
@@ -94,18 +100,21 @@ if __name__ == '__main__':
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
         #
-        logging.info("MQTT on_message,"+msg.topic + " " + str(msg.payload))
-        message = str(msg.payload)
+        global v_game_id,v_player1_id,v_player2_id,message_json_s
+        ##
+        logging.info("MQTT on_message,"+msg.topic + " " + str(msg.payload.decode("utf-8")))
+        message = str(msg.payload.decode("utf-8"))
         # opponent info
-        # tag_vs = "_vs_"
-        # tag_play = "_play_"
         if message.find(v_tag_vs)!=-1:
             v_game_id = message
-            # v_player_id = message.split(tag_vs)[0]
-            # v_opponent_id = message.split(tag_vs)[1]
-            logging.info("VS game id:%s", v_game_id)
+            v_player1_id = message.split(v_tag_vs)[0].split(v_client_id)[1]
+            print("v_player1_id:", v_player1_id)
+            v_player2_id = message.split(v_tag_vs)[1].split(v_client_id)[1]
+            print("v_player2_id:", v_player2_id)
+            logging.info("VS game id:%s,player1_id:%s,player2_id:%s", v_game_id,v_player1_id,v_player2_id)
             # subscribe the game topic
             client.subscribe(v_game_id)
+            logging.info("MQTT subscribe to:%s", v_game_id)
             #  testing
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#B[cm]")
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#")
@@ -113,36 +122,51 @@ if __name__ == '__main__':
         if message.find(v_tag_play)!=-1:
             logging.info("PLAY play msg raw:%s",message)
             cur_player_id = message.split(v_tag_play)[0]
-            play_msg = message.split(v_tag_play)[1]#'B[cm]'
-            logging.info("PLAY current play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
-            # first hand
-            if cur_player_id == v_player_id:
-                ## fixture with open database:
-                client.publish(v_game_id, v_player_id + v_tag_play + "#B[cm]")
-            ## next round
-
-            # opponent only
-            if cur_player_id != v_player_id:
-                logging.info("PLAY current playing id:%s",cur_player_id)
-                # assemble game message.
-                global v_game_id
-                message_json = {'game_id': v_game_id,
-                           'user_id': cur_player_id,
-                           'msg': play_msg}
-                # msg response
-                result = simpleAI.AI(message_json)
-                result['user_id'] = v_player_id
-                # result['method'] = 'play'
-                logging.info('PLAY simpleAI response:%s', result)
-                # publish message
-                client.publish(v_game_id, v_player_id + tag_play + result['msg'])
-                # client.publish(v_game_id,json.dumps(result))
+            print("cur_player_id:",cur_player_id)
+            pre_play_msg = message.split(v_tag_play)[1]#maybe null
+            logging.info("PLAY current player:%s,pre_play_msg:%s", cur_player_id,pre_play_msg)
+            if pre_play_msg=='':
+                # first hand
+                if v_player_id == v_player1_id: #double check
+                    #FIXME:with open database:
+                    pre_play_msg = 'B[dp]'
+                    # message assemble
+                    message_json = {'game_id': v_game_id,
+                                    'user_id': v_player_id,
+                                    'msg': pre_play_msg}
+                    # append message
+                    message_json_s.append(message_json)
+                    print("assembled message_json_s:",message_json_s)
+                    #
+                    client.publish(v_game_id, v_player_id + v_tag_play + pre_play_msg)
+                    logging.info("PLAY FIRST_HAND.player_id:%s,play_msg:%s", cur_player_id, pre_play_msg)
+            else:
+                # next round as opponent only
+                if cur_player_id != v_player_id:
+                    logging.info("PLAY current player id:%s,v_player_id:%s",cur_player_id,v_player_id)
+                    # message assemble
+                    message_json = {'game_id': v_game_id,
+                               'user_id': cur_player_id,
+                               'msg': pre_play_msg}
+                    # append message
+                    message_json_s.append(message_json)
+                    print("assembled message_json_s:", message_json_s)
+                    # msg response
+                    logging.info("send to plainAI message_json_s:%s",message_json_s)
+                    result = plainAI.AI(message_json_s)
+                    result['user_id'] = v_player_id
+                    # result['method'] = 'play'
+                    logging.info('PLAY plainAI response:%s', result)
+                    # append msa
+                    # publish message
+                    client.publish(v_game_id, v_player_id + v_tag_play + result['msg'])
+                    # client.publish(v_game_id,json.dumps(result))
 
 
     # The callback for when this client publishes to the server.
     def on_publish(client, userdata, mid):
         ##
-        logging.info("MQTT message published:%s",str(userdata))
+        logging.debug("MQTT message published:%s",str(userdata))
 
 
     def on_log(client, userdata, level, buf):
@@ -157,7 +181,8 @@ if __name__ == '__main__':
     client.on_log = on_log
 
     client.connect(v_broker_url, v_broker_port, 60)
-    client.subscribe(v_queue_name,2)
+    #default channel name.
+    client.subscribe(v_client_id,2)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.

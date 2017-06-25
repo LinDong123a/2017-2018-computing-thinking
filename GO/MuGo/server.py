@@ -26,6 +26,7 @@ def post_info():
     message = {'game_id': request.form.get('game_id', 'wrong_game_id'),
                'user_id': request.form.get('user_id', 'wrong_user_id'), 'msg': request.form.get('msg', 'wrong_msg')}
 
+    print("send to AI message_json:",message)
     result = simpleAI.AI(message)
     result['user_id'] = 'MuGo'
     result['method'] = 'play'

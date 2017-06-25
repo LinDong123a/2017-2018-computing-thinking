@@ -30,8 +30,8 @@ public class GamerServiceImpl implements GamerService {
         @Override public List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException {
                 int arraySize = tenantedUsers.size();
                 LOG.info("tenantedUsers("+tenantedUsers.size()+"):"+tenantedUsers.toString());
-                List<User> firstPart = tenantedUsers.subList(0,arraySize/2);
-                List<User> secondPart = tenantedUsers.subList(arraySize/2,arraySize);
+                List<User> secondPart = tenantedUsers.subList(0,arraySize/2);
+                List<User>  firstPart= tenantedUsers.subList(arraySize/2,arraySize);
                 List<Gamer> gamers = new ArrayList<>(arraySize/2);
                 for (int i=0;i<arraySize/2;i++) {
                         //produce message topic by uuid,for public message.

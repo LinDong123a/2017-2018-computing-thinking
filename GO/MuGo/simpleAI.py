@@ -39,6 +39,7 @@ def AI(msg):
             cmd = cmd.strip('\n ')
             if cmd == '':
                 continue
+            print("gtp_engine.send(cmd):", cmd)
             gtp_engine.send(cmd)
         # sys.stdout.write(cmd + '\n')
         # sys.stdout.flush()

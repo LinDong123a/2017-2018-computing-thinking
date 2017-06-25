@@ -11,6 +11,7 @@ import sys
 from policy import PolicyNetwork
 from strategies import RandomPlayer, PolicyNetworkBestMovePlayer, PolicyNetworkRandomMovePlayer, MCTS
 from load_data_sets import DataSet, parse_data_sets
+import random
 
 string = 'abcdefghijklmnopqrstuvwxyz'
 read_file = os.getcwd() + "/AI_FILE/savedmodel"
@@ -25,7 +26,7 @@ def AI(msg):
 
     data_file = data_file_path + msg['game_id']
     x, y, color = parse_input_msg(msg)
-    print(x, y, color)
+    print('AI(msg) parsed:',x, y, color)
 
     # Initialize the policy network
     n = PolicyNetwork(use_cpu=True)
@@ -60,6 +61,7 @@ def AI(msg):
             cmd = cmd.strip('\n ')
             if cmd == '':
                 continue
+            print("gtp_engine.send(cmd)",cmd)
             gtp_engine.send(cmd)
         # sys.stdout.write(cmd + '\n')
         # sys.stdout.flush()
