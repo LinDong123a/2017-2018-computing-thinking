@@ -12,7 +12,6 @@ from load_data_sets import DataSet, parse_data_sets
 
 string = 'abcdefghijklmnopqrstuvwxyz'
 read_file = "./AI_FILE/savedmodel"
-data_file = "yyf.sgf"
 
 data_file_path = 'game_database/sgf/'
 
@@ -20,7 +19,8 @@ data_file_path = 'game_database/sgf/'
 def AI(msg):
     global read_file  # Extract information
 
-    data_file = data_file_path + msg['game_id']
+    data_file = data_file_path + '[2]' + msg['game_id']
+
     x, y, color = parse_input_msg(msg)
     print(x, y, color)
 
@@ -67,6 +67,7 @@ def AI(msg):
     response = color + '[' + AI_x + AI_y + ']'
     # sys.stdout.write(response)
     # sys.stdout.flush()
+
 
     return {'game_id': msg['game_id'], 'msg': response}
 
