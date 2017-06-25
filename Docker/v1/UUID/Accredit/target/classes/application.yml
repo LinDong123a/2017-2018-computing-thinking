@@ -12,6 +12,8 @@ mqtt:
   brokerUrl: tcp://localhost:1883
   qos: 2
   clientId: TH_
+  tag_vs: _vs_
+  tag_play: _play_
 chain:
     baseUrl: http://localhost:7050
     enrollSecret: 6avZQLwcUe9b

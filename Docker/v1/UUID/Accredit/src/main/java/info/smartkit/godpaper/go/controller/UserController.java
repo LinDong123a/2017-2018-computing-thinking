@@ -65,8 +65,13 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<User> list(){
+    public List<User> listAll(){
             return repository.findAll();
+    }
+
+    @RequestMapping(method = RequestMethod.GET,value="/status/{index}")
+    public List<User> listByStatus(@PathVariable int index){
+            return repository.findByStatus(index);
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/tenant")
@@ -83,9 +88,27 @@ public class UserController {
             //and subscribe
             mqttService.subscribe(updated.getTopicName());
             //
-            //ChainCode register
+            //TODO:ChainCode register
             //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
             return updated;
     }
+        @RequestMapping(method = RequestMethod.DELETE, value="/tenant/{userId}")
+        public User untenant(@PathVariable String userId) throws MqttException {
+                //User tenant
+                User tenantUeser = repository.findOne(userId);
+                //update status
+                tenantUeser.setStatus(UserStatus.unTENANTED.getIndex());
+                User updated = repository.save(tenantUeser);
+                LOG.info("untenantedUser:"+updated.toString());
+                //MqttClient untenant
+                //produce message topic by uuid
+//                mqttService.disconnect(mqttProperties.getBrokerUrl(), updated.getTopicName());
+                //and unsubscribe
+                mqttService.unsubscribe(updated.getTopicName());
+                //
+                //TODO:ChainCode un-register
+                //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
+                return updated;
+        }
 
 }

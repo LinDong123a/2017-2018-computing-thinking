@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.pojo;
 
+import info.smartkit.godpaper.go.settings.MqttVariables;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class Gamer {
 
         public String getName() {
-                return player1.getId()+"_vs_"+player2.getId();
+                return player1.getId()+ MqttVariables.tag_vs+player2.getId();
         }
 
         public void setId(String id) {

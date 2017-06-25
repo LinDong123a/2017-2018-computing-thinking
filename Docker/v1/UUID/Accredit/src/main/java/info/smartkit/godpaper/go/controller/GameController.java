@@ -36,10 +36,10 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET,value="/pair")
         public List<Gamer> pairAll() throws MqttException {
                 List<User> tenantedUsers = userRepository.findByStatus(UserStatus.TENANTED.getIndex());
-                LOG.info("tenantedUsers:"+tenantedUsers.toString());
+                LOG.info("tenantedUsers("+tenantedUsers.size()+"):"+tenantedUsers.toString());
                 //
                 List<Gamer> pairedGames = service.pairAll(tenantedUsers);
-                LOG.info("pairedGames:"+pairedGames.toString());
+                LOG.info("pairedGames("+pairedGames.size()+"):"+pairedGames.toString());
                 return pairedGames;
         }
 

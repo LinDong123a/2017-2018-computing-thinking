@@ -42,6 +42,29 @@ public class MqttProperties {
         private String clientId;
         private int qos;
 
+        public String getTag_vs() {
+                return tag_vs;
+        }
+
+        public void setTag_vs(String tag_vs) {
+                this.tag_vs = tag_vs;
+                //
+                MqttVariables.tag_vs = tag_vs;
+        }
+
+        public String getTag_play() {
+                return tag_play;
+        }
+
+        public void setTag_play(String tag_play) {
+                this.tag_play = tag_play;
+                //
+                MqttVariables.tag_play = tag_play;
+        }
+
+        private String tag_vs;
+        private String tag_play;
+
         public MqttProperties() {
         }
 

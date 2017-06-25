@@ -33,9 +33,8 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
                 connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
-                LOG.info("MQTT Connecting to broker: "+brokerUrl);
                 mqttClient.connect(connOpts);
-                LOG.info("MQTT client Connected.");
+                LOG.info("MQTT Connecting to broker: "+brokerUrl);
 
         }
 
@@ -52,14 +51,25 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 if(mqttClient==null){
                         this.connect(mqttProperties.getBrokerUrl(),topic);
                 }
-                LOG.info("MQTT Publishing message: "+content);
+//                LOG.info("MQTT Publishing message: "+content);
                 MqttMessage message = new MqttMessage(content.getBytes());
                 message.setQos(qos);
                 mqttClient.publish(topic, message);
-                LOG.info("MQTT  Message published to:"+topic);
+                LOG.info("MQTT  Message published to:"+topic+",MSG:"+content);
 //                sampleClient.disconnect();
 //                LOG.info("MqttClient Disconnected");
 
+        }
+
+        @Override public void disconnect(String brokerUrl, String clientId) throws MqttException {
+                mqttClient.disconnect();
+        }
+
+        @Override public void unsubscribe(String topic) throws MqttException {
+                if(mqttClient==null){
+                        this.connect(mqttProperties.getBrokerUrl(),topic);
+                }
+                mqttClient.unsubscribe(topic);
         }
 
         @Override public void connectionLost(Throwable throwable) {
@@ -71,7 +81,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
         @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 LOG.info("MQTT messageArrived,topic:"+topic+",message:"+mqttMessage.toString());
                 String playingMessage = mqttMessage.getPayload().toString();
-                LOG.info("MQTT messageArrived payload:"+playingMessage);
+                LOG.debug("MQTT messageArrived payload:"+playingMessage);
                 List<Gamer> playingGamers = gamerRepository.findByName(topic);
                 if(playingGamers.size()>0) {
                         String gamerName = playingMessage.split("_play_")[0];

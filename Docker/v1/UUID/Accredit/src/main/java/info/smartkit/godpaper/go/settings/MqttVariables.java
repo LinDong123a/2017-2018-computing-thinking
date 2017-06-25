@@ -5,4 +5,6 @@ package info.smartkit.godpaper.go.settings;
  */
 public class MqttVariables {
         public static String clientId;
+        public static String tag_vs;
+        public static String tag_play;
 }

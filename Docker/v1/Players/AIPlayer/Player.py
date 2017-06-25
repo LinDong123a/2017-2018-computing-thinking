@@ -6,15 +6,19 @@ cf = configparser.ConfigParser()
 cf.read("dev.conf")
 s = cf.sections()
 # logging.info('conf section:',s)
-o_jms = cf.options("jms")
+o_jms = cf.options("mqtt")
 print('conf options:', o_jms)
 o_api = cf.options("api")
 print('conf options:', o_api)
-v_broker_url = cf.get("jms","broker_url")
+v_broker_url = cf.get("mqtt","broker_url")
 print("v_broker_url:"+v_broker_url)
-v_broker_port = cf.getint("jms","broker_port")
+v_broker_port = cf.getint("mqtt","broker_port")
 print("v_broker_port:",v_broker_port)
-v_queue_name = cf.get("jms","queue_name")
+v_tag_vs = cf.get("mqtt","tag_vs")
+print("v_tag_vs:",v_tag_vs)
+v_tag_play = cf.get("mqtt","tag_play")
+print("v_tag_play:",v_tag_play)
+v_queue_name = cf.get("mqtt","queue_name")
 print("v_queue_name default:",v_queue_name)
 v_restful_url = cf.get("api","restful_url")
 print("v_restful_url:",v_restful_url)
@@ -93,9 +97,9 @@ if __name__ == '__main__':
         logging.info("MQTT on_message,"+msg.topic + " " + str(msg.payload))
         message = str(msg.payload)
         # opponent info
-        tag_vs = "_vs_"
-        tag_play = "_play_"
-        if message.find(tag_vs)!=-1:
+        # tag_vs = "_vs_"
+        # tag_play = "_play_"
+        if message.find(v_tag_vs)!=-1:
             v_game_id = message
             # v_player_id = message.split(tag_vs)[0]
             # v_opponent_id = message.split(tag_vs)[1]
@@ -106,20 +110,20 @@ if __name__ == '__main__':
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#B[cm]")
             # client.publish(v_game_id, "594a4c8b6516899e6a30e17f#play#")
         # game table turn info from game topic
-        if message.find(tag_play)!=-1:
+        if message.find(v_tag_play)!=-1:
             logging.info("PLAY play msg raw:%s",message)
-            cur_player_id = message.split(tag_vs)[0]
-            play_msg = message.split(tag_play)[1]#'B[cm]'
+            cur_player_id = message.split(v_tag_play)[0]
+            play_msg = message.split(v_tag_play)[1]#'B[cm]'
             logging.info("PLAY current play message:player_id:%s,play_msg:%s", cur_player_id,play_msg)
             # first hand
             if cur_player_id == v_player_id:
                 ## fixture with open database:
-                client.publish(v_game_id, v_player_id + tag_play + "#B[cm]")
+                client.publish(v_game_id, v_player_id + v_tag_play + "#B[cm]")
             ## next round
 
             # opponent only
             if cur_player_id != v_player_id:
-                logging.info("current playing id:%s",cur_player_id)
+                logging.info("PLAY current playing id:%s",cur_player_id)
                 # assemble game message.
                 global v_game_id
                 message_json = {'game_id': v_game_id,
