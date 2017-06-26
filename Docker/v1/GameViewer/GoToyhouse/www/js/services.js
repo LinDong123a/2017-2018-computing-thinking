@@ -18,18 +18,14 @@ angular.module('app.services', [])
   };
 }])
 
-.service('TableService', [function(){
+.service('TableService', ['$http',function($http){
   //
   return {
-    getOne: function()
-    {
-      return  { sgf :"(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[gokifu.com]BC[cn]WC[cn]PB[Gu Li]BR[9p]PW[Shi Yue]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];B[qd];W[dd];B[pq];W[dq];B[fc]"};
-    },
-    getSaved: function(callback){
-      $http.get("http://localhost:8095/accredit/game/saved").success(function(data) {
-        console.log("saved gamers:",data);
+    getOne: function(callback){
+      $http.get("http://localhost:8095/accredit/game/595080c96516891c2d10832c").success(function(data) {
+        console.log("one gamer info:",data);
         callback(data);
       });
-    },
+    }
   }
 }]);

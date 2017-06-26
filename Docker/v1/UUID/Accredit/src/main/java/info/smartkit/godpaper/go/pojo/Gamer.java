@@ -14,10 +14,6 @@ import java.util.Date;
 @Document(collection = "gamers")
 public class Gamer {
 
-        public String getName() {
-                return player1.getId()+ MqttVariables.tag_vs+player2.getId();
-        }
-
         public void setId(String id) {
                 this.id = id;
         }
@@ -33,15 +29,28 @@ public class Gamer {
         @Id
         private String id;
 
+        public void setTopic(String topic) {
+                this.topic = topic;
+        }
+
+        public String getTopic() {
+                return player1.getTopicName()+MqttVariables.tag_vs+player2.getTopicName();
+        }
+
+        public String getName() {
+                return name;
+        }
+
         public void setName(String name) {
                 this.name = name;
         }
 
         private String name;
+        private String topic;
         public Gamer() {
         }
 
-        public Gamer(String name, User player1, User player2, String sgf) {
+        public Gamer(String name,User player1, User player2, String sgf) {
                 this.name = name;
                 this.player1 = player1;
                 this.player2 = player2;
@@ -50,7 +59,7 @@ public class Gamer {
 
         private User player1;
         private User player2;
-        private String sgf;//status
+        private String sgf= "(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];";
 
         public User getPlayer1() {
                 return player1;
@@ -58,6 +67,7 @@ public class Gamer {
 
         public void setPlayer1(User player1) {
                 this.player1 = player1;
+                //TODO:regex replace sgf info
         }
 
         public User getPlayer2() {
@@ -66,6 +76,7 @@ public class Gamer {
 
         public void setPlayer2(User player2) {
                 this.player2 = player2;
+                //TODO:regex replace sgf info
         }
 
         public String getSgf() {
@@ -90,6 +101,6 @@ public class Gamer {
         private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby
 
         @Override public String toString() {
-                return "Gamer{" + "id='" + id + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + '}';
+                return "Gamer{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", topic='" + topic + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + '}';
         }
 }

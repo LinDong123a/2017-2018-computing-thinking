@@ -2,6 +2,7 @@ package info.smartkit.godpaper.go.service;
 
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
+import info.smartkit.godpaper.go.settings.GameStatus;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.List;

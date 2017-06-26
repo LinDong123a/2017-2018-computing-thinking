@@ -6,6 +6,7 @@ import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.GamerService;
+import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.apache.log4j.LogManager;
@@ -28,6 +29,7 @@ public class GameController {
         @Autowired GamerRepository repository;
         @Autowired UserRepository userRepository;
         @Autowired GamerService service;
+        @Autowired MqttService mqttService;
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer){
                 Gamer result = repository.save(gamer);
@@ -70,9 +72,11 @@ public class GameController {
 
 
         @RequestMapping(method = RequestMethod.DELETE, value="/{gamerId}")
-        public void delete(@PathVariable String gamerId){
+        public void delete(@PathVariable String gamerId) throws MqttException {
                 //Dismiss gamer's user
                 Gamer gamer = repository.findOne(gamerId);
+                //unsubscribe
+                mqttService.unsubscribe(gamer.getTopic());
                 User player1 = gamer.getPlayer1();
                 player1.setStatus(UserStatus.unTENANTED.getIndex());
                 userRepository.save(player1);
@@ -83,9 +87,12 @@ public class GameController {
                 repository.delete(gamerId);
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
-        public void delete(){
+        public void delete() throws MqttException {
                 List<Gamer> allGamers = repository.findAll();
                 for(Gamer gamer : allGamers){
+                        //unsubscribe
+                        mqttService.unsubscribe(gamer.getTopic());
+                        //
                         User player1 = gamer.getPlayer1();
                         player1.setStatus(UserStatus.unTENANTED.getIndex());
                         userRepository.save(player1);

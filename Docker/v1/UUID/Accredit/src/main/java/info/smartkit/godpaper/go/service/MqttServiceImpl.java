@@ -1,12 +1,16 @@
 package info.smartkit.godpaper.go.service;
 
+//import com.toomasr.sgf4j.Sgf;
+//import com.toomasr.sgf4j.parser.Game;
 import info.smartkit.UUIDAccreditApplication;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.MqttProperties;
+import info.smartkit.godpaper.go.settings.MqttVariables;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+//import org.apache.log4j.spi.NOPLogger;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,7 @@ import java.util.List;
 public class MqttServiceImpl implements MqttService,MqttCallback {
 
         @Autowired GamerRepository gamerRepository;
+        @Autowired GamerService gamerService;
         @Autowired MqttProperties mqttProperties;
         private  MqttClient mqttClient = null;
 
@@ -44,7 +49,11 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 }
                 //
                 mqttClient.subscribe(topic);
-                mqttClient.setCallback(this);
+                //ONLY PLAYING GAME TOPIC.
+                if(topic.contains(MqttVariables.tag_vs)) {
+                        LOG.info("MQTT subscribed game topic:"+topic);
+                        mqttClient.setCallback(this);
+                }
         }
 
         @Override public void publish(String topic, String content, int qos) throws MqttException {
@@ -80,16 +89,27 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
 
         @Override public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 LOG.info("MQTT messageArrived,topic:"+topic+",message:"+mqttMessage.toString());
-                String playingMessage = mqttMessage.getPayload().toString();
-                LOG.debug("MQTT messageArrived payload:"+playingMessage);
-                List<Gamer> playingGamers = gamerRepository.findByName(topic);
-                if(playingGamers.size()>0) {
-                        String gamerName = playingMessage.split("_play_")[0];
-                        String gamerMessage = playingMessage.split("_play_")[1];
-                        //TODO: switch by gamer id and update SGF info
-                        Gamer playingGamer = gamerRepository.findByName(gamerName).get(0);
-                        playingGamer.setSgf(gamerMessage);
-                        LOG.info("NOW!! gamer.setSgf(mqttMessage.toString())");
+                String playingMessage = mqttMessage.toString();
+//                LOG.debug("MQTT messageArrived payload:"+playingMessage);//594dd2e0e4b0dbacf6b3d0e3_play_W[pd]
+                if (playingMessage.contains(MqttVariables.tag_play)) {
+                        String[] gameIdMessage =  playingMessage.split(MqttVariables.tag_play);
+                        String gamerId =gameIdMessage[0];
+                        LOG.info("gameIdMessage("+gameIdMessage.length+"),gamerId:"+gamerId);
+                        //Except first hand.
+                        if(gameIdMessage.length==2) {
+                                String gamerMessage = gameIdMessage[1];
+                                //find one
+                                Gamer playingGamer = gamerRepository.findByTopic(topic).get(0);
+                                LOG.info("findByTopicName:"+playingGamer.toString());
+                                //by gamer id and update SGF info
+                                //TODO:SGF reader and writer functions.
+//                                Game sgfGame = Sgf.createFromString(gamerMessage);
+//                                LOG.info("sgfGame:"+sgfGame.toString());
+                                String sgfString = playingGamer.getSgf().concat(gamerMessage).concat(";");
+                                playingGamer.setSgf(sgfString);
+                                Gamer updatedGamer = gamerRepository.save(playingGamer);
+                                LOG.info("updatedGamer.sgf:"+updatedGamer.getSgf());
+                        }
                 }
         }
 

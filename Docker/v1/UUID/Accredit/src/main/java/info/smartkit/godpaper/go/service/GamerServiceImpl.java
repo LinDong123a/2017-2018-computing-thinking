@@ -11,10 +11,14 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -27,9 +31,13 @@ public class GamerServiceImpl implements GamerService {
         @Autowired GamerRepository gamerRepository;
         @Autowired MqttService mqttService;
 
+        @Autowired
+        private MongoTemplate mongoTemplate;
+
         @Override public List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException {
                 int arraySize = tenantedUsers.size();
                 LOG.info("tenantedUsers("+tenantedUsers.size()+"):"+tenantedUsers.toString());
+                //TODO:more game machine mechanism here.
                 List<User> secondPart = tenantedUsers.subList(0,arraySize/2);
                 List<User>  firstPart= tenantedUsers.subList(arraySize/2,arraySize);
                 List<Gamer> gamers = new ArrayList<>(arraySize/2);
@@ -41,7 +49,7 @@ public class GamerServiceImpl implements GamerService {
                         List<Gamer> existedGamers = gamerRepository.findByName(vsTitle);
                         LOG.info("existedGamers("+existedGamers.size()+"):"+existedGamers.toString());
                         if(existedGamers.size()==0) {//Do not existed.
-                                Gamer gamer = new Gamer(vsTitle, firstPart.get(i), secondPart.get(i), "");
+                                Gamer gamer = new Gamer("",firstPart.get(i), secondPart.get(i), "");
                                 //db save first.
                                 gamer.setStatus(GameStatus.PAIRED.getIndex());
                                 Gamer saved = gamerRepository.save(gamer);
@@ -104,10 +112,15 @@ public class GamerServiceImpl implements GamerService {
                 //Update game status
                 player1.setStatus(UserStatus.PLAYING.getIndex());
                 player2.setStatus(UserStatus.STANDBY.getIndex());
-                //
+                //subscribe game topic
+                mqttService.subscribe(gamer.getTopic());
                 //
                 //Save game status
+                gamer.setTopic(gamer.getTopic());
+                //
+                gamer.setSgf("(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];");
                 gamer.setStatus(GameStatus.PLAYING.getIndex());
+                //
                 Gamer savedGamer = gamerRepository.save(gamer);
                 LOG.info("savedGamer#"+index+":"+savedGamer.toString());
                 return gamer;

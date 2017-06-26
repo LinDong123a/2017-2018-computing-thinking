@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
     client.connect(v_broker_url, v_broker_port, 60)
     #default channel name.
-    client.subscribe(v_client_id,2)
+    client.subscribe(v_client_id,0)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
