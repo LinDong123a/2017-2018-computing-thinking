@@ -1,4 +1,4 @@
-One logical business object → One microservice  → One git repository folder  → One Mongo collection
+__One logical business object → One microservice  → One git repository folder  → One Mongo collection__
 
 
 1. 
