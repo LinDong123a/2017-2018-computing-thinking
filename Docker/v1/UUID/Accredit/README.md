@@ -1,7 +1,10 @@
 One logical business object → One microservice  → One git repository folder  → One Mongo collection
 
 
-1. gradle -b build.gradle build -x test
+1. 
+```
+gradle -b build.gradle build -x test
+```
 
 1.1 Verify: 
 ```
