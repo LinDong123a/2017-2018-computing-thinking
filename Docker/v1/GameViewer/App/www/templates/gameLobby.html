@@ -1,0 +1,25 @@
+<ion-view title="Game Lobby" id="page2">
+  <ion-nav-buttons side="right">
+    <button class="button ion-android-bulb" ng-click="playAll()"> PLAY ALL
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="left">
+    <button class="button ion-android-person" ng-click="createUser()"> 1.+USER
+    </button>
+    <button class="button ion-android-bookmark" ng-click="tenantUser()"> 2.->TENANT
+    </button>
+    <button class="button ion-android-people" ng-click="pairAll()"> 3.>PAIR ALL<
+    </button>
+  </ion-nav-buttons>
+  <ion-content padding="true" class="has-header">
+    <ion-list id="gameLobby-list">
+      <ion-list>
+        <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList">
+          <i class="icon ion-android-laptop"></i>
+          <h2>{{lobby.player1.fullName}} VS {{lobby.player2.fullName}}</h2>
+          <p>{{lobby.player1.id}} VS {{lobby.player2.id}}</p>
+        </ion-item>
+
+      </ion-list>
+  </ion-content>
+</ion-view>
