@@ -74,3 +74,11 @@ docker run --name gameviewer smartkit/godpaper-go-ionic
 ```
 docker logs -gameviewer
 ```
+
+### Tips
+
+docker stop $(docker ps -a -q)     # stop all containers
+
+docker rm $(docker ps -a -q)       # remove all containers
+
+docker rmi -f $(docker images -q)  # remove all images
