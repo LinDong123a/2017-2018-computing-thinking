@@ -1,0 +1,22 @@
+<ion-modal-view ng-controller="gameLobbyCtrl">
+  <ion-header-bar class="bar bar-header">
+    <h1 class="title">Settings</h1>
+    <button class="button button-icon icon ion-close" ng-click="modal_settings.hide()"></button>
+  </ion-header-bar>
+
+  <ion-content class="has-header" id="printSection">
+
+    <div class="list">
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">API:</span>
+        <input type="text" placeholder="192.168.0.11" ng-model="envInfo.api">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">MQTT:</span>
+        <input type="text" placeholder="192.168.0.11" ng-model="envInfo.mqtt">
+      </label>
+      <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"
+               ng-click="updateEnvInfo()" ng-disabled="false">SAVE</button>
+    </div>
+  </ion-content>
+</ion-modal-view>

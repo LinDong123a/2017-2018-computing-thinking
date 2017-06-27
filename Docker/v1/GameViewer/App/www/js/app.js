@@ -12,6 +12,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
   $sceDelegateProvider.resourceUrlWhitelist([ 'self','*://www.youtube.com/**', '*://player.vimeo.com/video/**']);
 
 })
+  .value('debug', true)
+  .constant('envInfo', {api:'http://127.0.0.1:8095/accredit/',mqtt:'127.0.0.1'})
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
