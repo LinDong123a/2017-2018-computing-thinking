@@ -23,7 +23,7 @@ RUN npm install -g grunt-cli
 RUN npm install -g gulp
 RUN npm install -g bower
 
-RUN ionic start ionic-demo sidemenu
+#RUN ionic start ionic-demo sidemenu
 
 # Expose port: web (8100), livereload (35729)
 EXPOSE 8100 35729
@@ -68,6 +68,6 @@ RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment
 
 RUN ["/opt/tools/android-accept-licenses.sh", "android update sdk --all --no-ui --filter platform-tools,tools,build-tools-21.1.2,android-19,addon-google_apis_x86-google-19,extra-android-support,extra-android-m2repository,extra-google-m2repository,sys-img-x86-android-21"]
 
-
-WORKDIR ionic-demo
+COPY . /App
+WORKDIR /App
 CMD ["ionic", "serve", "--all", "--port", "8100", "--livereload-port", "35729"]

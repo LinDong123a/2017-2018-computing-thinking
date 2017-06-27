@@ -27,9 +27,17 @@ print("v_resource_name_user:",v_resource_name_user)
 # if docker_links
 
 import os
+v_uri_api = os.environ.get('URI_API')
+logging.info("v_uri_api:%s",v_uri_api)
+if v_uri_api!= None:
+    v_restful_url = v_uri_api
+v_ip_mqtt = os.environ.get('IP_MQTT')
+logging.info("v_ip_mqtt:%s",v_ip_mqtt)
+if v_ip_mqtt!= None:
+    v_broker_url = v_ip_mqtt
 import json
 from urllib.parse import urlparse
-# import docker_links
+# TODO：import docker_links
 # links = docker_links.parse_links(os.environ)
 # print("docker_links:",json.dumps(links, indent=4))
 # import UUID-API
