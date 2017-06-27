@@ -34,7 +34,7 @@ docker run -P -d --name mongodb smartkit/godpaper-go-mongodb
 cd BlockChain/HyperLedger & docker-compose up -d
 ```
 
-#### 3.smartkit/godpaper-go-uuid-accredit
+#### 4.smartkit/godpaper-go-uuid-accredit
 
 1.
 ```
@@ -50,7 +50,7 @@ Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
 BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
 
 
-#### 4.smartkit/godpaper-go-ai-player
+#### 5.smartkit/godpaper-go-ai-player
 
 1.
 ```
@@ -60,4 +60,17 @@ docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_M
 2. 
 ```
 docker logs -aiplayer
+```
+
+#### 6.smartkit/godpaper-go-ionic
+
+
+1.
+```
+docker run --name gameviewer smartkit/godpaper-go-ionic
+```
+
+2. 
+```
+docker logs -gameviewer
 ```
