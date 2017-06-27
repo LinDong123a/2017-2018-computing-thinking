@@ -1,6 +1,6 @@
 {
-  "name": "GoToyhouse",
-  "version": "1.1.1",
+  "name": "gotoyhouse",
+  "version": "0.0.1",
   "description": "GoToyhouse: An Ionic project",
   "dependencies": {
     "gulp": "^3.5.6",
@@ -30,5 +30,28 @@
       "version": "",
       "locator": "ios"
     }
-  ]
+  ],
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/yangboz/2017-2018-computing-thinking.git"
+  },
+  "keywords": [
+    "ai",
+    "go",
+    "deeplearning",
+    "tensorflow",
+    "docker",
+    "kubernetes",
+    "microservices"
+  ],
+  "author": "yangboz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yangboz/2017-2018-computing-thinking/issues"
+  },
+  "homepage": "https://github.com/yangboz/2017-2018-computing-thinking#readme"
 }
