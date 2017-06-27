@@ -63,7 +63,24 @@ docker logs -aiplayer
 ```
 
 #### 6.smartkit/godpaper-go-ionic
+1.
 
+```
+cd /v1/GameViewer/App && ionic serve
+```
+
+2.
+
+```
+http://localhost:8100
+```
+or
+
+```
+file:///Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/GameViewer/App/platforms/ios/www/index.html#/page1/page3
+```
+
+### TODO:
 
 1.
 ```
@@ -74,6 +91,7 @@ docker run --name gameviewer smartkit/godpaper-go-ionic
 ```
 docker logs -gameviewer
 ```
+---
 
 ### Tips
 
