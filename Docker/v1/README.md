@@ -41,7 +41,14 @@ cd BlockChain/HyperLedger & docker-compose up -d
 docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartkit/godpaper-go-uuid-accredit
 ```
 
-2. 
+2. RESTful API:
+
+User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
+
+Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
+
+BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
+
 
 #### 4.smartkit/godpaper-go-ai-player
 
@@ -51,12 +58,6 @@ docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_M
 ```
 
 2. 
-'''
+```
 docker logs -aiplayer
 ```
-
-User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
-
-Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
-
-BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
