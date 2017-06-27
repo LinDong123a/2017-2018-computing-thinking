@@ -2,7 +2,7 @@
 __“The future belongs to AI.”__
 
 
-## And How?
+### And How?
 
 1.
 ```
