@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d93cbadb-6508-40a6-a5db-e40d6f2e269c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../../GameViewer/App/www/templates/modal-game-settings.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../GameViewer/App/www/templates/modal-settings.html" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../GameViewer/App/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../../GameViewer/App/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../GameViewer/App/www/js/app.js" afterPath="$PROJECT_DIR$/../../GameViewer/App/www/js/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../GameViewer/App/www/js/controllers.js" afterPath="$PROJECT_DIR$/../../GameViewer/App/www/js/controllers.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../GameViewer/App/www/js/services.js" afterPath="$PROJECT_DIR$/../../GameViewer/App/www/js/services.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../GameViewer/App/www/templates/gameLobby.html" afterPath="$PROJECT_DIR$/../../GameViewer/App/www/templates/gameLobby.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Players/AIPlayer/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../../Players/AIPlayer/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

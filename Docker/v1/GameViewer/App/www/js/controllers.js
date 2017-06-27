@@ -1,21 +1,20 @@
 angular.module('app.controllers', [])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService) {
+function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService,envInfo) {
   //FIXME:$rootScope not working.
   // $rootScope.gamerIds = [];
+  $scope.envInfo = envInfo;
 	// Load the modal from the given template URL
-    $ionicModal.fromTemplateUrl('templates/modal——settings.html', function($ionicModal) {
-      $scope.modal_settings = $ionicModal;
-      // console.log("$scope.modal_game_lobby:",$scope.modal_game_lobby);
-    }, {
-        // Use our scope for the scope of the modal to keep it simple
-        scope: $scope,
-        // The animation we want to use for the modal entrance
-        animation: 'slide-in-up'
-    });
+  $scope.modal_settings = $ionicModal.fromTemplate(
+    '<div class="modal"><header class="bar bar-header"> <h1 class="title">Settings</h1><div class="button button-clear" ng-click="modal_settings.hide()"><span class="icon ion-close-round"></span></div></header><p></p><ion-content class="has-header" has-header="true" padding="true"><div class="list"> <label class="item item-input item-stacked-label"> <span class="input-label">API:</span> <input type="text" placeholder="192.168.0.11" ng-model="envInfo.api"> </label> <label class="item item-input item-stacked-label"> <span class="input-label">MQTT:</span> <input type="text" placeholder="192.168.0.11" ng-model="envInfo.mqtt"> </label> <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"ng-click="updateEnvInfo()">UPDATE</button> </div></ion-content></div>',
+    {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
 
   $scope.pairAll = function () {
     LobbyService.pairAll(function(data){
@@ -34,9 +33,6 @@ function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService) {
       console.log("LobbyService.gamerIds:",LobbyService.gamerIds);
     });
   }
-  $scope.createUser = function(){
-  //TODO:
-  }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
       console.log("LobbyService.dismissAll:",  data);
@@ -45,8 +41,9 @@ function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService) {
     });
   }
   $scope.updateEnvInfo = function(){
-    //TODO:
-
+    //
+    console.log("updated envInfo:",envInfo);
+    $scope.modal_settings.hide();
   }
 }])
 

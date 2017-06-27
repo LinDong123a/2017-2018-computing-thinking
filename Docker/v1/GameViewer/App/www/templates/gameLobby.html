@@ -1,15 +1,16 @@
 <ion-view title="Game Lobby" id="page2">
   <ion-nav-buttons side="right">
-    <button class="button ion-android-bulb" ng-click="playAll()"> PLAY ALL
+    <button class="button ion-android-people" ng-click="pairAll()"> 2.PAIR ALL
+    </button>
+    <button class="button ion-android-bulb" ng-click="playAll()"> 3.PLAY ALL
     </button>
   </ion-nav-buttons>
   <ion-nav-buttons side="left">
+    <button class="button button-assertive ion-android-refresh" ng-click="dismissAll()"> 0.DISMISS
+    </button>
     <button class="button ion-android-settings" ng-click="modal_settings.show()"> 1.SETTINGS
     </button>
-    <button class="button ion-android-refresh" ng-click="dismissAll()"> 2.DISMISS
-    </button>
-    <button class="button ion-android-people" ng-click="pairAll()"> 3.PAIR ALL
-    </button>
+
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
     <ion-list id="gameLobby-list">
@@ -19,7 +20,6 @@
           <h2>{{lobby.player1.fullName}} VS {{lobby.player2.fullName}}</h2>
           <p>{{lobby.player1.id}} VS {{lobby.player2.id}}</p>
         </ion-item>
-
       </ion-list>
   </ion-content>
 </ion-view>
