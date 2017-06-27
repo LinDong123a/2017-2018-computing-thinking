@@ -43,6 +43,18 @@ docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartk
 
 2. 
 
+#### 4.smartkit/godpaper-go-ai-player
+
+1.
+```
+docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_MQTT=192.168.0.11 smartkit/godpaper-go-ai-player
+```
+
+2. 
+'''
+docker logs -aiplayer
+```
+
 User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
 
 Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
