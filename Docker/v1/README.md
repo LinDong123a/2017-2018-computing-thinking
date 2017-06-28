@@ -54,13 +54,13 @@ BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-contr
 1.Clean tenanted Users and Create 2 random users. 
 
 ```
-curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/user/status/1"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/user/r/2"
+curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/user/status/1" && curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/user/r/2"
 ```
 
-2.Paire gamers all and play gamers all
+2.Dismiss gamers all && Pair gamers all && play gamers all
 
 ```
-curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
+curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/game/" && curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
 ```
 
 #### 5.smartkit/godpaper-go-ai-player
