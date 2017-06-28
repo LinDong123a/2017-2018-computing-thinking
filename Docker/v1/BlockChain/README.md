@@ -9,7 +9,20 @@ Chaincode, also called the smart contract, is essentially the business logic tha
 
 https://www.ibm.com/developerworks/cloud/library/cl-ibm-blockchain-chaincode-development-using-golang/index.html
 
-基本原理
+### Data models in chaincode
+
+The Hyperledger ledger consists of two parts:
+
+#### World state, 
+
+which is stored in a key value store. This key value store is powered by the RocksDB. This key value store takes in a byte array as the value, which can be used to store a serialized JSON structure. Essentially this key value store can be used to store any custom data model/schema required by your smart contract to function.
+
+#### Blockchain, 
+
+which consists of a series of blocks each containing a number of transactions. Each block contains the hash of the world state and is also linked to the previous block. Blockchain is append-only.
+
+
+### 基本原理
 
 区块链的基本原理,基本概念包括：
 
