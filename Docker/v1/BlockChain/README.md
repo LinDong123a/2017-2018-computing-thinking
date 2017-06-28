@@ -1,5 +1,5 @@
 
-##V1.Docker+CI/CD+Microservices
+## V1.Docker+BlockChain+Microservices
 
 https://www.ibm.com/developerworks/library/j-chaincode-for-java-developers/index.html
 
@@ -20,6 +20,9 @@ which is stored in a key value store. This key value store is powered by the Roc
 #### Blockchain, 
 
 which consists of a series of blocks each containing a number of transactions. Each block contains the hash of the world state and is also linked to the previous block. Blockchain is append-only.
+
+### What happened exactly on chaincode(smart contract) deploy and invoke , query, in Hyperledger?
+
 
 #### Deploy
 
