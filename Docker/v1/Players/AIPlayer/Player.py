@@ -83,9 +83,10 @@ if __name__ == '__main__':
 #
     # variables
     v_queue_name = tenantResponse.body['topicName']
-    # v_player_id = tenantResponse.body['topicName']
+    v_player_rank = tenantResponse.body['rank']
     v_player_id = tenantResponse.body['id']
     logging.info("v_queue_name:%s",v_queue_name)
+    logging.info("v_player_rank:%s", v_player_rank)
     logging.info("v_player_id:%s", v_player_id)
     v_game_id = ''
     v_player1_id = ''
@@ -161,7 +162,9 @@ if __name__ == '__main__':
                     print("assembled message_json_s:", message_json_s)
                     # msg response
                     logging.info("send to plainAI message_json_s:%s",message_json_s)
-                    result = plainAI.AI(message_json_s)
+                    rank_model_path = os.getcwd() + "/"+str(v_player_rank)+ "/savedmodel"
+                    logging.info("rank_model_path:%s", rank_model_path)
+                    result = plainAI.AI(message_json_s,rank_model_path)
                     result['user_id'] = v_player_id
                     # result['method'] = 'play'
                     logging.info('PLAY plainAI response:%s', result)

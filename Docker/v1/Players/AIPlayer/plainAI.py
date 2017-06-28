@@ -8,13 +8,15 @@ from policy import PolicyNetwork
 from strategies import PolicyNetworkBestMovePlayer
 
 string = 'abcdefghijklmnopqrstuvwxyz'
-read_file = os.getcwd() + "/AI_FILE/savedmodel"
+# read_file_prefix = os.getcwd() + "/"
+DEFAULT_MODEL_PATH = os.getcwd() + "/AI_FILE/savedmodel"
+read_file = ''
 # data_file = "yyf.sgf"
 
 # data_file_path = 'game_database/sgf/'
 
 
-def AI(msgs):
+def AI(msgs,model=DEFAULT_MODEL_PATH):
     print("AI(msg) called.")
     global read_file  # Extract information
 
@@ -26,6 +28,8 @@ def AI(msgs):
     # Initialize the policy network
     n = PolicyNetwork(use_cpu=True)
     print("PolicyNetwork init.")
+    # global read_file
+    # read_file = read_file_prefix+str(RANK)+"/savedmodel"
     print("n,read_file:",n,read_file)
     try:
         instance = PolicyNetworkBestMovePlayer(n, read_file)
