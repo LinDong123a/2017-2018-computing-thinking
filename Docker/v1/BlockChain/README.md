@@ -5,6 +5,10 @@ https://www.ibm.com/developerworks/library/j-chaincode-for-java-developers/index
 
 http://radiostud.io/eight-blockchain-platforms-comparison/
 
+Chaincode, also called the smart contract, is essentially the business logic that governs how the different entities or parties in a blockchain network interact or transact with each other. Simply put, the chaincode is the encapsulation of business network transactions in code. Invocations of the chaincode result in sets and gets of the ledger or world state.
+
+https://www.ibm.com/developerworks/cloud/library/cl-ibm-blockchain-chaincode-development-using-golang/index.html
+
 基本原理
 
 区块链的基本原理,基本概念包括：
