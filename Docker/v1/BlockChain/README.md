@@ -21,6 +21,18 @@ which is stored in a key value store. This key value store is powered by the Roc
 
 which consists of a series of blocks each containing a number of transactions. Each block contains the hash of the world state and is also linked to the previous block. Blockchain is append-only.
 
+#### Deploy
+
+During “Deploy” the chain code is submitted to the ledger in a form of transaction and distributed to all nodes in the network. Each node creates new Docker container with this chaincode embedded. After that container will be started and Init method will be executed.
+
+#### Query
+
+During “Query” - chain code will read the current state and send it back to user. This transaction is not saved in blockchain.
+
+#### Invoke
+
+During “Invoke” - chaincode can modify the state of the variables in ledger. Each “Invoke” transaction will be added to the “block” in the ledger.
+
 
 ### 基本原理
 
