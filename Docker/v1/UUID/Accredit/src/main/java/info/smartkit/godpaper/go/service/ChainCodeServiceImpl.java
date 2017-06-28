@@ -115,7 +115,7 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                                 .ctorMsg(
                                                         ChaincodeInput.builder()
                                                                 .function("invoke")
-                                                                .args(Arrays.asList("a", "b", "10"))
+                                                                .args(Arrays.asList(values))//"a", "b", "10"
                                                                 .build())
                                                 .secureContext(enrollId)
                                                 .type(ChaincodeSpec.Type.GOLANG)
@@ -237,6 +237,13 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                 }
 
                         }
+                });
+        }
+
+        private <T> Observable<T> attachErrorHandler(Observable<T> obs) {
+                return obs.onErrorResumeNext(throwable -> {
+                        System.out.println("Handling error by printint to console: " + throwable);
+                        return Observable.empty();
                 });
         }
 }

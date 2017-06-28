@@ -32,7 +32,7 @@ public class ChainCodeController {
                 chainCodeService.deleteRegistrar(userId,enrollSecret);
         }
         //Query,String chainName,String enrollId, String[] values
-        @RequestMapping(method = RequestMethod.POST)
+        @RequestMapping(method = RequestMethod.POST, value="/invoke")
         public void invokeChain(@RequestBody Invoker invoker){
                 chainCodeService.invoke(invoker.getChainName(),invoker.getEnrollId(),invoker.getValues());
         }

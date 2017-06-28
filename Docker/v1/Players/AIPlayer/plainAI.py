@@ -18,7 +18,6 @@ read_file = ''
 
 def AI(msgs,model=DEFAULT_MODEL_PATH):
     print("AI(msg) called.")
-    global read_file  # Extract information
 
     # data_file = data_file_path + msg
     lastMsg = msgs[len(msgs)-1]
@@ -30,9 +29,9 @@ def AI(msgs,model=DEFAULT_MODEL_PATH):
     print("PolicyNetwork init.")
     # global read_file
     # read_file = read_file_prefix+str(RANK)+"/savedmodel"
-    print("n,read_file:",n,read_file)
+    print("n,read_file:",n,model)
     try:
-        instance = PolicyNetworkBestMovePlayer(n, read_file)
+        instance = PolicyNetworkBestMovePlayer(n, model)
     except Exception:
         print(traceback.format_exc())
     #instance = PolicyNetworkRandomMovePlayer(n, read_file)

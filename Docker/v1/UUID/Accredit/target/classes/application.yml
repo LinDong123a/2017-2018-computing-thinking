@@ -4,7 +4,7 @@ spring:
 ---
 spring:
   profiles: dev
-  data.mongodb.uri: mongodb://localhost:32771/toyhouse
+  data.mongodb.uri: mongodb://localhost:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095

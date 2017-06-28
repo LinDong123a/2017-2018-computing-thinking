@@ -120,6 +120,7 @@ public class GamerServiceImpl implements GamerService {
                 //
                 gamer.setSgf("(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];");
                 gamer.setStatus(GameStatus.PLAYING.getIndex());
+                //SAVE TO CHAIN-CODE
                 //
                 Gamer savedGamer = gamerRepository.save(gamer);
                 LOG.info("savedGamer#"+index+":"+savedGamer.toString());
