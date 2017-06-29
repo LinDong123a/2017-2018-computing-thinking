@@ -28,6 +28,14 @@ which consists of a series of blocks each containing a number of transactions. E
 
 During “Deploy” the chain code is submitted to the ledger in a form of transaction and distributed to all nodes in the network. Each node creates new Docker container with this chaincode embedded. After that container will be started and Init method will be executed.
 
+1.Make sure you can compile your code locally, 
+
+2.place your code in a public github repo, 
+
+3.submit a deploy request,
+
+4.check the response for any errors.
+
 #### Query
 
 During “Query” - chain code will read the current state and send it back to user. This transaction is not saved in blockchain.
