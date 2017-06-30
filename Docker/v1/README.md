@@ -49,7 +49,8 @@ Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
 
 BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
 
-3.Curl tips:
+
+3.Tips:
 
 1.Clean tenanted Users and Create 2 random users. 
 
@@ -108,8 +109,18 @@ docker logs -gameviewer
 
 ### Tips
 
-docker stop $(docker ps -a -q)     # stop all containers
+1. stop all containers
 
-docker rm $(docker ps -a -q)       # remove all containers
+```
+docker stop $(docker ps -a -q)    
+```
+2.remove all containers
 
-docker rmi -f $(docker images -q)  # remove all images
+```
+docker rm $(docker ps -a -q)    
+```
+
+3.remove all images
+```
+docker rmi -f $(docker images -q)
+```
