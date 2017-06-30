@@ -52,6 +52,12 @@ BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-contr
 
 3.Tips:
 
+0.Deploy "toyhouse_go_dev" ChainCode
+
+```
+curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/chain/deploy/"
+```
+
 1.Clean tenanted Users and Create 2 random users. 
 
 ```
