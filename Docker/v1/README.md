@@ -137,3 +137,12 @@ docker rm $(docker ps -a -q)
 ```
 docker rmi -f $(docker images -q)
 ```
+
+4.Export container
+```
+sudo docker export containerID > your.tar
+```
+5.Import container
+```
+docker import your.tar your/container
+```
