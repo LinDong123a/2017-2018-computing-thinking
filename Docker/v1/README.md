@@ -41,6 +41,11 @@ _1.Docker run_
 docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartkit/godpaper-go-uuid-accredit
 ```
 
+or:
+```
+java -Dspring.data.mongodb.uri=mongodb://mongodb/toyhouse -Djava.security.egd=file:/dev/./urandom -Dmqtt.brokerUrl=tcp://activemq:1883 -jar build/libs/Accredit-0.0.1-SNAPSHOT.jar
+```
+
 _2. RESTful API:_
 
 1.User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
