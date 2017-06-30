@@ -8,7 +8,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +28,11 @@ public class GamerServiceImpl implements GamerService {
         private ChainCodeService chainCodeService;
 
         @Autowired ChainCodeProperties chainCodeProperties;
+
+
+        public static final String ENCODING = "UTF-8";
+        private static final String VERSION = "0.0.1";
+        public static final int m_size = 19;
 
         @Override public List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException {
                 int arraySize = tenantedUsers.size();
@@ -93,15 +97,6 @@ public class GamerServiceImpl implements GamerService {
                 return this.play(curGamer,1);
         }
 
-        @Override public String toSgf(Gamer gamer) {
-                //TODO:SGF reader and writer functions.
-                //                                Game sgfGame = Sgf.createFromString(gamerMessage);
-                //                                LOG.info("sgfGame:"+sgfGame.toString());
-                String fixture = "(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];";
-                //TODO:parse gamer info to sgf format string.
-                return fixture;
-        }
-
         private Gamer play(Gamer gamer,int index) throws MqttException{
                 LOG.info("this.play:#"+index+",is:"+gamer.toString());
                 User player1 = gamer.getPlayer1();
@@ -131,5 +126,88 @@ public class GamerServiceImpl implements GamerService {
                 String[] putArgs = {gamer.getId(),gamer.getSgf()};
                 chainCodeService.invoke(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
                 return gamer;
+        }
+//SGF block
+
+        //@see: https://github.com/jromang/gogui/blob/master/src/net/sf/gogui/sgf/SgfWriter.java
+        @Override public String toSgf(Gamer gamer) {
+                //
+                //                                Game sgfGame = Sgf.createFromString(gamerMessage);
+                //                                LOG.info("sgfGame:"+sgfGame.toString());
+                String fixture = "(";//;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
+                //
+                String sgfHeader = this.getHeader(chainCodeProperties.getChainName(),VERSION,gamer);
+                LOG.info("sgfHeader:"+sgfHeader);
+                return sgfHeader;
+        }
+
+        private String getHeader(String application, String version,Gamer gamer)
+        {
+                StringBuilder header = new StringBuilder(128);
+                header.append(";FF[4]CA[");
+                header.append(getEscaped(ENCODING));
+                header.append(']');
+                if (application != null && ! application.equals(""))
+                {
+                        String appName = application;
+                        if (version != null && ! version.equals(""))
+                                appName = appName + ":" + version;
+                        header.append("AP[");
+                        header.append(getEscaped(appName));
+                        header.append(']');
+                }
+                        header.append("SZ[");
+                        header.append(m_size);
+                        header.append(']');
+                        header.append("SO[go.toyhouse.cc]BC[cn]WC[cn]");
+                        //player1
+                        //name
+                        User player1 = gamer.getPlayer1();
+                        header.append("PB[").append(player1.getFullName()).append(']');
+                        //rank
+                        header.append("BR[").append(player1.getRank()).append("p]");
+                        //player2
+                        User player2 = gamer.getPlayer2();
+                        header.append("PW[").append(player2.getFullName()).append(']');
+                        //rank
+                        header.append("WR[").append(player2.getRank()).append("p]");
+                        //TODO:komi
+                        header.append("KM[").append("0").append("]");
+                        //DateTime
+                        header.append("DT[").append(gamer.getCreated()).append("]");
+                        //TODO:Result
+                        header.append("RE[B+R]");
+                        //
+                return header.toString();
+        }
+
+
+        private String getEscaped(String text)
+        {
+                return getEscaped(text, false);
+        }
+
+        private String getEscaped(String text, boolean escapeColon)
+        {
+                StringBuilder result = new StringBuilder(2 * text.length());
+                for (int i = 0; i < text.length(); ++i)
+                {
+                        char c = text.charAt(i);
+                        String specialCharacters;
+                        if (escapeColon)
+                                specialCharacters = "]:\\";
+                        else
+                                specialCharacters = "]\\";
+                        if (specialCharacters.indexOf(c) >= 0)
+                        {
+                                result.append('\\');
+                                result.append(c);
+                        }
+                        else if (c != '\n' && Character.isWhitespace(c))
+                                result.append(' ');
+                        else
+                                result.append(c);
+                }
+                return result.toString();
         }
 }

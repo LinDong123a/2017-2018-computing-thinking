@@ -145,7 +145,7 @@ if __name__ == '__main__':
                                     'msg': pre_play_msg}
                     # append message
                     message_json_s.append(message_json)
-                    print("assembled message_json_s:",message_json_s)
+                    # print("assembled message_json_s:",message_json_s)
                     #
                     client.publish(v_game_id, v_player_id + v_tag_play + pre_play_msg)
                     logging.info("PLAY FIRST_HAND.player_id:%s,play_msg:%s", cur_player_id, pre_play_msg)
@@ -159,7 +159,7 @@ if __name__ == '__main__':
                                'msg': pre_play_msg}
                     # append message
                     message_json_s.append(message_json_send)
-                    print("assembled message_json_s:", message_json_s)
+                    # print("assembled message_json_s:", message_json_s)
                     # msg response
                     logging.info("send to plainAI message_json_s:%s",message_json_s)
                     rank_model_path = os.getcwd() + "/"+str(v_player_rank)+ "/savedmodel"

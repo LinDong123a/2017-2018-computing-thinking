@@ -54,12 +54,18 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{userId}")
-    public void delete(@PathVariable String userId){
+    public void deleteByUserId(@PathVariable String userId){
             repository.delete(userId);
     }
 
+
+        @RequestMapping(method = RequestMethod.DELETE, value="/")
+        public void deleteAll(){
+                repository.deleteAll();
+        }
+
     @RequestMapping(method = RequestMethod.DELETE, value="/status/{index}")
-    public void delete(@PathVariable int index){
+    public void deleteByStatus(@PathVariable int index){
             List<User> statusUsers = repository.findByStatus(index);
             repository.delete(statusUsers);
     }
