@@ -50,7 +50,7 @@ docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartk
 3.BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
 
 
-3.Tips:
+3.Steps:
 
 0.Deploy "toyhouse_go_dev" ChainCode
 
