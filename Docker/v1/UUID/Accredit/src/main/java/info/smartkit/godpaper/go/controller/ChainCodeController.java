@@ -51,7 +51,14 @@ public class ChainCodeController {
 //                        chainCodeService.queryC(invoker.getChainName(), invoker.getEnrollId(), invoker.getValues().toString());
 //                }
 //        }
+//deploy it with initial values.
+
 //Deploy init/Invoke
+        @RequestMapping(method = RequestMethod.GET, value="/deploy/")
+        public ChaincodeOpResult deploy(){
+                String[] helloArgs = {"hello",chainCodeProperties.getChainName()};
+                return chainCodeService.deploy(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),helloArgs);
+        }
         @RequestMapping(method = RequestMethod.GET, value="/invoke/{key}/{value}")
         public ChaincodeOpResult putKeyValue(@PathVariable String key,@PathVariable String value){
                 String[] putArgs = {key,value};

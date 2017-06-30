@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.hyperledger.java.shim.ChaincodeBase;
 import org.hyperledger.java.shim.ChaincodeStub;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -16,7 +15,6 @@ public class UUIDAccreditChainCode extends ChaincodeBase {
 
         private static Logger LOG = LogManager.getLogger(UUIDAccreditChainCode.class);
 
-        public static String chainName= "toyhouse_java";
 
         @Override public String run(ChaincodeStub stub, String function, String[] args) {
                 LOG.info("In run, function:"+function);
@@ -67,19 +65,20 @@ public class UUIDAccreditChainCode extends ChaincodeBase {
         }
 
         @Override public String getChaincodeID() {
-                return UUIDAccreditChainCode.chainName;
+
+                return ChainCodeVariables.chainName;
         }
 
 
 
-        public static void main(String[] args) throws Exception {
-//                System.out.println("Hello world! starting "+args);
-                LOG.info("UUIDAccreditChainCode main with args:"+ Arrays.toString(args));
-                ChainCodeVariables.chainCode = new UUIDAccreditChainCode();
-//                String[] helloArgs = {"put", "KEY-1", "Chaincode Initialized"};
-                ChainCodeVariables.chainCode.start(null);//Notice: Default with chain code register behavior
-//Test code.
-
-        }
+//        public static void main(String[] args) throws Exception {
+////                System.out.println("Hello world! starting "+args);
+//                LOG.info("UUIDAccreditChainCode main with args:"+ Arrays.toString(args));
+//                ChainCodeVariables.chainCode = new UUIDAccreditChainCode();
+////                String[] helloArgs = {"put", "KEY-1", "Chaincode Initialized"};
+//                ChainCodeVariables.chainCode.start(null);//Notice: Default with chain code register behavior
+////Test code.
+//
+//        }
 
 }
