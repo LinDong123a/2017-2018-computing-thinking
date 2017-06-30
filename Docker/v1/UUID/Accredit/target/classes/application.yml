@@ -16,6 +16,8 @@ mqtt:
   tag_play: _play_
 chain:
   baseUrl: http://localhost:7050
+#  host: 127.0.0.1
+#  port: 7050
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_dev
@@ -34,6 +36,8 @@ mqtt:
   tag_play: _play_
 chain:
   baseUrl: http://118.190.96.120:7050
+#  host: 118.190.96.120
+#  port: 7050
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_test

@@ -93,6 +93,15 @@ public class GamerServiceImpl implements GamerService {
                 return this.play(curGamer,1);
         }
 
+        @Override public String toSgf(Gamer gamer) {
+                //TODO:SGF reader and writer functions.
+                //                                Game sgfGame = Sgf.createFromString(gamerMessage);
+                //                                LOG.info("sgfGame:"+sgfGame.toString());
+                String fixture = "(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];";
+                //TODO:parse gamer info to sgf format string.
+                return fixture;
+        }
+
         private Gamer play(Gamer gamer,int index) throws MqttException{
                 LOG.info("this.play:#"+index+",is:"+gamer.toString());
                 User player1 = gamer.getPlayer1();
@@ -108,22 +117,19 @@ public class GamerServiceImpl implements GamerService {
                 //Update game status
                 player1.setStatus(UserStatus.PLAYING.getIndex());
                 player2.setStatus(UserStatus.STANDBY.getIndex());
-                //subscribe game topic
-                mqttService.subscribe(gamer.getTopic());
-                //
                 //Save game status
                 gamer.setTopic(gamer.getTopic());
-                //TODO:SGF reader and writer functions.
-                //                                Game sgfGame = Sgf.createFromString(gamerMessage);
-                //                                LOG.info("sgfGame:"+sgfGame.toString());
-                gamer.setSgf("(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];");
+                //
+                gamer.setSgf(this.toSgf(gamer));
                 gamer.setStatus(GameStatus.PLAYING.getIndex());
-                //Register to ChainCode after deploy
-                String[] putArgs = {gamer.getId(),gamer.getSgf()};
-                chainCodeService.deploy(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
                 //
                 Gamer savedGamer = gamerRepository.save(gamer);
                 LOG.info("savedGamer#"+index+":"+savedGamer.toString());
+                //subscribe game topic
+                mqttService.subscribe(gamer.getTopic());
+                //Register to ChainCode after deploy
+                String[] putArgs = {gamer.getId(),gamer.getSgf()};
+                chainCodeService.invoke(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
                 return gamer;
         }
 }

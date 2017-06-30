@@ -86,7 +86,7 @@ if __name__ == '__main__':
     v_player_rank = tenantResponse.body['rank']
     v_player_id = tenantResponse.body['id']
     logging.info("v_queue_name:%s",v_queue_name)
-    logging.info("v_player_rank:%s", v_player_rank)
+    logging.info("v_player_rank:%s",v_player_rank)
     logging.info("v_player_id:%s", v_player_id)
     v_game_id = ''
     v_player1_id = ''

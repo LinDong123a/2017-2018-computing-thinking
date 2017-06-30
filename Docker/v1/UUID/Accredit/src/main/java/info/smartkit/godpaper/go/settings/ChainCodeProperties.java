@@ -56,7 +56,9 @@ public class ChainCodeProperties {
                 LOG.info("channelName:" + enrollSecret);
         }
 
-        private String baseUrl;
+        private String baseUrl;//host+port
+//        private String host;
+//        private int port;
 
         public String getEnrollId() {
                 return enrollId;

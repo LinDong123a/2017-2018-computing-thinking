@@ -5,10 +5,7 @@ package info.smartkit.godpaper.go.service;
 
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.repository.GamerRepository;
-import info.smartkit.godpaper.go.settings.ChainCodeVariables;
-import info.smartkit.godpaper.go.settings.GameStatus;
-import info.smartkit.godpaper.go.settings.MqttProperties;
-import info.smartkit.godpaper.go.settings.MqttVariables;
+import info.smartkit.godpaper.go.settings.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.*;
@@ -28,6 +25,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
         @Autowired GamerService gamerService;
         @Autowired MqttProperties mqttProperties;
         @Autowired ChainCodeService chainCodeService;
+        @Autowired ChainCodeProperties chainCodeProperties;
         private  MqttClient mqttClient = null;
 
         private static Logger LOG = LogManager.getLogger(MqttServiceImpl.class);
@@ -101,15 +99,16 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                                 String gamerMessage = gameIdMessage[1];
                                 //find one
                                 Gamer playingGamer = gamerRepository.findByTopic(topic).get(0);
+//                                Gamer playingGamer = gamerRepository.findOne(gamerId);
                                 LOG.info("findByTopicName:"+playingGamer.toString());
                                 //by gamer id and update SGF info
-                                //TODO:SGF reader and writer functions.
 //                                Game sgfGame = Sgf.createFromString(gamerMessage);
 //                                LOG.info("sgfGame:"+sgfGame.toString());
                                 String sgfString = playingGamer.getSgf().concat(gamerMessage).concat(";");//(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
                                 playingGamer.setSgf(sgfString);
-                               // update to ChainCode invoke
-                                chainCodeService.invoke(ChainCodeVariables.chainName,"lucas",sgfString.split(";"));
+                                //update to ChainCode invoke
+                                String[] putArgs = {playingGamer.getId(),playingGamer.getSgf()};
+                                chainCodeService.invoke(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
                                 //
                                 playingGamer.setStatus(GameStatus.SAVED.getIndex());
                                 Gamer updatedGamer = gamerRepository.save(playingGamer);

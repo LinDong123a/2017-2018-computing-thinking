@@ -13,6 +13,11 @@ import java.util.Map;
  */
 public class UUIDAccreditChainCode extends ChaincodeBase {
 
+//        static {
+//                String host = ChainCodeVariables.baseUrl;
+////                int port = 7051;
+//        }
+
         private static Logger LOG = LogManager.getLogger(UUIDAccreditChainCode.class);
 
 

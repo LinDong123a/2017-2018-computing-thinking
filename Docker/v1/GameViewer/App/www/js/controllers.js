@@ -45,23 +45,36 @@ function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService,envInfo) {
     console.log("updated envInfo:",envInfo);
     $scope.modal_settings.hide();
   }
+
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','LobbyService','TableService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','LobbyService','TableService','ChainCodeService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,LobbyService,TableService) {
+function ($rootScope,$scope,LobbyService,TableService,ChainCodeService) {
 //
+  $scope.gamers = [];
   $scope.tableIndex = 0;
   $scope.tableInfo = {};
+  $scope.getAll = function(){
+    LobbyService.getAll(function(data){
+      console.log("LobbyService.getAll:",  data);
+      $scope.gamers = data;
+    });
+  }
   // console.log("scope.gamerIds[$scope.tableIndex]:",$scope.gamerIds[$scope.tableIndex]);
   $scope.getOne = function(){
-    console.log("LobbyService.gamerIds:", LobbyService.gamerIds);
-    TableService.gamerId = LobbyService.gamerIds[$scope.tableIndex];
-    console.log("TableService.gamerId:", TableService.gamerId);
-    $scope.tableInfo = TableService.getOne(function(data){
-      $scope.tableInfo = data;
-      console.log("$scope.tableInfo:",$scope.tableInfo);
+    // console.log("LobbyService.gamerIds:", LobbyService.gamerIds);
+    // TableService.gamerId = LobbyService.gamerIds[$scope.tableIndex];
+    // console.log("TableService.gamerId:", TableService.gamerId);
+    $scope.tableInfo = $scope.gamers[$scope.tableIndex];
+    // $scope.tableInfo = TableService.getOne(function(data){
+    console.info("$scope.tableInfo:",$scope.tableInfo);
+    //TODO:ChainCode Verify
+    // ChainCodeService.gamerId = $scope.tableInfo.id;
+    // console.log("ChainCodeService.gamerId:", ChainCodeService.gamerId);
+    // $scope.tableInfo = ChainCodeService.getOne(function(data){
+    //   sgf = data;
       //
       var gameTableDiv = document.getElementById("gameTableDiv");
       console.log("$scope.gameTableDiv:",gameTableDiv);
@@ -71,12 +84,12 @@ function ($rootScope,$scope,LobbyService,TableService) {
         });
       }
       $scope.tableIndex++;
-      if($scope.tableIndex==LobbyService.gamerIds.length){
+      if($scope.tableIndex==$scope.gamers.length){
         $scope.tableIndex = 0; //next round.
       }
-    });
-
-  }
+    };
+  //default calls
+  $scope.getAll();
 }])
 
   .controller('accountCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

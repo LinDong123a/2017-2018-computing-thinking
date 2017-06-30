@@ -13,4 +13,5 @@ public interface GamerService {
         List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException;
         List<Gamer> playAll() throws MqttException;
         Gamer playOne(String gamerId) throws MqttException;
+        String toSgf(Gamer gamer);
 }

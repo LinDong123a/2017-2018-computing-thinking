@@ -17,6 +17,12 @@ angular.module('app.services', [])
         callback(data);
       });
     },
+    getAll: function(callback){
+      $http.get(envInfo.api+"game").success(function(data) {
+        console.log("all gamers:",data);
+        callback(data);
+      });
+    },
     dismissAll: function(callback){
       $http.delete(envInfo.api+"game/").success(function(data) {
         console.log("dismissed gamers:",data);
@@ -31,10 +37,22 @@ angular.module('app.services', [])
   return {
     gamerId : '',
     getOne: function(callback){
-      $http.get(envInfo.api+"/game/"+this.gamerId).success(function(data) {
-        console.log("one gamer info:",data);
+      $http.get(envInfo.api+"/game").success(function(data) {
+        console.log("all gamer info:",data);
         callback(data);
       });
     }
   }
-}]);
+}])
+  .service('ChainCodeService', ['$http','envInfo',function($http,envInfo){
+    //
+    return {
+      gamerId : '',
+      getOne: function(callback){
+        $http.get(envInfo.api+"/chain/query/"+this.gamerId).success(function(data) {
+          console.log("one gamer info:",data);
+          callback(data);
+        });
+      }
+    }
+  }]);
