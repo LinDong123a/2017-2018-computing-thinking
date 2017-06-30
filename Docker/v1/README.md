@@ -49,7 +49,8 @@ Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
 
 BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
 
-3.Curl tips:
+
+3.Tips:
 
 1.Clean tenanted Users and Create 2 random users. 
 
