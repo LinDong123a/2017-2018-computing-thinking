@@ -1,6 +1,5 @@
 package info.smartkit.godpaper.go.service;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**

@@ -5,7 +5,7 @@ import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.ChainCodeService;
 import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.UserService;
-import info.smartkit.godpaper.go.settings.ChainProperties;
+import info.smartkit.godpaper.go.settings.ChainCodeProperties;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.apache.log4j.LogManager;
@@ -28,7 +28,7 @@ public class UserController {
     @Autowired UserService service;
     @Autowired ChainCodeService chainCodeService;
     //
-    @Autowired ChainProperties chainProperties;
+    @Autowired ChainCodeProperties chainProperties;
 
     @Autowired MqttService mqttService;
 

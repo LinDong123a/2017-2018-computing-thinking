@@ -9,7 +9,7 @@ from strategies import PolicyNetworkBestMovePlayer
 
 string = 'abcdefghijklmnopqrstuvwxyz'
 # read_file_prefix = os.getcwd() + "/"
-DEFAULT_MODEL_PATH = os.getcwd() + "/AI_FILE/savedmodel"
+DEFAULT_MODEL_PATH = os.getcwd() + "/0/savedmodel"
 read_file = ''
 # data_file = "yyf.sgf"
 

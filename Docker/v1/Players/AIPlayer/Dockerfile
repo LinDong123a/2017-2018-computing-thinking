@@ -17,11 +17,11 @@ RUN apt-get -y install python3.5 python3-pip
 
 COPY . /app
 WORKDIR /app
-
+RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 RUN python docker-links-python/setup.py install
 #Preprocess SGFs
 ENTRYPOINT ["python3"]
 #ENTRYPOINT ["/bin/bash"]
-EXPOSE 6000
+#EXPOSE 6000
 CMD ["Player.py"]

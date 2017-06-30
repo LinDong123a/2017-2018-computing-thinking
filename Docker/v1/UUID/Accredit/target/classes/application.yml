@@ -4,7 +4,7 @@ spring:
 ---
 spring:
   profiles: dev
-  data.mongodb.uri: mongodb://localhost:27017/toyhouse
+  data.mongodb.uri: mongodb://localhost:32771/toyhouse
 server:
   contextPath: /accredit
   port: 8095
@@ -15,13 +15,25 @@ mqtt:
   tag_vs: _vs_
   tag_play: _play_
 chain:
-    baseUrl: http://localhost:7050
-    enrollSecret: 6avZQLwcUe9b
-    chainName: "toyhouse_go"
+  baseUrl: http://localhost:7050
+  enrollId: jim
+  enrollSecret: 6avZQLwcUe9b
+  chainName: toyhouse_java_dev
 ---
 spring:
   profiles: test
----
-spring:
-  profiles: stage
-
+  data.mongodb.uri: mongodb://118.190.96.120:32771/toyhouse
+server:
+  contextPath: /accredit
+  port: 8095
+mqtt:
+  brokerUrl: tcp://118.190.96.120:1883
+  qos: 2
+  clientId: TH_
+  tag_vs: _vs_
+  tag_play: _play_
+chain:
+  baseUrl: http://118.190.96.120:7050
+  enrollId: jim
+  enrollSecret: 6avZQLwcUe9b
+  chainName: toyhouse_java_test

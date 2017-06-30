@@ -1,6 +1,6 @@
 package info.smartkit.godpaper.go.service;
 
-import info.smartkit.godpaper.go.settings.ChainVariables;
+import info.smartkit.godpaper.go.settings.ChainCodeVariables;
 import me.grapebaba.hyperledger.fabric.ErrorResolver;
 import me.grapebaba.hyperledger.fabric.Fabric;
 import me.grapebaba.hyperledger.fabric.Hyperledger;
@@ -14,16 +14,19 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by smartkit on 21/06/2017.
  */
 @Service
 public class ChainCodeServiceImpl implements ChainCodeService {
-
 
         private static final HttpLoggingInterceptor HTTP_LOGGING_INTERCEPTOR = new HttpLoggingInterceptor();
 //
@@ -37,12 +40,16 @@ public class ChainCodeServiceImpl implements ChainCodeService {
 
         private Fabric getFabric(){
                 if(FABRIC==null){
-                        FABRIC = Hyperledger.fabric(ChainVariables.baseUrl, HTTP_LOGGING_INTERCEPTOR);
+                        FABRIC = Hyperledger.fabric(ChainCodeVariables.baseUrl, HTTP_LOGGING_INTERCEPTOR);
                 }
                 return FABRIC;
         }
 
 
+        /*
+         * TODO:CA-register then enroll.
+         * @see: https://stackoverflow.com/questions/39458479/hyperledger-new-user-register
+         */
         @Override public void createRegistrar(String enrollId, String enrollSecret) {
                 getFabric().createRegistrar(
                         Secret.builder()
@@ -100,7 +107,8 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                 });
         }
 
-        @Override public void invoke(String chainName,String enrollId, String[] values) {
+        @Override public ChaincodeOpResult invoke(String chainName,String enrollId, String[] args) {
+                List<ChaincodeOpResult> opResults = new ArrayList<ChaincodeOpResult>();
                 getFabric().chaincode(
                         ChaincodeOpPayload.builder()
                                 .jsonrpc("2.0")
@@ -115,10 +123,10 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                                 .ctorMsg(
                                                         ChaincodeInput.builder()
                                                                 .function("invoke")
-                                                                .args(Arrays.asList(values))//"a", "b", "10"
+                                                                .args(Arrays.asList(args))//"aKey","aValue","bKey", "bValue"
                                                                 .build())
                                                 .secureContext(enrollId)
-                                                .type(ChaincodeSpec.Type.GOLANG)
+                                                .type(ChaincodeSpec.Type.GOLANG)//
                                                 .build())
                                 .build())
                         .flatMap(new Func1<ChaincodeOpResult, Observable<Transaction>>() {
@@ -130,7 +138,9 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                         } catch (InterruptedException e) {
                                                 e.printStackTrace();
                                         }
-                                        return FABRIC.getTransaction(chaincodeOpResult.getResult().getMessage());
+                                        opResults.add(chaincodeOpResult);
+//
+                                        return  getFabric().getTransaction(chaincodeOpResult.getResult().getMessage());
                                 }
                         })
                         .subscribe(new Action1<Transaction>() {
@@ -139,10 +149,11 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                         System.out.printf("Get transaction:%s\n", transaction);
                                 }
                         });
-
+                return opResults.get(0);
         }
 
-        @Override public void queryB(String chainName,String enrollId,String type) {
+        @Override public String queryBykey(String chainName,String enrollId,String key) {
+                final String[] keyValue = { "" };
                 getFabric().chaincode(
                         ChaincodeOpPayload.builder()
                                 .jsonrpc("2.0")
@@ -156,8 +167,8 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                                                 .build())
                                                 .ctorMsg(
                                                         ChaincodeInput.builder()
-                                                                .function("query")
-                                                                .args(Collections.singletonList("b"))
+                                                                .function("get")
+                                                                .args(Collections.singletonList(key))
                                                                 .build())
                                                 .secureContext(enrollId)
                                                 .type(ChaincodeSpec.Type.GOLANG)
@@ -167,11 +178,15 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                 @Override
                                 public void call(ChaincodeOpResult chaincodeOpResult) {
                                         LOG.info("Query chaincode result:%s\n"+chaincodeOpResult);
+                                        keyValue[0] = chaincodeOpResult.getResult().getMessage();
                                 }
                         });
-        }
+                return keyValue[0];
 
-        @Override public void queryC(String chainName,String enrollId,String type) {
+
+        }
+        @Override public String queryAllKeys(String chainName,String enrollId) {
+                final String[] allKeys = {""};
                 getFabric().chaincode(
                         ChaincodeOpPayload.builder()
                                 .jsonrpc("2.0")
@@ -185,8 +200,7 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                                                                 .build())
                                                 .ctorMsg(
                                                         ChaincodeInput.builder()
-                                                                .function("query")
-                                                                .args(Collections.singletonList("c"))
+                                                                .function("keys")
                                                                 .build())
                                                 .secureContext(enrollId)
                                                 .type(ChaincodeSpec.Type.GOLANG)
@@ -195,10 +209,71 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                         .subscribe(new Action1<ChaincodeOpResult>() {
                                 @Override
                                 public void call(ChaincodeOpResult chaincodeOpResult) {
+                                        allKeys[0]=chaincodeOpResult.getResult().getMessage();
                                         LOG.info("Query chaincode result:%s\n"+chaincodeOpResult);
                                 }
                         });
+                return allKeys[0];
         }
+
+
+//        @Override public void queryB(String chainName,String enrollId,String type) {
+//                getFabric().chaincode(
+//                        ChaincodeOpPayload.builder()
+//                                .jsonrpc("2.0")
+//                                .id(1)
+//                                .method("query")
+//                                .params(
+//                                        ChaincodeSpec.builder()
+//                                                .chaincodeID(
+//                                                        ChaincodeID.builder()
+//                                                                .name(chainName)
+//                                                                .build())
+//                                                .ctorMsg(
+//                                                        ChaincodeInput.builder()
+//                                                                .function("query")
+//                                                                .args(Collections.singletonList("b"))
+//                                                                .build())
+//                                                .secureContext(enrollId)
+//                                                .type(ChaincodeSpec.Type.GOLANG)
+//                                                .build())
+//                                .build())
+//                        .subscribe(new Action1<ChaincodeOpResult>() {
+//                                @Override
+//                                public void call(ChaincodeOpResult chaincodeOpResult) {
+//                                        LOG.info("Query chaincode result:%s\n"+chaincodeOpResult);
+//                                }
+//                        });
+//        }
+
+//        @Override public void queryC(String chainName,String enrollId,String type) {
+//                getFabric().chaincode(
+//                        ChaincodeOpPayload.builder()
+//                                .jsonrpc("2.0")
+//                                .id(1)
+//                                .method("query")
+//                                .params(
+//                                        ChaincodeSpec.builder()
+//                                                .chaincodeID(
+//                                                        ChaincodeID.builder()
+//                                                                .name(chainName)
+//                                                                .build())
+//                                                .ctorMsg(
+//                                                        ChaincodeInput.builder()
+//                                                                .function("query")
+//                                                                .args(Collections.singletonList("c"))
+//                                                                .build())
+//                                                .secureContext(enrollId)
+//                                                .type(ChaincodeSpec.Type.GOLANG)
+//                                                .build())
+//                                .build())
+//                        .subscribe(new Action1<ChaincodeOpResult>() {
+//                                @Override
+//                                public void call(ChaincodeOpResult chaincodeOpResult) {
+//                                        LOG.info("Query chaincode result:%s\n"+chaincodeOpResult);
+//                                }
+//                        });
+//        }
 
         @Override public void getBlockchain() {
                 getFabric().getBlockchain()
@@ -240,10 +315,59 @@ public class ChainCodeServiceImpl implements ChainCodeService {
                 });
         }
 
-        private <T> Observable<T> attachErrorHandler(Observable<T> obs) {
-                return obs.onErrorResumeNext(throwable -> {
-                        System.out.println("Handling error by printint to console: " + throwable);
-                        return Observable.empty();
+        /*
+        /{"jsonrpc": "2.0",   "method": "deploy",   "params": {    "type": 1,     "chaincodeID":{        "name": "hello"    },     "CtorMsg": {        "args": [""]     }   },   "id": 1 }
+        */
+        @Override public ChaincodeOpResult deploy( String chainName,String enrollId,String[] args) {
+                List<ChaincodeOpResult> opResults = new ArrayList<ChaincodeOpResult>();
+                //
+                getFabric().chaincode(
+                        ChaincodeOpPayload.builder()
+                                .jsonrpc("2.0")
+                                .id(1)
+                                .method("deploy")
+                                .params(
+                                        ChaincodeSpec.builder()
+                                                .chaincodeID(
+                                                        ChaincodeID.builder()
+                                                                .name(chainName)
+//                                                                .path("github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02")
+                                                                .build())
+                                                .ctorMsg(
+                                                        ChaincodeInput.builder()
+                                                                .function("init")
+                                                                .args(Arrays.asList(args))//e.g:"aKey","aValue"，"bKey","bValue"
+                                                                .build())
+                                                .type(ChaincodeSpec.Type.GOLANG)
+                                                .secureContext(enrollId)
+                                                .build())
+                                .build())
+                        .subscribe(new Action1<ChaincodeOpResult>() {
+                                @Override
+                                public void call(ChaincodeOpResult chaincodeOpResult) {
+                                        LOG.info("Deploy chaincode result:%s\n"+chaincodeOpResult);
+                                        opResults.add(chaincodeOpResult);
+                                }
+                        }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                                Error error = ErrorResolver.resolve(throwable, Error.class);
+                                LOG.error("Error message:%s\n"+error.getError());
+                        }
                 });
+                return opResults.get(0);
         }
+
+        //        private <T> Observable<T> attachErrorHandler(Observable<T> obs) {
+//                return obs.onErrorResumeNext(throwable -> {
+//                        System.out.println("Handling error by printint to console: " + throwable);
+//                        return Observable.empty();
+//                });
+//        }
+//
+//        // Use like this:
+//        Observable<String> unsafeObs = getErrorProducingObservable();
+//        Observable<String> safeObservable = attachErrorHandler(unsafeObs);
+//        // This call will now never cause OnErrorNotImplementedException
+//        safeObservable.subscribe(s -> System.out.println("Result: " + s));
 }

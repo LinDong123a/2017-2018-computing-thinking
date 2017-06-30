@@ -2,21 +2,21 @@ package info.smartkit.godpaper.go.service;
 
 //import com.toomasr.sgf4j.Sgf;
 //import com.toomasr.sgf4j.parser.Game;
-import info.smartkit.UUIDAccreditApplication;
+
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.repository.GamerRepository;
+import info.smartkit.godpaper.go.settings.ChainCodeVariables;
 import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.settings.MqttVariables;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-//import org.apache.log4j.spi.NOPLogger;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+//import org.apache.log4j.spi.NOPLogger;
 
 /**
  * Created by smartkit on 23/06/2017.
@@ -27,6 +27,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
         @Autowired GamerRepository gamerRepository;
         @Autowired GamerService gamerService;
         @Autowired MqttProperties mqttProperties;
+        @Autowired ChainCodeService chainCodeService;
         private  MqttClient mqttClient = null;
 
         private static Logger LOG = LogManager.getLogger(MqttServiceImpl.class);
@@ -105,8 +106,12 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                                 //TODO:SGF reader and writer functions.
 //                                Game sgfGame = Sgf.createFromString(gamerMessage);
 //                                LOG.info("sgfGame:"+sgfGame.toString());
-                                String sgfString = playingGamer.getSgf().concat(gamerMessage).concat(";");
+                                String sgfString = playingGamer.getSgf().concat(gamerMessage).concat(";");//(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
                                 playingGamer.setSgf(sgfString);
+                               // update to ChainCode invoke
+                                chainCodeService.invoke(ChainCodeVariables.chainName,"lucas",sgfString.split(";"));
+                                //
+                                playingGamer.setStatus(GameStatus.SAVED.getIndex());
                                 Gamer updatedGamer = gamerRepository.save(playingGamer);
                                 LOG.info("updatedGamer.sgf:"+updatedGamer.getSgf());
                         }
