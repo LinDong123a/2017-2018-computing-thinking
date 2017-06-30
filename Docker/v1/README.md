@@ -43,11 +43,11 @@ docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartk
 
 2. RESTful API:
 
-User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
+1.User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
 
-Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
+2.Gamer API: http://127.0.0.1:8095/accredit/swagger-ui.html#/game-controller
 
-BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
+3.BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
 
 
 3.Tips:
