@@ -67,7 +67,7 @@ curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/user/statu
 __7.2.Dismiss all history gamers__
 
 ```
-curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/game/" && curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
+curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/game/"
 ```
 
 #### 5.smartkit/godpaper-go-ai-player
@@ -78,10 +78,16 @@ docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_M
 ```
 
 
-__7.3.Pair gamers all && play gamers all__
+__7.3.Pair gamers all___
 
 ```
 curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
+```
+
+__7.4.Play gamers all__
+
+```
+curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
 ```
 
 #### 6.smartkit/godpaper-go-ionic
@@ -91,7 +97,7 @@ _1.Docker run_
 cd /v1/GameViewer/App && ionic serve
 ```
 
-__7.4.Game Viewer__
+__7.5.Game Viewer__
 
 ```
 http://localhost:8100
