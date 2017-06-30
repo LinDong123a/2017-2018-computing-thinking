@@ -78,16 +78,10 @@ docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_M
 ```
 
 
-__7.3.Pair gamers all___
+__7.3.Pair gamers all && Play gamers all___
 
 ```
 curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
-```
-
-__7.4.Play gamers all__
-
-```
-curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
 ```
 
 #### 6.smartkit/godpaper-go-ionic
