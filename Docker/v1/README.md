@@ -50,21 +50,21 @@ _2. RESTful API:_
 3.BlockChain API: http://127.0.0.1:8095/accredit/swagger-ui.html#/chain-code-controller
 
 
-_3.Verify Steps:_
+__7.Verify Steps:__
 
-__0.Deploy "toyhouse_go_dev" ChainCode__
+__7.0.Deploy "toyhouse_go_dev" ChainCode__
 
 ```
 curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/chain/deploy/"
 ```
 
-__1.Clean tenanted Users and Create 2 random users.__
+__7.1.Clean tenanted Users and Create 2 random users.__
 
 ```
 curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/user/status/1" && curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/user/r/2"
 ```
 
-__2.Dismiss all history gamers __
+__7.2.Dismiss all history gamers__
 
 ```
 curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/game/" && curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
@@ -78,7 +78,7 @@ docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_M
 ```
 
 
-__3.Pair gamers all && play gamers all__
+__7.3.Pair gamers all && play gamers all__
 
 ```
 curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/play"
@@ -91,7 +91,7 @@ _1.Docker run_
 cd /v1/GameViewer/App && ionic serve
 ```
 
-__2.Game Viewer__
+__7.4.Game Viewer__
 
 ```
 http://localhost:8100
