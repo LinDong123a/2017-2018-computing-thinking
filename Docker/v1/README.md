@@ -41,6 +41,11 @@ _1.Docker run_
 docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartkit/godpaper-go-uuid-accredit
 ```
 
+or:
+```
+java -Dspring.data.mongodb.uri=mongodb://mongodb/toyhouse -Djava.security.egd=file:/dev/./urandom -Dmqtt.brokerUrl=tcp://activemq:1883 -jar build/libs/Accredit-0.0.1-SNAPSHOT.jar
+```
+
 _2. RESTful API:_
 
 1.User API: http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller
@@ -74,7 +79,7 @@ curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/game/"
 
 _1.Docker run_
 ```
-docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_MQTT=192.168.0.11 smartkit/godpaper-go-ai-player
+docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_MQTT=192.168.0.11 smartkit/godpaper-go-ai-player:latest
 ```
 
 
@@ -131,4 +136,13 @@ docker rm $(docker ps -a -q)
 3.remove all images
 ```
 docker rmi -f $(docker images -q)
+```
+
+4.Export container
+```
+sudo docker export containerID > your.tar
+```
+5.Import container
+```
+docker import your.tar your/container
 ```
