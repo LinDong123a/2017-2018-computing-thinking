@@ -24,7 +24,7 @@ docker run -d --name activemq -p 8161:8161 -p 1883:1883 -p 5672:5672 -p 61613:61
 
 _1.Docker run_
 ```
-docker run -P -d --name mongodb smartkit/godpaper-go-mongodb
+docker run -p 27017:27017 -d --name mongodb smartkit/godpaper-go-mongodb
 ```
 
 #### 3.MultiChain/HyperLedger

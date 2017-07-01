@@ -7,7 +7,7 @@ angular.module('app.routes', [])
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
-    
+
 
       .state('tabsController.gameLobby', {
     url: '/page2',
@@ -34,8 +34,17 @@ angular.module('app.routes', [])
     templateUrl: 'templates/tabsController.html',
     abstract:true
   })
+    .state('tabsController.gamePlayer', {
+      url: '/page0',
+      views: {
+        'tab0': {
+          templateUrl: 'templates/gamePlayer.html',
+          controller: 'gamePlayerCtrl'
+        }
+      }
+    })
 
-$urlRouterProvider.otherwise('/page1/page2')
+$urlRouterProvider.otherwise('/page1/page0')
 
 
 });

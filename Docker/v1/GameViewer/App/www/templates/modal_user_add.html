@@ -1,0 +1,19 @@
+<div class="modal">
+  <header class="bar bar-header bar-positive">
+    <h1 class="title">PLAYER</h1>
+    <div class="button button-clear" ng-click="modal_user_add.hide()">
+      <span class="icon ion-android-close"></span>
+    </div>
+  </header>
+  <ion-content class="has-header" has-header="true" padding="true">
+  <div class="list">
+    <label class="item item-input item-stacked-label">
+    <span class="input-label">NAME:</span> <input type="text" placeholder="127.0.0.1" ng-model="anewUser.fullName">
+    </label>
+    <label class="item item-input item-stacked-label">
+      <span class="input-label">AI:</span><input type="number" placeholder="0"  min="0" max="3" ng-model="anewUser.rank">
+    </label>
+    <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"ng-click="createUser()">ADD</button>
+  </div>
+</ion-content>
+</div>

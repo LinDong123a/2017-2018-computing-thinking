@@ -1,0 +1,19 @@
+<ion-view title="Game Player" id="page0">
+  <ion-nav-buttons side="right">
+    <button class="button ion-android-person-add" ng-click="addUser()"> 1.ADD PLAYER
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="left">
+
+  </ion-nav-buttons>
+  <ion-content padding="true" class="has-header">
+    <ion-list id="gamePlayer-list">
+      <ion-list>
+        <ion-item class="item-avatar item-icon-left" id="gamePlayer-list-item" ng-repeat="user in userList">
+          <i class="icon ion-android-laptop"></i>
+          <h2>Name:{{user.fullName}}</h2>
+          <h2>Rank:{{user.rank}}</h2>
+        </ion-item>
+      </ion-list>
+  </ion-content>
+</ion-view>

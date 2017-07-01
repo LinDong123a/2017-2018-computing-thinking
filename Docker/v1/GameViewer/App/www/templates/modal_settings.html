@@ -1,0 +1,15 @@
+<div class="modal">
+  <header class="bar bar-header bar-positive">
+    <h1 class="title">SETTINGS</h1>
+    <div class="button button-clear" ng-click="modal_settings.hide()">
+      <span class="icon ion-android-close"></span>
+    </div>
+  </header>
+  <ion-content class="has-header" has-header="true" padding="true">
+  <div class="list"> <label class="item item-input item-stacked-label">
+    <span class="input-label">API.host:</span> <input type="text" placeholder="127.0.0.1" ng-model="envInfo.api.host"> </label>
+    <label class="item item-input item-stacked-label"> <span class="input-label">MQTT.host:</span> <input type="text" placeholder="192.168.0.11" ng-model="envInfo.mqtt.host"> </label>
+    <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"ng-click="updateEnvInfo()">UPDATE</button>
+  </div>
+</ion-content>
+</div>

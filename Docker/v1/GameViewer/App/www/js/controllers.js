@@ -1,20 +1,18 @@
 angular.module('app.controllers', [])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService,envInfo) {
+function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService) {
   //FIXME:$rootScope not working.
   // $rootScope.gamerIds = [];
+  //Dynamic host modification
+  // envInfo.mqtt.host = $location.host();
+  // envInfo.api.host = $location.host();
+  // envInfo.api.url = envInfo.api.host+envInfo.api.port+envInfo.api.context;
+  // envInfo.mqtt.url = envInfo.mqtt.host+envInfo.mqtt.port;
+  //
   $scope.envInfo = envInfo;
-	// Load the modal from the given template URL
-  $scope.modal_settings = $ionicModal.fromTemplate(
-    '<div class="modal"><header class="bar bar-header"> <h1 class="title">Settings</h1><div class="button button-clear" ng-click="modal_settings.hide()"><span class="icon ion-close-round"></span></div></header><p></p><ion-content class="has-header" has-header="true" padding="true"><div class="list"> <label class="item item-input item-stacked-label"> <span class="input-label">API:</span> <input type="text" placeholder="192.168.0.11" ng-model="envInfo.api"> </label> <label class="item item-input item-stacked-label"> <span class="input-label">MQTT:</span> <input type="text" placeholder="192.168.0.11" ng-model="envInfo.mqtt"> </label> <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"ng-click="updateEnvInfo()">UPDATE</button> </div></ion-content></div>',
-    {
-    scope: $scope,
-    animation: 'slide-in-up'
-  });
-
 
   $scope.pairAll = function () {
     LobbyService.pairAll(function(data){
@@ -48,10 +46,19 @@ function ($rootScope,$scope, $stateParams,$ionicModal,LobbyService,envInfo) {
 
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','LobbyService','TableService','ChainCodeService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','LobbyService','TableService','ChainCodeService','$ionicModal',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,LobbyService,TableService,ChainCodeService) {
+function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicModal) {
+  // Load the modal from the given template URL
+  $scope.modal_settings = null;
+  $ionicModal.fromTemplateUrl("templates/modal_settings.html",
+    {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+    $scope.modal_settings = modal;
+  });
 //
   $scope.gamers = [];
   $scope.tableIndex = 0;
@@ -92,9 +99,35 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService) {
   $scope.getAll();
 }])
 
-  .controller('accountCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','UserService','$ionicModal',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($scope, $stateParams,TableService) {
+    function ($scope, $stateParams,UserService,envInfo,$ionicModal) {
+
+      //Load the modal from the given template URL
+      $scope.modal_user_add  = null;
+      $ionicModal.fromTemplateUrl("templates/modal_user_add.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $scope.modal_user_add = modal;
+      });
+      $scope.anewUser = {fullName:'undefined',rank:0};
+      $scope.addUser = function () {
+        $scope.modal_user_add.show();
+      };
+      $scope.userList = [];
+      $scope.createUser = function () {
+        //
+        UserService.anewUser = $scope.anewUser;
+        console.info(" UserService.anewUser:", UserService.anewUser);
+        //
+        UserService.createOne(function(data){
+          console.log("UserService.createOne(:",  data);
+          $scope.userList.push(data);
+          console.log("$scope.userList:",  $scope.userList);
+        });
+      }
 
     }])

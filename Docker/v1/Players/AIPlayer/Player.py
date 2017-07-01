@@ -10,18 +10,18 @@ o_jms = cf.options("mqtt")
 print('conf options:', o_jms)
 o_api = cf.options("api")
 print('conf options:', o_api)
-v_broker_url = cf.get("mqtt","broker_url")
-print("v_broker_url:"+v_broker_url)
+
 v_broker_port = cf.getint("mqtt","broker_port")
 print("v_broker_port:",v_broker_port)
+
+v_client_id = cf.get("mqtt","client_id")
+print("v_client_id:",v_client_id)
+
 v_tag_vs = cf.get("mqtt","tag_vs")
 print("v_tag_vs:",v_tag_vs)
 v_tag_play = cf.get("mqtt","tag_play")
 print("v_tag_play:",v_tag_play)
-v_client_id = cf.get("mqtt","client_id")
-print("v_client_id:",v_client_id)
-v_restful_url = cf.get("api","restful_url")
-print("v_restful_url:",v_restful_url)
+
 v_resource_name_user = cf.get("api","resource_name_user")
 print("v_resource_name_user:",v_resource_name_user)
 # if docker_links
@@ -31,10 +31,19 @@ v_uri_api = os.environ.get('URI_API')
 logging.info("v_uri_api:%s",v_uri_api)
 if v_uri_api!= None:
     v_restful_url = v_uri_api
+else:
+    v_restful_url = cf.get("api", "restful_url")
+print("v_restful_url:", v_restful_url)
+
 v_ip_mqtt = os.environ.get('IP_MQTT')
 logging.info("v_ip_mqtt:%s",v_ip_mqtt)
 if v_ip_mqtt!= None:
     v_broker_url = v_ip_mqtt
+else:
+    v_broker_url = cf.get("mqtt", "broker_url")
+print("v_broker_url:" + v_broker_url)
+
+
 import json
 from urllib.parse import urlparse
 # TODO：import docker_links
@@ -63,6 +72,7 @@ class UserResource(Resource):
 if __name__ == '__main__':
     #First off,UUID REST client post,@see: http://python-simple-rest-client.readthedocs.io/en/0.1.1/quickstart.html
     # create api instance
+    global v_restful_url
     api = API(api_root_url = v_restful_url,params = {},headers = {},timeout = 2,append_slash = False,json_encode_body = True)
     # add users resource
     api.add_resource(resource_name=v_resource_name_user,resource_class=UserResource)
