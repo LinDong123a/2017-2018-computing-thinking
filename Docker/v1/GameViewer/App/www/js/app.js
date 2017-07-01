@@ -13,7 +13,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
 
 })
   .value('debug', true)
-  .constant('envInfo', {api:{host:"127.0.0.1",port:":8095",context:"/accredit/"},mqtt:{host:"127.0.0.1",port:":1883"}})
+  .constant('envInfo', {api:{host:"http://localhost",port:":8095",contextPath:"/accredit",url:"http://localhost:8095/accredit"},mqtt:{host:"127.0.0.1",port:":1883"}})
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

@@ -15,8 +15,9 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   $scope.envInfo = envInfo;
 
   $scope.pairAll = function () {
+    console.log("LobbyService:",LobbyService);
     LobbyService.pairAll(function(data){
-      console.log("LobbyService.getAll(:",  data);
+      console.log("LobbyService.pairAll(:",  data);
       $scope.lobbyList  = data;
       console.log("$scope.lobbyList:",  $scope.lobbyList);
     });
@@ -99,11 +100,11 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
   $scope.getAll();
 }])
 
-  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','UserService','$ionicModal',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($scope, $stateParams,UserService,envInfo,$ionicModal) {
-
+    function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService) {
+      console.info("envInfo:",envInfo);
       //Load the modal from the given template URL
       $scope.modal_user_add  = null;
       $ionicModal.fromTemplateUrl("templates/modal_user_add.html",
@@ -121,12 +122,35 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
       $scope.createUser = function () {
         //
         UserService.anewUser = $scope.anewUser;
-        console.info(" UserService.anewUser:", UserService.anewUser);
+        console.info("UserService.anewUser:", UserService.anewUser);
         //
-        UserService.createOne(function(data){
+        console.log("envInfo:",envInfo);
+        UserService.createUser(function(data){
           console.log("UserService.createOne(:",  data);
           $scope.userList.push(data);
           console.log("$scope.userList:",  $scope.userList);
+          //
+          $scope.modal_user_add.hide();
+        });
+      }
+
+      $scope.getUsers = function () {
+//
+        UserService.getUsers(function(data){
+          console.log("UserService.getUsers:", data);
+          $scope.userList = data;
+          console.log("$scope.userList:", $scope.userList);
+        });
+      }
+
+      $scope.deleteUser = function ($user) {
+//
+        UserService.delUserId = $user.id;
+        //
+        UserService.deleteUser(function(data){
+          console.log("UserService.deleteUser:", data);
+         //refresh user list.
+          $scope.getUsers();
         });
       }
 
