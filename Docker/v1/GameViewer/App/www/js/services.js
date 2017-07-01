@@ -4,12 +4,6 @@ angular.module('app.services', [])
   //Private Variable
   return {
     gamerIds : [],
-    pairAll: function(callback){
-      $http.get(envInfo.api.url+"/game/pair").success(function(data) {
-        console.log("paired gamers:",data);
-        callback(data);
-      });
-    },
     playAll: function(callback){
       $http.get(envInfo.api.url+"/game/play").success(function(data) {
         console.log("played gamers:",data);
@@ -82,5 +76,25 @@ angular.module('app.services', [])
       }
 
     }
+  }])
+
+  .factory('GameService', ['$http','envInfo',function($http,envInfo){
+    //Private Variable
+    return {
+      gamerIds : [],
+      pairAll: function(callback){
+        $http.get(envInfo.api.url+"/game/pair").success(function(data) {
+          console.log("paired gamers:",data);
+          callback(data);
+        });
+      }
+      ,
+      playAll: function(callback){
+        $http.get(envInfo.api.url+"/game/play").success(function(data) {
+          console.log("played gamers:",data);
+          callback(data);
+        });
+      }
+    };
   }])
 ;

@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService) {
+function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService) {
   //FIXME:$rootScope not working.
   // $rootScope.gamerIds = [];
   //Dynamic host modification
@@ -15,21 +15,17 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   $scope.envInfo = envInfo;
 
   $scope.pairAll = function () {
-    console.log("LobbyService:",LobbyService);
-    LobbyService.pairAll(function(data){
-      console.log("LobbyService.pairAll(:",  data);
+    console.log("GameService:",GameService);
+    GameService.pairAll(function(data){
+      console.log("GameService.pairAll(:",  data);
       $scope.lobbyList  = data;
       console.log("$scope.lobbyList:",  $scope.lobbyList);
     });
   }
   $scope.playAll = function(){
     console.log("game start!:");
-    LobbyService.playAll(function(data){
-      console.log("LobbyService.playAll:",  data);
-      for(var i=0;i<data.length;i++){
-        LobbyService.gamerIds.push(data[i].id);
-      }
-      console.log("LobbyService.gamerIds:",LobbyService.gamerIds);
+    GameService.playAll(function(data){
+      console.log("GameService.playAll:",  data);
     });
   }
   $scope.dismissAll = function(){
@@ -38,11 +34,6 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       $scope.lobbyList  = [];
       console.log("$scope.lobbyList:",  $scope.lobbyList);
     });
-  }
-  $scope.updateEnvInfo = function(){
-    //
-    console.log("updated envInfo:",envInfo);
-    $scope.modal_settings.hide();
   }
 
 }])
@@ -96,6 +87,12 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
         $scope.tableIndex = 0; //next round.
       }
     };
+
+  $scope.updateEnvInfo = function(){
+    //
+    console.log("updated envInfo:",envInfo);
+    $scope.modal_settings.hide();
+  }
   //default calls
   $scope.getAll();
 }])
