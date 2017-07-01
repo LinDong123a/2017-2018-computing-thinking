@@ -79,7 +79,7 @@ curl -X DELETE --header "Accept: */*" "http://localhost:8095/accredit/game/"
 
 _1.Docker run_
 ```
-docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_MQTT=192.168.0.11 smartkit/godpaper-go-ai-player
+docker run --name aiplayer -e URI_API=http://192.168.0.11:8095/accredit/ -e IP_MQTT=192.168.0.11 smartkit/godpaper-go-ai-player:latest
 ```
 
 
