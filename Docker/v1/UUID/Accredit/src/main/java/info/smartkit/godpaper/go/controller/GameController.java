@@ -1,6 +1,7 @@
 package info.smartkit.godpaper.go.controller;
 
 
+import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
@@ -15,6 +16,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -102,5 +104,11 @@ public class GameController {
                 }
                 //
                 repository.deleteAll();
+        }
+
+        @RequestMapping(method = RequestMethod.GET, value="/sgf/{gamerId}")
+        public SgfDto saveSgfByid(@PathVariable String gamerId) throws IOException {
+                Gamer gamer = repository.findOne(gamerId);
+                return service.toSgf(gamer,true);
         }
 }

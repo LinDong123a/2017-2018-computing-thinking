@@ -102,6 +102,7 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
     function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService) {
       console.info("envInfo:",envInfo);
+      $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
       //Load the modal from the given template URL
       $scope.modal_user_add  = null;
       $ionicModal.fromTemplateUrl("templates/modal_user_add.html",
@@ -111,7 +112,7 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
         }).then(function(modal) {
         $scope.modal_user_add = modal;
       });
-      $scope.anewUser = {fullName:'undefined',rank:0};
+      $scope.anewUser = {name:'undefined',rank:0,policy:"random"};
       $scope.addUser = function () {
         $scope.modal_user_add.show();
       };

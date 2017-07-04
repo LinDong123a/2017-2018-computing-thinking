@@ -17,15 +17,43 @@ public class User {
     @Id
     private String id;
     private String email;
-    private String fullName;
 
-    public User(String id, String email, String fullName, int rank, int status) {
-        this.id = id;
-        this.email = email;
-        this.fullName = fullName;
-        this.rank = rank;
-        this.status = status;
+    public String getName() {
+        return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    private String name;
+    private String policy;
+    private int score;
+
 
     public int getRank() {
         return rank;
@@ -33,10 +61,6 @@ public class User {
 
     public void setRank(int rank) {
         this.rank = rank;
-    }
-
-    @Override public String toString() {
-        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", fullName='" + fullName + '\'' + ", rank=" + rank + ", status=" + status + ", topicName='" + getTopicName() + '\'' + ", created=" + created + '}';
     }
 
     private int rank=0;//rank of game;
@@ -55,10 +79,8 @@ public class User {
         return MqttVariables.clientId+id;
     }
 
-
-    public User(String email, String fullName) {
-        this.email = email;
-        this.fullName = fullName;
+    @Override public String toString() {
+        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", name='" + name + '\'' + ", policy='" + policy + '\'' + ", score=" + score + ", rank=" + rank + ", status=" + status + ", created=" + created + '}';
     }
 
     public User() {
@@ -76,13 +98,6 @@ public class User {
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date created = new Date();

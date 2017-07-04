@@ -1,15 +1,23 @@
 package info.smartkit.godpaper.go.service;
 
+import com.toomasr.sgf4j.Sgf;
+import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.settings.*;
+import info.smartkit.godpaper.go.utils.ServerUtil;
+import info.smartkit.godpaper.go.utils.SgfUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +36,13 @@ public class GamerServiceImpl implements GamerService {
         private ChainCodeService chainCodeService;
 
         @Autowired ChainCodeProperties chainCodeProperties;
+        @Autowired ServerProperties serverProperties;
 
 
-        public static final String ENCODING = "UTF-8";
+
+        private static final String ENCODING = "UTF-8";
         private static final String VERSION = "0.0.1";
-        public static final int m_size = 19;
+        private static final int m_size = 19;
 
         @Override public List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException {
                 int arraySize = tenantedUsers.size();
@@ -115,7 +125,7 @@ public class GamerServiceImpl implements GamerService {
                 //Save game status
                 gamer.setTopic(gamer.getTopic());
                 //
-                gamer.setSgf(this.toSgf(gamer));
+                gamer.setSgf(this.toSgf(gamer,false).getCmd());
                 gamer.setStatus(GameStatus.PLAYING.getIndex());
                 //
                 Gamer savedGamer = gamerRepository.save(gamer);
@@ -130,15 +140,35 @@ public class GamerServiceImpl implements GamerService {
 //SGF block
 
         //@see: https://github.com/jromang/gogui/blob/master/src/net/sf/gogui/sgf/SgfWriter.java
-        @Override public String toSgf(Gamer gamer) {
+        @Override public SgfDto toSgf(Gamer gamer,Boolean filed){
                 //
+                SgfDto sgfDto = new SgfDto();
                 //                                Game sgfGame = Sgf.createFromString(gamerMessage);
                 //                                LOG.info("sgfGame:"+sgfGame.toString());
-                String fixture = "(";//;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
+//                String fixture = "(";//;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
                 //
                 String sgfHeader = this.getHeader(chainCodeProperties.getChainName(),VERSION,gamer);
+                //
                 LOG.info("sgfHeader:"+sgfHeader);
-                return sgfHeader;
+                sgfDto.setCmd(sgfHeader);
+                //
+                if(filed)//Save to disk sgf file.
+                {
+                       File sgfFile =  Sgf.writeToFile(gamer.getSgf());
+                       LOG.info("sgfFile:"+sgfFile.toString());
+
+                       String destFileStr =SgfUtil.getSgf(sgfFile.getName());
+                       File destFile = new File(destFileStr);
+                        try {
+                               FileUtils.copyFile(sgfFile,destFile);
+                               LOG.info("copy sgf file success.");
+                               String serverUrl = ServerUtil.getInetAddress().getHostAddress()+":"+serverProperties.getPort()+serverProperties.getContextPath();
+                               sgfDto.setUrl(serverUrl+"/sgf/"+sgfFile.getName());
+                        } catch (IOException e) {
+                                e.printStackTrace();
+                        }
+                }
+                return sgfDto;
         }
 
         private String getHeader(String application, String version,Gamer gamer)
@@ -163,12 +193,12 @@ public class GamerServiceImpl implements GamerService {
                         //player1
                         //name
                         User player1 = gamer.getPlayer1();
-                        header.append("PB[").append(player1.getFullName()).append(']');
+                        header.append("PB[").append(player1.getName()).append(']');
                         //rank
                         header.append("BR[").append(player1.getRank()).append("p]");
                         //player2
                         User player2 = gamer.getPlayer2();
-                        header.append("PW[").append(player2.getFullName()).append(']');
+                        header.append("PW[").append(player2.getName()).append(']');
                         //rank
                         header.append("WR[").append(player2.getRank()).append("p]");
                         //TODO:komi

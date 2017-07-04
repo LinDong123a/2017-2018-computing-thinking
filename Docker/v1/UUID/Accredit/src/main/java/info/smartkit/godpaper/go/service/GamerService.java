@@ -1,9 +1,11 @@
 package info.smartkit.godpaper.go.service;
 
+import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,5 +15,5 @@ public interface GamerService {
         List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException;
         List<Gamer> playAll() throws MqttException;
         Gamer playOne(String gamerId) throws MqttException;
-        String toSgf(Gamer gamer);
+        SgfDto toSgf(Gamer gamer,Boolean filed) throws IOException;
 }

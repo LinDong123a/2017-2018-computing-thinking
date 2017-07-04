@@ -2,6 +2,7 @@ package info.smartkit.godpaper.go.service;
 
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
+import info.smartkit.godpaper.go.settings.AIVariables;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,17 @@ public class UserServiceImpl implements UserService {
         for (int i = 0; i < numbers; i++) {
             User user = new User();
             user.setEmail(RandomStringUtils.randomAlphanumeric(7).toLowerCase().concat("@toyhouse.cc"));
-            user.setFullName(RandomStringUtils.randomAlphanumeric(4).toUpperCase().concat(".").concat(RandomStringUtils.randomAlphanumeric(5).toUpperCase()));
+            user.setName(RandomStringUtils.randomAlphanumeric(4).toUpperCase().concat(".").concat(RandomStringUtils.randomAlphanumeric(5).toUpperCase()));
             //Random rank
-            Random generator = new Random();
-            int rRank = 3 - generator.nextInt(3);
+            Random rank_generator = new Random();
+            int rRank = AIVariables.rank - rank_generator.nextInt(AIVariables.rank);
             user.setRank(rRank);
+            //Random policy
+            Random policy_generator = new Random();
+            int size_policy = AIVariables.policys.size();
+            int rPolicy = size_policy - policy_generator.nextInt(size_policy);
+            String policy = AIVariables.policys.get(rPolicy);
+            user.setPolicy(policy);
             User saved = repository.save(user);
             users.add(saved);
         }

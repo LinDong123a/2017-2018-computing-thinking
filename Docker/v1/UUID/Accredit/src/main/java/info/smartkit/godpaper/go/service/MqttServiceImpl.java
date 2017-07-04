@@ -109,6 +109,8 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                                 //update to ChainCode invoke
                                 String[] putArgs = {playingGamer.getId(),playingGamer.getSgf()};
                                 chainCodeService.invoke(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
+                                //Saved to real sgf file.
+
                                 //
                                 playingGamer.setStatus(GameStatus.SAVED.getIndex());
                                 Gamer updatedGamer = gamerRepository.save(playingGamer);

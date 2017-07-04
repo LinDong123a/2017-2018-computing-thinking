@@ -16,7 +16,7 @@ read_file = ''
 # data_file_path = 'game_database/sgf/'
 
 
-def AI(msgs,model=DEFAULT_MODEL_PATH):
+def AI(msgs,model=DEFAULT_MODEL_PATH,strategy=RandomPlayer()):
     print("AI(msg) called.")
 
     # data_file = data_file_path + msg
@@ -31,7 +31,15 @@ def AI(msgs,model=DEFAULT_MODEL_PATH):
     # read_file = read_file_prefix+str(RANK)+"/savedmodel"
     print("n,read_file:",n,model)
     try:
-        instance = PolicyNetworkBestMovePlayer(n, model)
+        # instance = PolicyNetworkBestMovePlayer(n, model)
+        if strategy == 'random':
+            instance = RandomPlayer()
+        elif strategy == 'best_move':
+            instance = PolicyNetworkBestMovePlayer(n, model)
+        elif strategy == 'random_move':
+            instance = PolicyNetworkRandomMovePlayer(n, model)
+        elif strategy == 'mcts':
+            instance = MCTS(n, model)
     except Exception:
         print(traceback.format_exc())
     #instance = PolicyNetworkRandomMovePlayer(n, read_file)

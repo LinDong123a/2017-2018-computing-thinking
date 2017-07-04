@@ -1,9 +1,7 @@
 package info.smartkit.godpaper.go.settings;
 
-import info.smartkit.godpaper.go.service.ChainCodeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "chain")
 public class ChainCodeProperties {
 
-        @Autowired ChainCodeService chainCodeService;
 
         private static Logger LOG = LogManager.getLogger(ChainCodeProperties.class);
         //

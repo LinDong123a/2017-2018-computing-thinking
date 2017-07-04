@@ -21,6 +21,9 @@ chain:
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_dev
+ai:
+  ranks: 3
+  policys: random,best_move,random_move,mcts
 ---
 spring:
   profiles: test
@@ -41,3 +44,6 @@ chain:
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_test
+ai:
+  ranks: 3
+  policys: random,best_move,random_move,mcts

@@ -95,9 +95,11 @@ if __name__ == '__main__':
     v_queue_name = tenantResponse.body['topicName']
     v_player_rank = tenantResponse.body['rank']
     v_player_id = tenantResponse.body['id']
+    v_player_policy = tenantResponse.body['policy']
     logging.info("v_queue_name:%s",v_queue_name)
     logging.info("v_player_rank:%s",v_player_rank)
     logging.info("v_player_id:%s", v_player_id)
+    logging.info("v_player_policy:%s", v_player_policy)
     v_game_id = ''
     v_player1_id = ''
     v_player2_id = ''

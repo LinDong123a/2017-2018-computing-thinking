@@ -4,7 +4,7 @@ spring:
 ---
 spring:
   profiles: dev
-  data.mongodb.uri: mongodb://localhost:32771/toyhouse
+  data.mongodb.uri: mongodb://localhost:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
@@ -21,10 +21,13 @@ chain:
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_dev
+ai:
+  ranks: 3
+  policys: random,best_move,random_move,mcts
 ---
 spring:
   profiles: test
-  data.mongodb.uri: mongodb://118.190.96.120:32771/toyhouse
+  data.mongodb.uri: mongodb://118.190.96.120:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
@@ -41,3 +44,6 @@ chain:
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_test
+ai:
+  ranks: 3
+  policys: random,best_move,random_move,mcts

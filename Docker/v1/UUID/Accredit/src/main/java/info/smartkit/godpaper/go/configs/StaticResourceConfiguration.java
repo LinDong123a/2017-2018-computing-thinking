@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class StaticResourceConfiguration extends WebMvcConfigurerAdapter {
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
             "classpath:/META-INF/resources/", "classpath:/resources/",
-            "classpath:/static/", "classpath:/public/"};
+            "classpath:/static/", "classpath:/public/","classpath:/sgf/"};
 
     /**
      * Add our static resources folder mapping.
@@ -38,8 +38,8 @@ public class StaticResourceConfiguration extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
 
-        registry.addResourceHandler("/uploads/**").addResourceLocations(
-                "classpath:/uploads/");
+        registry.addResourceHandler("/sgf/**").addResourceLocations(
+                "classpath:/sgf/");
     }
 
 
