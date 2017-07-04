@@ -5,7 +5,7 @@ import gtp as gtp_lib
 import traceback
 
 from policy import PolicyNetwork
-from strategies import PolicyNetworkBestMovePlayer
+from strategies import RandomPlayer,PolicyNetworkBestMovePlayer,PolicyNetworkRandomMovePlayer,MCTS
 
 string = 'abcdefghijklmnopqrstuvwxyz'
 # read_file_prefix = os.getcwd() + "/"
@@ -14,10 +14,10 @@ read_file = ''
 # data_file = "yyf.sgf"
 
 # data_file_path = 'game_database/sgf/'
-
-
-def AI(msgs,model=DEFAULT_MODEL_PATH,strategy=RandomPlayer()):
-    print("AI(msg) called.")
+instance = None
+gtp_engine = None
+def AI(msgs,model=DEFAULT_MODEL_PATH,strategy=None):
+    print("AI(msg) called,strategy:",strategy)
 
     # data_file = data_file_path + msg
     lastMsg = msgs[len(msgs)-1]
@@ -30,25 +30,27 @@ def AI(msgs,model=DEFAULT_MODEL_PATH,strategy=RandomPlayer()):
     # global read_file
     # read_file = read_file_prefix+str(RANK)+"/savedmodel"
     print("n,read_file:",n,model)
-    try:
-        # instance = PolicyNetworkBestMovePlayer(n, model)
-        if strategy == 'random':
-            instance = RandomPlayer()
-        elif strategy == 'best_move':
-            instance = PolicyNetworkBestMovePlayer(n, model)
-        elif strategy == 'random_move':
-            instance = PolicyNetworkRandomMovePlayer(n, model)
-        elif strategy == 'mcts':
-            instance = MCTS(n, model)
-    except Exception:
-        print(traceback.format_exc())
+
+    if strategy == 'random':
+        global instance
+        instance = RandomPlayer()
+    elif strategy == 'best_move':
+        global instance
+        instance = PolicyNetworkBestMovePlayer(n, model)
+    elif strategy == 'random_move':
+        global instance
+        instance = PolicyNetworkRandomMovePlayer(n, model)
+    elif strategy == 'mcts':
+        global instance
+        instance = MCTS(n, model)
     #instance = PolicyNetworkRandomMovePlayer(n, read_file)
     print("PolicyNetwork instanced.",instance)
     try:
+        global gtp_engine
         gtp_engine = gtp_lib.Engine(instance)
     except Exception:
         print(traceback.format_exc())
-    print("GTP Engine get ready.",gtp_engine)
+    print("GTP Engine get ready.")
     #sys.stderr.write("GTP Enginene ready\n")
     AI_cmd = parse_AI_instruction(color)
     print("AI_cmd parsed.")

@@ -176,7 +176,8 @@ if __name__ == '__main__':
                     logging.info("send to plainAI message_json_s:%s",message_json_s)
                     rank_model_path = os.getcwd() + "/"+str(v_player_rank)+ "/savedmodel"
                     logging.info("rank_model_path:%s", rank_model_path)
-                    result = plainAI.AI(message_json_s,rank_model_path)
+                    logging.info("v_player_policy:%s", v_player_policy)
+                    result = plainAI.AI(message_json_s,rank_model_path,v_player_policy)
                     result['user_id'] = v_player_id
                     # result['method'] = 'play'
                     logging.info('PLAY plainAI response:%s', result)

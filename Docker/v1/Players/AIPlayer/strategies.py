@@ -61,8 +61,8 @@ class GtpInterface(object):
         self.position = None
         self.komi = 6.5
         print("GtpInterface(object):",self,object)
-        #self.clear()
-        super(PolicyNetworkBestMovePlayer, self).clear()
+        self.clear()
+        # super(PolicyNetworkBestMovePlayer, self).clear()
 
     def set_size(self, n):
         self.size = n

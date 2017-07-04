@@ -28,11 +28,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="strategies.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="strategies.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/strategies.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1545">
-              <caret line="111" column="34" lean-forward="false" selection-start-line="111" selection-start-column="34" selection-end-line="111" selection-end-column="34" />
+            <state relative-caret-position="165">
+              <caret line="52" column="56" lean-forward="true" selection-start-line="52" selection-start-column="56" selection-end-line="52" selection-end-column="56" />
               <folding />
             </state>
           </provider>
@@ -48,11 +48,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Player.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Player.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="98" column="33" lean-forward="false" selection-start-line="98" selection-start-column="32" selection-end-line="98" selection-end-column="33" />
+            <state relative-caret-position="299">
+              <caret line="169" column="51" lean-forward="false" selection-start-line="169" selection-start-column="51" selection-end-line="169" selection-end-column="51" />
               <folding />
             </state>
           </provider>
@@ -61,9 +61,11 @@
       <file leaf-file-name="plainAI.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/plainAI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="44" column="59" lean-forward="true" selection-start-line="44" selection-start-column="59" selection-end-line="44" selection-end-column="59" />
-              <folding />
+            <state relative-caret-position="240">
+              <caret line="34" column="23" lean-forward="true" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
+              <folding>
+                <element signature="e#46#55#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -72,7 +74,7 @@
         <entry file="file://$PROJECT_DIR$/dev.conf">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="75">
-              <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+              <caret line="5" column="13" lean-forward="true" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -87,9 +89,10 @@
         <option value="/anaconda/envs/python35/lib/python3.5/site-packages/docker_links.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/simpleAI.py" />
-        <option value="$PROJECT_DIR$/plainAI.py" />
         <option value="$PROJECT_DIR$/dev.conf" />
         <option value="$PROJECT_DIR$/Player.py" />
+        <option value="$PROJECT_DIR$/plainAI.py" />
+        <option value="$PROJECT_DIR$/strategies.py" />
       </list>
     </option>
   </component>
@@ -520,7 +523,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="11" column="56" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="56" />
-          <folding />
+          <folding>
+            <element signature="e#46#55#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -715,14 +720,6 @@
     <entry file="file:///anaconda/envs/python35/lib/python3.5/site-packages/gtp.py" />
     <entry file="file://$PROJECT_DIR$/game_database/sgf/TH_594dd2ece4b0dbacf6b3d0e4_vs_TH_594dd2e0e4b0dbacf6b3d0e3_&lt;bound method Random.randint of &lt;random.Random object at 0x7f8d09083a18&gt;&gt;" />
     <entry file="file://$PROJECT_DIR$/game_database/sgf/TH_594dd2ece4b0dbacf6b3d0e4_vs_TH_594dd2e0e4b0dbacf6b3d0e3_&lt;bound method Random.randint of &lt;random.Random object at 0x7fe744058418&gt;&gt;" />
-    <entry file="file://$PROJECT_DIR$/strategies.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1545">
-          <caret line="111" column="34" lean-forward="false" selection-start-line="111" selection-start-column="34" selection-end-line="111" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game_database/sgf/594dd2e0e4b0dbacf6b3d0e3" />
     <entry file="file://$PROJECT_DIR$/game_database/sgf/594dd2ece4b0dbacf6b3d0e4" />
     <entry file="file://$PROJECT_DIR$/simpleAI.py">
@@ -734,26 +731,36 @@
       </provider>
     </entry>
     <entry file="file:///anaconda/envs/python35/lib/python3.5/site-packages/paho/mqtt/client.py" />
-    <entry file="file://$PROJECT_DIR$/plainAI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="44" column="59" lean-forward="true" selection-start-line="44" selection-start-column="59" selection-end-line="44" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dev.conf">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
-          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+          <caret line="5" column="13" lean-forward="true" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="98" column="33" lean-forward="false" selection-start-line="98" selection-start-column="32" selection-end-line="98" selection-end-column="33" />
+        <state relative-caret-position="299">
+          <caret line="169" column="51" lean-forward="false" selection-start-line="169" selection-start-column="51" selection-end-line="169" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plainAI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="34" column="23" lean-forward="true" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
+          <folding>
+            <element signature="e#46#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/strategies.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="52" column="56" lean-forward="true" selection-start-line="52" selection-start-column="56" selection-end-line="52" selection-end-column="56" />
           <folding />
         </state>
       </provider>

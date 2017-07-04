@@ -15,11 +15,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="gameLobby.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="gameLobby.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/www/templates/gameLobby.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+            <state relative-caret-position="345">
+              <caret line="23" column="38" lean-forward="false" selection-start-line="23" selection-start-column="31" selection-end-line="23" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -28,8 +28,8 @@
       <file leaf-file-name="gamePlayer.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/templates/gamePlayer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+            <state relative-caret-position="285">
+              <caret line="19" column="73" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="73" />
               <folding />
             </state>
           </provider>
@@ -95,7 +95,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controllers.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="controllers.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="574">
@@ -141,10 +141,10 @@
         <option value="$PROJECT_DIR$/www/js/routes.js" />
         <option value="$PROJECT_DIR$/www/js/app.js" />
         <option value="$PROJECT_DIR$/www/js/services.js" />
-        <option value="$PROJECT_DIR$/www/templates/gameLobby.html" />
-        <option value="$PROJECT_DIR$/www/templates/gamePlayer.html" />
         <option value="$PROJECT_DIR$/www/templates/modal_user_add.html" />
         <option value="$PROJECT_DIR$/www/js/controllers.js" />
+        <option value="$PROJECT_DIR$/www/templates/gamePlayer.html" />
+        <option value="$PROJECT_DIR$/www/templates/gameLobby.html" />
       </list>
     </option>
   </component>
@@ -386,12 +386,12 @@
       <workItem from="1498882270945" duration="9620000" />
       <workItem from="1499051982488" duration="217000" />
       <workItem from="1499130666092" duration="439000" />
-      <workItem from="1499133752503" duration="765000" />
+      <workItem from="1499133752503" duration="3125000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55720000" />
+    <option name="totallyTimeSpent" value="58080000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="134" y="23" width="1751" height="1029" extended-state="0" />
@@ -657,14 +657,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/templates/gameLobby.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www/templates/tabsController.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -713,14 +705,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/templates/gamePlayer.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www/templates/modal_user_add.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -733,6 +717,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="574">
           <caret line="87" column="7" lean-forward="true" selection-start-line="87" selection-start-column="7" selection-end-line="87" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/templates/gamePlayer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="73" lean-forward="true" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/templates/gameLobby.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="38" lean-forward="false" selection-start-line="23" selection-start-column="31" selection-end-line="23" selection-end-column="38" />
           <folding />
         </state>
       </provider>
