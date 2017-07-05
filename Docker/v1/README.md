@@ -146,7 +146,7 @@ sudo docker export containerID > your.tar
 ```
 docker import your.tar your/container
 ```
-
+6.Run container with entrypoint or command
 ```
 docker run -p 27017:27017 -d --name mongodb our/container entrypoint/command 
 ```
