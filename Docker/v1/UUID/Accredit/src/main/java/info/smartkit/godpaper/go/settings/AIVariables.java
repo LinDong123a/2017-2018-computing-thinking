@@ -8,4 +8,6 @@ import java.util.List;
 public class AIVariables {
         public static int rank;
         public static List<String> policys;
+        public static String player;
+        public static String agent;
 }

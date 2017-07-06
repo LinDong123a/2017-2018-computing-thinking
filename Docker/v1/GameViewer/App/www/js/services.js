@@ -82,8 +82,16 @@ angular.module('app.services', [])
     //Private Variable
     return {
       gamerIds : [],
+      rPlayerId: null,//current running player.
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
+          console.log("paired gamers:",data);
+          callback(data);
+        });
+      }
+      ,
+      runPlayer: function(callback){
+        $http.get(envInfo.api.url+"/game/run/player/"+this.rPlayerId).success(function(data) {
           console.log("paired gamers:",data);
           callback(data);
         });

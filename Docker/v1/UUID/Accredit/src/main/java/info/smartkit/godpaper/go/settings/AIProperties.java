@@ -17,10 +17,6 @@ import java.util.List;
 public class AIProperties {
         private static Logger LOG = LogManager.getLogger(AIProperties.class);
 
-        @Override public String toString() {
-                return "AIProperties{" + "rank=" + rank + ", policys=" + policys + '}';
-        }
-
         public int getRank() {
                 return rank;
         }
@@ -45,4 +41,35 @@ public class AIProperties {
 
         private int rank;
         private List<String> policys;
+
+        public String getPlayer() {
+                return player;
+        }
+
+        public void setPlayer(String player) {
+                this.player = player;
+                //
+                AIVariables.player = player;
+                LOG.info("setPlayer:"+AIVariables.player);
+        }
+
+
+        private String player;
+
+        @Override public String toString() {
+                return "AIProperties{" + "rank=" + rank + ", policys=" + policys + ", player='" + player + '\'' + ", agent='" + agent + '\'' + '}';
+        }
+
+        public String getAgent() {
+                return agent;
+        }
+
+        public void setAgent(String agent) {
+                this.agent = agent;
+                //
+                AIVariables.agent = agent;
+                LOG.info("setAgent:"+AIVariables.agent);
+        }
+
+        private String agent;
 }

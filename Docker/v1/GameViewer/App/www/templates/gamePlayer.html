@@ -18,7 +18,17 @@
           <h2>Score: {{user.score}}</h2>
           <h2>Status: {{user.status}}</h2>
           <h2>Created: {{user.created | date:'yyyy-MM-dd HH:mm:ss'}}</h2>
+          <div class="buttons">
+            <button class="button button-dark" ng-click="runPlayer(user.id)">
+              <i class="icon ion-android-arrow-forward"></i>
+            </button>
+          </div>
+<!--
+          <button class="icon ion-ios-game-controller-a-outline button button-icon" ng-click=""></button>
+          <button class="icon ion-ios-game-controller-b button button-icon" ng-click=""></button>
+          <button class="icon ion-ios-game-controller-b-outline button button-icon" ng-click=""></button>
           <ion-option-button class="button-assertive" ng-click="deleteUser(user)">DELETE</ion-option-button>
+          -->
         </ion-item>
       </ion-list>
   </ion-content>

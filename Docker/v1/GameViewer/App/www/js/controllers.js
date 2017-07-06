@@ -97,10 +97,10 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
   $scope.getAll();
 }])
 
-  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService) {
+    function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService) {
       console.info("envInfo:",envInfo);
       $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
       //Load the modal from the given template URL
@@ -149,6 +149,14 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
           console.log("UserService.deleteUser:", data);
          //refresh user list.
           $scope.getUsers();
+        });
+      }
+
+      $scope.runPlayer = function ($id) {
+
+        GameService.rPlayerId = $id;
+        GameService.runPlayer(function(data){
+          console.log("GameService.runPlayer:", data);
         });
       }
 

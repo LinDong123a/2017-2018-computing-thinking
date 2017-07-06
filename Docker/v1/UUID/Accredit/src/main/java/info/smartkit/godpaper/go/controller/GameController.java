@@ -1,11 +1,14 @@
 package info.smartkit.godpaper.go.controller;
 
 
+import com.spotify.docker.client.exceptions.DockerCertificateException;
+import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
+import info.smartkit.godpaper.go.service.DockerService;
 import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.settings.GameStatus;
@@ -32,6 +35,8 @@ public class GameController {
         @Autowired UserRepository userRepository;
         @Autowired GamerService service;
         @Autowired MqttService mqttService;
+        @Autowired DockerService dockerService;
+
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer){
                 Gamer result = repository.save(gamer);
@@ -110,5 +115,15 @@ public class GameController {
         public SgfDto saveSgfByid(@PathVariable String gamerId) throws IOException {
                 Gamer gamer = repository.findOne(gamerId);
                 return service.toSgf(gamer,true);
+        }
+
+        @RequestMapping(method = RequestMethod.GET,value="/run/player/{userId}")
+        public boolean runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+                return dockerService.runPlayer(userId);
+        }
+
+        @RequestMapping(method = RequestMethod.GET,value="/run/agent/{name}")
+        public boolean runAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+                return dockerService.runAgent(name);
         }
 }
