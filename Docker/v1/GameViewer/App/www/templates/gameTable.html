@@ -1,10 +1,13 @@
-<ion-view title="Game Table #{{tableIndex}}" id="page3" ng-controller="gameTableCtrl">
+<ion-view title="棋桌#{{tableIndex}}" id="page3" ng-controller="gameTableCtrl">
   <ion-nav-buttons side="right">
-    <button class="button ion-android-arrow-down" ng-click="getOne()"> NEXT
+
+    <button class="button ion-android-favorite" ng-click="getSgf()">存棋谱
     </button>
   </ion-nav-buttons>
   <ion-nav-buttons side="left">
-    <button class="button ion-android-settings" ng-click="modal_settings.show()"> 1.SETTINGS
+    <button class="button ion-android-arrow-down" ng-click="nextOne()">下一桌
+    </button>
+    <button class="button ion-android-settings" ng-click="modal_settings.show()">设置
     </button>
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">

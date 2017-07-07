@@ -4,18 +4,6 @@ angular.module('app.services', [])
   //Private Variable
   return {
     gamerIds : [],
-    playAll: function(callback){
-      $http.get(envInfo.api.url+"/game/play").success(function(data) {
-        console.log("played gamers:",data);
-        callback(data);
-      });
-    },
-    getAll: function(callback){
-      $http.get(envInfo.api.url+"/game").success(function(data) {
-        console.log("all gamers:",data);
-        callback(data);
-      });
-    },
     dismissAll: function(callback){
       $http.delete(envInfo.api.url+"game/").success(function(data) {
         console.log("dismissed gamers:",data);
@@ -83,6 +71,7 @@ angular.module('app.services', [])
     return {
       gamerIds : [],
       rPlayerId: null,//current running player.
+      curGamerId : null,//current running gamer.
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -91,8 +80,15 @@ angular.module('app.services', [])
       }
       ,
       runPlayer: function(callback){
-        $http.get(envInfo.api.url+"/game/run/player/"+this.rPlayerId).success(function(data) {
+        $http.get(envInfo.api.url+"/docker/run/player/"+this.rPlayerId).success(function(data) {
           console.log("paired gamers:",data);
+          callback(data);
+        });
+      }
+      ,
+      playOne: function(callback){
+        $http.get(envInfo.api.url+"/game/play/"+this.curGamerId).success(function(data) {
+          console.log("played one gamer:",data);
           callback(data);
         });
       }
@@ -102,7 +98,104 @@ angular.module('app.services', [])
           console.log("played gamers:",data);
           callback(data);
         });
+      },
+      getAll: function(callback){
+        $http.get(envInfo.api.url+"/game").success(function(data) {
+          console.log("all gamers:",data);
+          callback(data);
+        });
+      },
+      getOne: function(callback){
+        $http.get(envInfo.api.url+"/game/"+this.curGamerId).success(function(data) {
+          console.log("gamer one:",data);
+          callback(data);
+        });
+      }
+      ,
+      getSgf: function(callback){
+        $http.get(envInfo.api.url+"/game/sgf/"+this.curGamerId).success(function(data) {
+          console.log("gamer sgf:",data);
+          callback(data);
+        });
       }
     };
   }])
+
+  ///@see: http://forum.ionicframework.com/t/ionicloading-in-http-interceptor/4599/7
+  .factory('TrendicityInterceptor',
+    function ($injector, $q, $log) {
+
+      var hideLoadingModalIfNecessary = function () {
+        var $http = $http || $injector.get('$http');
+        if ($http.pendingRequests.length === 0) {
+          $injector.get('$ionicLoading').hide();
+        }
+      };
+
+      return {
+        request: function (config) {
+          $injector.get('$ionicLoading').show();
+
+          // Handle adding the access_token or auth request.
+
+          return config;
+        },
+        requestError: function (rejection) {
+          hideLoadingModalIfNecessary();
+          return $q.reject(rejection);
+        },
+        response: function (response) {
+          hideLoadingModalIfNecessary();
+          return response;
+        },
+        responseError: function (rejection) {
+          hideLoadingModalIfNecessary();
+          //http status code check
+          $log.error("detected what appears to be an oAuth error...", rejection);
+          if (rejection.status == 400) {
+            rejection.status = 401; // Set the status to 401 so that angular-http-auth inteceptor will handle it
+          }
+          return $q.reject(rejection);
+        }
+      };
+    })
+  //@see http://stackoverflow.com/questions/16627860/angular-js-and-ng-swith-when-emulating-enum
+  .factory('Enum', [function () {
+    var service = {
+      //
+      genderType: [
+        //AIPlayer:
+        {
+          name: "AI",
+          data: "1"
+        },
+        //HumanPlayer:
+        {
+          name: "Human",
+          data: "0"
+        }
+      ]
+      , getUUID: function () {
+        // http://www.ietf.org/rfc/rfc4122.txt
+        var s = [];
+        var hexDigits = "0123456789abcdef";
+        for (var i = 0; i < 36; i++) {
+          s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+        }
+        s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+        s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+        s[8] = s[13] = s[18] = s[23] = "_";
+
+        var uuid = s.join("");
+        return uuid;
+      }
+      , getTimestamp: function () {
+        var now = new Date;
+        var utc_timestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+          now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+        return utc_timestamp;
+      }
+    };
+    return service;
+  }]);
 ;

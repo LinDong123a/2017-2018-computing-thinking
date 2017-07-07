@@ -3,6 +3,8 @@ package info.smartkit.godpaper.go.controller;
 
 import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
+import com.spotify.docker.client.messages.ContainerInfo;
+import com.spotify.docker.client.messages.ContainerStats;
 import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
@@ -118,12 +120,12 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/player/{userId}")
-        public boolean runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+        public String runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
                 return dockerService.runPlayer(userId);
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/agent/{name}")
-        public boolean runAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+        public String runAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
                 return dockerService.runAgent(name);
         }
 }

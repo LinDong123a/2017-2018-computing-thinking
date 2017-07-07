@@ -1,28 +1,31 @@
-<ion-view title="Game Lobby" id="page2">
+<ion-view title="大厅" id="page2">
   <ion-nav-buttons side="right">
-    <button class="button ion-android-bulb" ng-click="playAll()"> 3.PLAY ALL
+    <button class="button ion-android-send" ng-click="playAll()">比赛
     </button>
   </ion-nav-buttons>
   <ion-nav-buttons side="left">
-    <!--
-    <button class="button button-assertive ion-android-refresh" ng-click="dismissAll()"> 0.DISMISS
+    <button class="button ion-android-refresh" ng-click="getAll()">刷新
     </button>
-    -->
-    <button class="button ion-android-people" ng-click="pairAll()"> 2.PAIR ALL
+
+    <button class="button ion-android-people" ng-click="pairAll()">配对
     </button>
 
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
     <ion-list id="gameLobby-list">
       <ion-list>
-        <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList">
-          <i class="icon-right ion-android-laptop"></i>
-          <h2>{{lobby.player1.name}} VS {{lobby.player2.name}}</h2>
-          <p>{{lobby.player1.rank}}p VS {{lobby.player2.rank}}p</p>
-          <p>{{lobby.player1.policy}} VS {{lobby.player2.policy}}</p>
-          <p>{{lobby.player1.score}} VS {{lobby.player2.score}}</p>
-          <h2>Created: {{lobby.created | date:'yyyy-MM-dd HH:mm:ss'}}</h2>
-          <button class="icon ion-ios-game-controller-a button button-icon" ng-click=""></button>
+        <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList" >
+          <!--<i class="icon-right ion-android-laptop"></i>-->
+          <h3>挑战名称：{{lobby.player1.name}} VS {{lobby.player2.name}}</h3>
+          <p>挑战等级：{{lobby.player1.rank}}段 VS {{lobby.player2.rank}}段</p>
+          <p>挑战策略：{{lobby.player1.policy}} VS {{lobby.player2.policy}}</p>
+          <p>挑战分数：{{lobby.player1.score}} VS {{lobby.player2.score}}</p>
+          <p>挑战时间: {{lobby.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+          <button class="icon ion-ios-game-controller-a button button-icon"></button>
+          <button class="icon-right ion-play" ng-show="lobby.status==1" ng-click="playOne(lobby.id)"></button>
+          <button class="icon-right ion-pause" ng-disabled="true" ng-show="lobby.status==2" ng-click=""></button>
+          <button class="icon-right ion-stop" ng-disabled="true" ng-show="lobby.status==2" on-click=""></button>
+          <button class="icon-right ion-eye" ng-show="lobby.status==2" ng-click="toGameTableView(lobby.id)"></button>
         </ion-item>
       </ion-list>
   </ion-content>

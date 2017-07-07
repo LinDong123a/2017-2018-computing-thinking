@@ -24,6 +24,8 @@ chain:
 ai:
   ranks: 3
   policys: random,best_move,random_move,mcts
+  player: smartkit/godpaper-go-ai-player:latest
+  agent: smartkit/godpaper-go-ai-mugo
 ---
 spring:
   profiles: test

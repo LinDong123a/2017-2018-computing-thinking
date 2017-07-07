@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+import static info.smartkit.godpaper.go.settings.AIVariables.rank;
+
 /**
  * Created by smartkit on 04/07/2017.
  */
@@ -17,16 +19,6 @@ import java.util.List;
 public class AIProperties {
         private static Logger LOG = LogManager.getLogger(AIProperties.class);
 
-        public int getRank() {
-                return rank;
-        }
-
-        public void setRank(int rank) {
-                this.rank = rank;
-                //
-                AIVariables.rank = rank;
-                LOG.info("setRank:"+AIVariables.rank);
-        }
 
         public List<String> getPolicys() {
                 return policys;
@@ -39,7 +31,19 @@ public class AIProperties {
                 LOG.info("setPolicys:"+AIVariables.policys.toString());
         }
 
-        private int rank;
+        @Override public String toString() {
+                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agent='" + agent + '\'' + '}';
+        }
+
+        public int getRanks() {
+                return ranks;
+        }
+
+        public void setRanks(int ranks) {
+                this.ranks = ranks;
+        }
+
+        private int ranks;
         private List<String> policys;
 
         public String getPlayer() {
@@ -55,10 +59,6 @@ public class AIProperties {
 
 
         private String player;
-
-        @Override public String toString() {
-                return "AIProperties{" + "rank=" + rank + ", policys=" + policys + ", player='" + player + '\'' + ", agent='" + agent + '\'' + '}';
-        }
 
         public String getAgent() {
                 return agent;

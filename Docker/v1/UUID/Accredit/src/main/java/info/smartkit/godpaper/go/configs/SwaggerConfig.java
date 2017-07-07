@@ -41,7 +41,7 @@ public class SwaggerConfig {
                 "GODPAPER.SMARTKIT.INFO description of API.",
                 "0.0.1",
                 "Terms of service",
-                "contact@smartkit.info",
+                "z@smartkit.info",
                 "License of API",
                 "API license URL");
         return apiInfo;

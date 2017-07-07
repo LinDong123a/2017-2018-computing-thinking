@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService) {
+function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location) {
   //FIXME:$rootScope not working.
   // $rootScope.gamerIds = [];
   //Dynamic host modification
@@ -13,13 +13,21 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   // envInfo.mqtt.url = envInfo.mqtt.host+envInfo.mqtt.port;
   //
   $scope.envInfo = envInfo;
-
+  //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), SAVED("saved", 3);
+  //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
   $scope.pairAll = function () {
     console.log("GameService:",GameService);
     GameService.pairAll(function(data){
       console.log("GameService.pairAll(:",  data);
       $scope.lobbyList  = data;
       console.log("$scope.lobbyList:",  $scope.lobbyList);
+    });
+  }
+  $scope.playOne = function($gid){
+    console.log("game start!:");
+    GameService.curGamerId = $gid;
+    GameService.playOne(function(data){
+      console.log("GameService.playOne:",  data);
     });
   }
   $scope.playAll = function(){
@@ -35,13 +43,28 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       console.log("$scope.lobbyList:",  $scope.lobbyList);
     });
   }
+  $scope.getAll = function(){
+    GameService.getAll(function(data){
+      console.log("GameService.getAll:",  data);
+      $scope.lobbyList  = data;
+      console.log("$scope.lobbyList:",  $scope.lobbyList);
+    });
+  }
+  $scope.toGameTableView  = function($gid){
+    console.log("$scope.toGameTableView called.");
+    GameService.curGamerId = $gid;
+    $location.url('/page1/page3');
+  }
+
+  //default calls
+  $scope.getAll();
 
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','LobbyService','TableService','ChainCodeService','$ionicModal',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicModal) {
+function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup) {
   // Load the modal from the given template URL
   $scope.modal_settings = null;
   $ionicModal.fromTemplateUrl("templates/modal_settings.html",
@@ -56,13 +79,13 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
   $scope.tableIndex = 0;
   $scope.tableInfo = {};
   $scope.getAll = function(){
-    LobbyService.getAll(function(data){
-      console.log("LobbyService.getAll:",  data);
+    GameService.getAll(function(data){
+      console.log("GameService.getAll:",  data);
       $scope.gamers = data;
     });
   }
   // console.log("scope.gamerIds[$scope.tableIndex]:",$scope.gamerIds[$scope.tableIndex]);
-  $scope.getOne = function(){
+  $scope.nextOne = function(){
     // console.log("LobbyService.gamerIds:", LobbyService.gamerIds);
     // TableService.gamerId = LobbyService.gamerIds[$scope.tableIndex];
     // console.log("TableService.gamerId:", TableService.gamerId);
@@ -72,16 +95,9 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
     //TODO:ChainCode Verify
     // ChainCodeService.gamerId = $scope.tableInfo.id;
     // console.log("ChainCodeService.gamerId:", ChainCodeService.gamerId);
-    // $scope.tableInfo = ChainCodeService.getOne(function(data){
-    //   sgf = data;
       //
-      var gameTableDiv = document.getElementById("gameTableDiv");
-      console.log("$scope.gameTableDiv:",gameTableDiv);
-      if(gameTableDiv) {
-        var player = new WGo.BasicPlayer(gameTableDiv, {
-          sgf: $scope.tableInfo.sgf
-        });
-      }
+      $scope.renderGameTable($scope.tableInfo);
+      //
       $scope.tableIndex++;
       if($scope.tableIndex==$scope.gamers.length){
         $scope.tableIndex = 0; //next round.
@@ -93,15 +109,47 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
     console.log("updated envInfo:",envInfo);
     $scope.modal_settings.hide();
   }
+  $scope.getSgf = function(){
+    GameService.getSgf(function(data){
+      console.log("GameService.getSgf:",  data);
+      $scope.sgfDto = data;
+      //alert message
+      $ionicPopup.alert({
+        title: '保存成功！',
+        template: "http://"+data.url
+      });
+    });
+  }
+  $scope.getOne = function() {
+    console.log("$scope.getOne called.");
+    //
+    GameService.getOne(function(data){
+      console.log("GameService.getOne:",  data);
+      $scope.renderGameTable(data);
+    });
+  }
+
+  $scope.renderGameTable = function ($tableInfo) {
+    var gameTableDiv = document.getElementById("gameTableDiv");
+    console.log("$scope.gameTableDiv:",gameTableDiv);
+    if(gameTableDiv) {
+      var player = new WGo.BasicPlayer(gameTableDiv, {
+        sgf: $tableInfo.sgf
+      });
+    }
+  }
+
   //default calls
-  $scope.getAll();
+  $scope.getOne();
+  // $scope.getAll();
 }])
 
-  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService) {
+    function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum) {
       console.info("envInfo:",envInfo);
+      //
       $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
       //Load the modal from the given template URL
       $scope.modal_user_add  = null;
@@ -112,9 +160,10 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
         }).then(function(modal) {
         $scope.modal_user_add = modal;
       });
-      $scope.anewUser = {name:'undefined',rank:0,policy:"random"};
+
       $scope.addUser = function () {
         $scope.modal_user_add.show();
+        $scope.anewUser = {name:Enum.getUUID(),rank:0,policy:"random"};
       };
       $scope.userList = [];
       $scope.createUser = function () {
@@ -159,5 +208,6 @@ function ($rootScope,$scope,LobbyService,TableService,ChainCodeService,$ionicMod
           console.log("GameService.runPlayer:", data);
         });
       }
-
+      //default calls
+      $scope.getUsers();
     }])

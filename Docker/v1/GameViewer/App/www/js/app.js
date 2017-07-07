@@ -15,6 +15,10 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
   .value('debug', true)
   .constant('envInfo', {api:{host:"http://localhost",port:":8095",contextPath:"/accredit",url:"http://localhost:8095/accredit"},mqtt:{host:"127.0.0.1",port:":1883"}})
 
+  .config(function($httpProvider) {
+    $httpProvider.interceptors.push('TrendicityInterceptor');
+  })
+
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
