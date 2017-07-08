@@ -25,7 +25,7 @@ ai:
   ranks: 3
   policys: random,best_move,random_move,mcts
   player: smartkit/godpaper-go-ai-player:latest
-  agent: smartkit/godpaper-tensorflow-mugo
+  agent: smartkit/godpaper-go-tensorflow-mugo:latest
 ---
 spring:
   profiles: test

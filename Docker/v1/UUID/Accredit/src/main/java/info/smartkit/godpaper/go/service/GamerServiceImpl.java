@@ -5,6 +5,7 @@ import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
+import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.ServerUtil;
 import info.smartkit.godpaper.go.utils.SgfUtil;
@@ -37,6 +38,8 @@ public class GamerServiceImpl implements GamerService {
 
         @Autowired ChainCodeProperties chainCodeProperties;
         @Autowired ServerProperties serverProperties;
+
+        @Autowired UserRepository userRepository;
 
 
 
@@ -105,6 +108,13 @@ public class GamerServiceImpl implements GamerService {
 
         @Override public Gamer playOne(String gamerId) throws MqttException {
                 Gamer curGamer = gamerRepository.findOne(gamerId);
+                //update users status
+                User player1 = curGamer.getPlayer1();
+                player1.setStatus(UserStatus.PLAYING.getIndex());
+                userRepository.save(player1);
+                User player2 = curGamer.getPlayer2();
+                player2.setStatus(UserStatus.PLAYING.getIndex());
+                userRepository.save(player2);
                 return this.play(curGamer,1);
         }
 

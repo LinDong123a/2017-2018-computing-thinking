@@ -133,7 +133,7 @@ public class DockerServiceImpl implements DockerService{
                 //
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getAgent())
-                        .addVolume("/sgf")
+//                        .addVolume("/sgf")
 //                        .env(envStrings)
                         .build();
                 final ContainerCreation creation = docker.createContainer(config, name);
