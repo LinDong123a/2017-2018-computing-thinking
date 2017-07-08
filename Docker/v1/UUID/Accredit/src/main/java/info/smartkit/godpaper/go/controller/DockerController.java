@@ -30,16 +30,16 @@ public class DockerController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/agent/{name}")
-        public String runAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+        public String trainAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
                 return dockerService.runAgent(name);
         }
 
-        @RequestMapping(method = RequestMethod.GET,value="/info/{id}")
-        public ContainerInfo info(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                return dockerService.info(id);
-        }
-        @RequestMapping(method = RequestMethod.GET,value="/stats/{id}")
-        public ContainerStats stats(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                return dockerService.stats(id);
-        }
+//        @RequestMapping(method = RequestMethod.GET,value="/info/{id}")
+//        public ContainerInfo info(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+//                return dockerService.info(id);
+//        }
+//        @RequestMapping(method = RequestMethod.GET,value="/stats/{id}")
+//        public ContainerStats stats(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+//                return dockerService.stats(id);
+//        }
 }

@@ -81,7 +81,7 @@ public class GameController {
 
 
         @RequestMapping(method = RequestMethod.DELETE, value="/{gamerId}")
-        public void delete(@PathVariable String gamerId) throws MqttException {
+        public void deleteOne(@PathVariable String gamerId) throws MqttException {
                 //Dismiss gamer's user
                 Gamer gamer = repository.findOne(gamerId);
                 //unsubscribe
@@ -96,7 +96,7 @@ public class GameController {
                 repository.delete(gamerId);
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
-        public void delete() throws MqttException {
+        public void deleteAll() throws MqttException {
                 List<Gamer> allGamers = repository.findAll();
                 for(Gamer gamer : allGamers){
                         //unsubscribe

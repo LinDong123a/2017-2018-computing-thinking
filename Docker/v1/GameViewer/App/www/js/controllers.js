@@ -4,8 +4,9 @@ angular.module('app.controllers', [])
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location) {
-  //FIXME:$rootScope not working.
-  // $rootScope.gamerIds = [];
+  //
+  $rootScope.gamerIds = [];
+  $rootScope.curGamerId = null;
   //Dynamic host modification
   // envInfo.mqtt.host = $location.host();
   // envInfo.api.host = $location.host();
@@ -52,8 +53,17 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   }
   $scope.toGameTableView  = function($gid){
     console.log("$scope.toGameTableView called.");
+    $rootScope.curGamerId = $gid;
     GameService.curGamerId = $gid;
+    console.log(" $rootScope.curGamerId:",$rootScope.curGamerId);
     $location.url('/page1/page3');
+  }
+  $scope.deleteOne = function($gamer){
+    GameService.curGamerId = $gamer.id;
+    GameService.deleteOne(function(data){
+      console.log("GameService.playOne:",  data);
+      $scope.getAll();//refresh.
+    });
   }
 
   //default calls
@@ -139,15 +149,21 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     }
   }
 
+  $scope.trainAgent = function () {
+    GameService.trainAgent(function(data){
+      console.log("GameService.trainAgent:", data);
+    });
+  }
+
   //default calls
   $scope.getOne();
   // $scope.getAll();
 }])
 
-  .controller('gamePlayerCtrl', ['$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('gamePlayerCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum) {
       console.info("envInfo:",envInfo);
       //
       $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};

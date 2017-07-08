@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>info.smartkit.GODPAPER</groupId>
-    <artifactId>sk-gd-go-uuid-accredit-service</artifactId>
+    <groupId>info.smartkit.godpaper</groupId>
+    <artifactId>sk-gd-go-uuid-accredit-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>sk-gd-go-uuid-accredit-service</name>
-    <description>SMARTKIT-GODPAPER-Go-UUID-ACCREDIT-Service project for Spring Boot</description>
+    <name>sk-gd-go-uuid-accredit-api</name>
+    <description>SMARTKIT-GODPAPER-Go-UUID-ACCREDIT-API project with Spring Boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -72,6 +72,7 @@ angular.module('app.services', [])
       gamerIds : [],
       rPlayerId: null,//current running player.
       curGamerId : null,//current running gamer.
+      curAgentId : "mugo",//current training agent.
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -81,6 +82,13 @@ angular.module('app.services', [])
       ,
       runPlayer: function(callback){
         $http.get(envInfo.api.url+"/docker/run/player/"+this.rPlayerId).success(function(data) {
+          console.log("paired gamers:",data);
+          callback(data);
+        });
+      }
+      ,
+      trainAgent: function(callback){
+        $http.get(envInfo.api.url+"/docker/train/agent/"+this.curAgentId).success(function(data) {
           console.log("paired gamers:",data);
           callback(data);
         });
@@ -115,6 +123,13 @@ angular.module('app.services', [])
       getSgf: function(callback){
         $http.get(envInfo.api.url+"/game/sgf/"+this.curGamerId).success(function(data) {
           console.log("gamer sgf:",data);
+          callback(data);
+        });
+      }
+      ,
+      deleteOne: function(callback){
+        $http.delete(envInfo.api.url+"/game/"+this.curGamerId).success(function(data) {
+          console.log("gamer one:",data);
           callback(data);
         });
       }

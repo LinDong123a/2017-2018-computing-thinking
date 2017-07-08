@@ -77,7 +77,9 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 if(mqttClient==null){
                         this.connect(mqttProperties.getBrokerUrl(),topic);
                 }
-                mqttClient.unsubscribe(topic);
+                if(mqttClient.isConnected()) {
+                        mqttClient.unsubscribe(topic);
+                }
         }
 
         @Override public void connectionLost(Throwable throwable) {

@@ -1,8 +1,10 @@
 package info.smartkit.godpaper.go.controller;
 
+import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.ChainCodeService;
+import info.smartkit.godpaper.go.service.DockerService;
 import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.UserService;
 import info.smartkit.godpaper.go.settings.ChainCodeProperties;
@@ -34,6 +36,8 @@ public class UserController {
 
     @Autowired MqttProperties mqttProperties;
 
+    @Autowired DockerService dockerService;
+
     @RequestMapping(method = RequestMethod.POST)
     public User createOne(@RequestBody User user){
         User result = repository.save(user);
@@ -54,15 +58,19 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value="/{userId}")
-    public void deleteByUserId(@PathVariable String userId){
+    public void deleteByUserId(@PathVariable String userId) throws InterruptedException, DockerException, MqttException {
+            User targetUser = repository.findOne(userId);
+            if( repository.findByStatus(UserStatus.TENANTED.getIndex()).contains(targetUser)) {
+                    service.untenant(userId);
+            }
             repository.delete(userId);
     }
 
-
-        @RequestMapping(method = RequestMethod.DELETE, value="/")
-        public void deleteAll(){
-                repository.deleteAll();
-        }
+//
+//        @RequestMapping(method = RequestMethod.DELETE, value="/")
+//        public void deleteAll(){
+//                repository.deleteAll();
+//        }
 
     @RequestMapping(method = RequestMethod.DELETE, value="/status/{index}")
     public void deleteByStatus(@PathVariable int index){
@@ -81,40 +89,13 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/tenant")
-    public User tenant() throws MqttException {
-            //User tenant
-            User untenantedOne = repository.findByStatus(UserStatus.unTENANTED.getIndex()).get(0);
-            //update status
-            untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
-            User updated = repository.save(untenantedOne);
-            LOG.info("tenantedUser:"+updated.toString());
-            //MqttClient tenant
-            //produce message topic by uuid
-            mqttService.connect(mqttProperties.getBrokerUrl(), updated.getTopicName());
-            //and subscribe
-            mqttService.subscribe(updated.getTopicName());
-            //
-            //TODO:ChainCode register
-            //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
-            return updated;
+    public User tenant() throws MqttException, DockerException, InterruptedException {
+            return service.tenant();
     }
-        @RequestMapping(method = RequestMethod.DELETE, value="/tenant/{userId}")
-        public User untenant(@PathVariable String userId) throws MqttException {
-                //User tenant
-                User tenantUeser = repository.findOne(userId);
-                //update status
-                tenantUeser.setStatus(UserStatus.unTENANTED.getIndex());
-                User updated = repository.save(tenantUeser);
-                LOG.info("untenantedUser:"+updated.toString());
-                //MqttClient untenant
-                //produce message topic by uuid
-//                mqttService.disconnect(mqttProperties.getBrokerUrl(), updated.getTopicName());
-                //and unsubscribe
-                mqttService.unsubscribe(updated.getTopicName());
-                //
-                //TODO:ChainCode un-register
-                //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
-                return updated;
-        }
+    @RequestMapping(method = RequestMethod.DELETE, value="/tenant/{userId}")
+    public User untenant(@PathVariable String userId) throws MqttException, DockerException, InterruptedException {
+            //
+            return service.untenant(userId);
+    }
 
 }

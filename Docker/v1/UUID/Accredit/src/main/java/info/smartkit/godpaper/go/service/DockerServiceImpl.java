@@ -133,7 +133,8 @@ public class DockerServiceImpl implements DockerService{
                 //
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getAgent())
-                        .env(envStrings)
+                        .addVolume("/sgf")
+//                        .env(envStrings)
                         .build();
                 final ContainerCreation creation = docker.createContainer(config, name);
                 final String id = creation.id();
@@ -151,5 +152,36 @@ public class DockerServiceImpl implements DockerService{
         @Override public ContainerStats stats(String id) throws DockerException, InterruptedException, DockerCertificateException {
                 final ContainerStats stats = docker.stats(id);
                 return stats;
+        }
+
+        @Override public void stopContainer(String id, int delay) throws DockerException, InterruptedException {
+                // Stop container
+                docker.stopContainer(id,delay);
+        }
+
+        @Override public void killContainer(String id) throws DockerException, InterruptedException {
+                // Kill container
+                docker.killContainer(id);
+        }
+
+        @Override public void removeContainer(String id) throws DockerException, InterruptedException {
+                // Remove container
+                docker.removeContainer(id);
+        }
+
+        @Override public void pauseContainer(String id) throws DockerException, InterruptedException {
+                docker.pauseContainer(id);
+        }
+
+        @Override public void unpauseContainer(String id) throws DockerException, InterruptedException {
+                docker.unpauseContainer(id);
+        }
+
+        @Override public void startContainer(String id) throws DockerException, InterruptedException {
+                docker.startContainer(id);
+        }
+
+        @Override public void restartContainer(String id, int delay) throws DockerException, InterruptedException {
+                docker.restartContainer(id,delay);
         }
 }

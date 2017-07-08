@@ -48,6 +48,7 @@ public class GamerServiceImpl implements GamerService {
                 int arraySize = tenantedUsers.size();
                 LOG.info("tenantedUsers("+tenantedUsers.size()+"):"+tenantedUsers.toString());
                 //TODO:more game machine mechanism here.
+                //ELO,Glicko,https://help.elo.com/ELOdoc/frame/9/javaclient/en/0100000001
                 List<User> secondPart = tenantedUsers.subList(0,arraySize/2);
                 List<User>  firstPart= tenantedUsers.subList(arraySize/2,arraySize);
                 List<Gamer> gamers = new ArrayList<>(arraySize/2);
@@ -148,9 +149,10 @@ public class GamerServiceImpl implements GamerService {
 //                String fixture = "(";//;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
                 //
                 String sgfHeader = this.getHeader(chainCodeProperties.getChainName(),VERSION,gamer);
-                //
+                String sgfTail = ")";
+                        //
                 LOG.info("sgfHeader:"+sgfHeader);
-                sgfDto.setCmd(sgfHeader);
+                sgfDto.setCmd(sgfHeader+sgfTail);
                 //
                 if(filed)//Save to disk sgf file.
                 {
@@ -174,7 +176,7 @@ public class GamerServiceImpl implements GamerService {
         private String getHeader(String application, String version,Gamer gamer)
         {
                 StringBuilder header = new StringBuilder(128);
-                header.append(";FF[4]CA[");
+                header.append("(;FF[4]CA[");
                 header.append(getEscaped(ENCODING));
                 header.append(']');
                 if (application != null && ! application.equals(""))
