@@ -1,15 +1,18 @@
-<ion-view title="棋桌#{{$root.curGamerId}}" id="page3" ng-controller="gameTableCtrl">
+<ion-view title="棋桌" id="page3" ng-controller="gameTableCtrl">
+  <ion-nav-title>
+    {{$root.tableInfo.id}}
+  </ion-nav-title>
   <ion-nav-buttons side="right">
 
-    <button class="button ion-ios-filing-outline" ng-click="getSgf()">保存棋谱
-    </button>
     <button class="button ion-ios-analytics-outline" ng-click="trainAgent()">训练AI
+    </button>
+    <button class="button ion-ios-pulse" ng-show="sgfDto.url!=null" ng-click="trainAgent()">思维图谱
     </button>
   </ion-nav-buttons>
   <ion-nav-buttons side="left">
-    <button class="button ion-android-arrow-down" ng-click="nextOne()">下一桌
+    <button class="button ion-android-refresh" ng-click="$root.getOneTable()">刷新
     </button>
-    <button class="button ion-android-settings" ng-click="modal_settings.show()">设置
+    <button class="button ion-ios-filing-outline" ng-show="$root.tableInfo!=null" ng-click="getSgf()">保存棋谱
     </button>
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">

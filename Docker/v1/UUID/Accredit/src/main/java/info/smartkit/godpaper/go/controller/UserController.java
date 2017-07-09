@@ -80,7 +80,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<User> listAll(){
-            return repository.findAll();
+            return repository.findAllByOrderByCreatedDesc();
     }
 
     @RequestMapping(method = RequestMethod.GET,value="/status/{index}")

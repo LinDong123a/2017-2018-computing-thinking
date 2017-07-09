@@ -9,6 +9,7 @@ import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.settings.AIProperties;
 import info.smartkit.godpaper.go.settings.AIVariables;
+import info.smartkit.godpaper.go.utils.SgfUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,10 +131,18 @@ public class DockerServiceImpl implements DockerService{
                 List<String> envStrings = new ArrayList<>();
 //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
 //                envStrings.add("IP_MQTT=192.168.0.11");
+                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
+                final HostConfig hostConfig =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(""))
+                                        .to("/sgf/")
+                                        .readOnly(true)
+                                        .build())
+                                .build();
                 //
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getAgent())
-//                        .addVolume("/sgf")
+                        .hostConfig(hostConfig)
 //                        .env(envStrings)
                         .build();
                 final ContainerCreation creation = docker.createContainer(config, name);
@@ -141,6 +150,9 @@ public class DockerServiceImpl implements DockerService{
 
                 // Start container
                 docker.startContainer(id);
+                //inspect mounts
+                final ContainerInfo info = docker.inspectContainer(id);
+                LOG.info("Inspect mounts:"+info.mounts().toString());
                 return id;
         }
 

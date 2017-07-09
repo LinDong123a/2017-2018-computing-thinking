@@ -12,4 +12,5 @@ public interface GamerRepository extends MongoRepository<Gamer,String> {
         List<Gamer> findByStatus(int status);
         List<Gamer> findByName(String name);
         List<Gamer> findByTopic(String topic);
+        List<Gamer> findAllByOrderByCreatedDesc();
 }

@@ -1,12 +1,56 @@
 angular.module('app.controllers', [])
 
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum) {
+      console.info("appMainCtrl init.");
+      // Load the modal from the given template URL
+      $rootScope.modal_settings = null;
+      $ionicModal.fromTemplateUrl("templates/modal_settings.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $rootScope.modal_settings = modal;
+      });
+      //
+      $rootScope.curGamerId = null;
+      $rootScope.gamerIds = [];
+      $rootScope.tableInfo = null;
+      //common functions.
+      $rootScope.renderGameTable = function ($tableInfo) {
+        var gameTableDiv = document.getElementById("gameTableDiv");
+        console.log("$scope.gameTableDiv:",gameTableDiv);
+        if(gameTableDiv) {
+          var player = new WGo.BasicPlayer(gameTableDiv, {
+            sgf: $tableInfo.sgf
+          });
+        }
+      };
+      $rootScope.getOneTable = function() {
+        console.log("$scope.getOne called.");
+        //
+        GameService.getOne(function(data){
+          console.log("GameService.getOne:",  data);
+          $rootScope.tableInfo = data;
+          $rootScope.renderGameTable(data);
+        });
+      };
+
+      $rootScope.updateEnvInfo = function(){
+        //
+        console.log("updated envInfo:",envInfo);
+        $scope.modal_settings.hide();
+      }
+
+  }])
+
 .controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location) {
   //
-  $rootScope.gamerIds = [];
-  $rootScope.curGamerId = null;
   //Dynamic host modification
   // envInfo.mqtt.host = $location.host();
   // envInfo.api.host = $location.host();
@@ -57,6 +101,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     GameService.curGamerId = $gid;
     console.log(" $rootScope.curGamerId:",$rootScope.curGamerId);
     $location.url('/page1/page3');
+    $rootScope.getOneTable();
   }
   $scope.deleteOne = function($gamer){
     GameService.curGamerId = $gamer.id;
@@ -75,25 +120,12 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup) {
-  // Load the modal from the given template URL
-  $scope.modal_settings = null;
-  $ionicModal.fromTemplateUrl("templates/modal_settings.html",
-    {
-      scope: $scope,
-      animation: 'slide-in-up'
-    }).then(function(modal) {
-    $scope.modal_settings = modal;
-  });
 //
   $scope.gamers = [];
   $scope.tableIndex = 0;
   $scope.tableInfo = {};
-  $scope.getAll = function(){
-    GameService.getAll(function(data){
-      console.log("GameService.getAll:",  data);
-      $scope.gamers = data;
-    });
-  }
+  $scope.sgfDto = {cmd:null,url:null};
+  //
   // console.log("scope.gamerIds[$scope.tableIndex]:",$scope.gamerIds[$scope.tableIndex]);
   $scope.nextOne = function(){
     // console.log("LobbyService.gamerIds:", LobbyService.gamerIds);
@@ -105,8 +137,8 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     //TODO:ChainCode Verify
     // ChainCodeService.gamerId = $scope.tableInfo.id;
     // console.log("ChainCodeService.gamerId:", ChainCodeService.gamerId);
-      //
-      $scope.renderGameTable($scope.tableInfo);
+
+      $rootScope.renderGameTable($scope.tableInfo);
       //
       $scope.tableIndex++;
       if($scope.tableIndex==$scope.gamers.length){
@@ -114,11 +146,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       }
     };
 
-  $scope.updateEnvInfo = function(){
-    //
-    console.log("updated envInfo:",envInfo);
-    $scope.modal_settings.hide();
-  }
   $scope.getSgf = function(){
     GameService.getSgf(function(data){
       console.log("GameService.getSgf:",  data);
@@ -130,24 +157,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       });
     });
   }
-  $scope.getOne = function() {
-    console.log("$scope.getOne called.");
-    //
-    GameService.getOne(function(data){
-      console.log("GameService.getOne:",  data);
-      $scope.renderGameTable(data);
-    });
-  }
-
-  $scope.renderGameTable = function ($tableInfo) {
-    var gameTableDiv = document.getElementById("gameTableDiv");
-    console.log("$scope.gameTableDiv:",gameTableDiv);
-    if(gameTableDiv) {
-      var player = new WGo.BasicPlayer(gameTableDiv, {
-        sgf: $tableInfo.sgf
-      });
-    }
-  }
 
   $scope.trainAgent = function () {
     GameService.trainAgent(function(data){
@@ -156,8 +165,11 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
   }
 
   //default calls
-  $scope.getOne();
-  // $scope.getAll();
+  if($rootScope.curGamerId!=null) {
+    console.log("gameTableCtrl.getOneTable() called.");
+    $rootScope.getOneTable();
+  }
+
 }])
 
   .controller('gamePlayerCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

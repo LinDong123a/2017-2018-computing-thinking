@@ -169,13 +169,14 @@ public class GamerServiceImpl implements GamerService {
                        File sgfFile =  Sgf.writeToFile(gamer.getSgf());
                        LOG.info("sgfFile:"+sgfFile.toString());
 
-                       String destFileStr =SgfUtil.getSgf(sgfFile.getName());
+                       String destFileStr =SgfUtil.getSgfLocal(sgfFile.getName());
                        File destFile = new File(destFileStr);
                         try {
                                FileUtils.copyFile(sgfFile,destFile);
                                LOG.info("copy sgf file success.");
-                               String serverUrl = ServerUtil.getInetAddress().getHostAddress()+":"+serverProperties.getPort()+serverProperties.getContextPath();
-                               sgfDto.setUrl(serverUrl+"/sgf/"+sgfFile.getName());
+                               //
+                               String sgfUrl = SgfUtil.getSgfRemote(serverProperties.getPort(),serverProperties.getContextPath(),sgfFile.getName());
+                               sgfDto.setUrl(sgfUrl);
                         } catch (IOException e) {
                                 e.printStackTrace();
                         }

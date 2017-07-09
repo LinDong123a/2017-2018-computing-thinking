@@ -15,10 +15,14 @@ public class SgfUtil {
                 return workingDir;
         }
 
-        public static String getSgf(String context) {
+        public static String getSgfLocal(String context) {
                 // if(!new File("/uploads/").exists()) new File("/uploads/").mkdirs();
                 // return "/uploads/";
                 return getWorkingDir() + "/target/classes/sgf/" + context;
+        }
+
+        public static String getSgfRemote(int port,String contextPath,String sgfName){
+                return ServerUtil.getUrl(port,contextPath)+"/sgf/"+sgfName;
         }
 
 }

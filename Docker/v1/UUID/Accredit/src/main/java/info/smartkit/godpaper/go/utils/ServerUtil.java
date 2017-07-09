@@ -18,4 +18,7 @@ public class ServerUtil {
                 }
                 return inetAddr;
         }
+        public static String getUrl(int port,String contextPath){
+               return ServerUtil.getInetAddress().getHostAddress()+":"+port+contextPath;
+        }
 }

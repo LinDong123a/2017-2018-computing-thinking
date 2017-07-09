@@ -71,7 +71,7 @@ public class GameController {
 
         @RequestMapping(method = RequestMethod.GET)
         public List<Gamer> listAll(){
-                return repository.findAll();
+                return repository.findAllByOrderByCreatedDesc();
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/saved")

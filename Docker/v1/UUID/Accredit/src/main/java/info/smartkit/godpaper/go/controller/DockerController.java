@@ -5,6 +5,7 @@ import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerInfo;
 import com.spotify.docker.client.messages.ContainerStats;
 import info.smartkit.godpaper.go.service.DockerService;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,7 +32,8 @@ public class DockerController {
 
         @RequestMapping(method = RequestMethod.GET,value="/run/agent/{name}")
         public String trainAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                return dockerService.runAgent(name);
+                String uuidPrefix = RandomStringUtils.randomAlphanumeric(10).toLowerCase();
+                return dockerService.runAgent(name+"_"+uuidPrefix);
         }
 
 //        @RequestMapping(method = RequestMethod.GET,value="/info/{id}")

@@ -88,7 +88,7 @@ angular.module('app.services', [])
       }
       ,
       trainAgent: function(callback){
-        $http.get(envInfo.api.url+"/docker/train/agent/"+this.curAgentId).success(function(data) {
+        $http.get(envInfo.api.url+"/docker/run/agent/"+this.curAgentId).success(function(data) {
           console.log("paired gamers:",data);
           callback(data);
         });
