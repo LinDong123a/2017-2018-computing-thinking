@@ -112,7 +112,7 @@ __8.AI Agents__
 1.Mugo
 
 ```
-docker run --name mugo -v /Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/UUID/Accredit/target/classes/sgf:/sgf smartkit/godpaper-go-tensorflow-mugo:latest
+docker run --name mugo -v /Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/UUID/Accredit/target/classes/sgf:/sgf smartkit/godpaper-go-ai-agent-mugo:latest
 ```
 1.DarkGo
 
