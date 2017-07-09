@@ -107,7 +107,7 @@ or
 file:///Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/GameViewer/App/platforms/ios/www/index.html#/page1/page3
 ```
 
-__7.5.AI Agents__
+__8.AI Agents__
 
 1.Mugo
 
