@@ -117,7 +117,7 @@ public class DockerServiceImpl implements DockerService{
                 final String logs;
                 try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
-                        LOG.info("Docker logs:"+logs.toString());
+                        LOG.info("Docker(Player) logs:"+logs.toString());
                 }
 //                final ContainerStats stats = docker.stats(id);
                 return id;
@@ -135,8 +135,8 @@ public class DockerServiceImpl implements DockerService{
                 final HostConfig hostConfig =
                         HostConfig.builder()
                                 .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(""))
-                                        .to("/sgf/")
-                                        .readOnly(true)
+                                        .to("/sgf")
+//                                        .readOnly(true)
                                         .build())
                                 .build();
                 //
@@ -153,6 +153,11 @@ public class DockerServiceImpl implements DockerService{
                 //inspect mounts
                 final ContainerInfo info = docker.inspectContainer(id);
                 LOG.info("Inspect mounts:"+info.mounts().toString());
+                final String logs;
+                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                        logs = stream.readFully();
+                        LOG.info("Docker(Agent) logs:"+logs.toString());
+                }
                 return id;
         }
 

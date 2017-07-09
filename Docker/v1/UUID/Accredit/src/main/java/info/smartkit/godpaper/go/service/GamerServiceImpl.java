@@ -219,7 +219,7 @@ public class GamerServiceImpl implements GamerService {
                         //DateTime
                         header.append("DT[").append(gamer.getCreated()).append("]");
                         //TODO:Result
-                        header.append("RE[B+R]");
+                        header.append("RE[B+R];");
                         //
                 return header.toString();
         }
