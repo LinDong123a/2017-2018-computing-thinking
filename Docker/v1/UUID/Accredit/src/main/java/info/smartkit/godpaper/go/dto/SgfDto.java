@@ -6,6 +6,20 @@ package info.smartkit.godpaper.go.dto;
 public class SgfDto {
         private String cmd;
 
+        @Override public String toString() {
+                return "SgfDto{" + "cmd='" + cmd + '\'' + ", name='" + name + '\'' + ", url='" + url + '\'' + '}';
+        }
+
+        public String getName() {
+                return name;
+        }
+
+        public void setName(String name) {
+                this.name = name;
+        }
+
+        private String name;
+
         public SgfDto() {
         }
 
@@ -27,12 +41,5 @@ public class SgfDto {
 
         private String url;
 
-        public SgfDto(String cmd, String url) {
-                this.cmd = cmd;
-                this.url = url;
-        }
 
-        @Override public String toString() {
-                return "SgfDto{" + "cmd='" + cmd + '\'' + ", url='" + url + '\'' + '}';
-        }
 }

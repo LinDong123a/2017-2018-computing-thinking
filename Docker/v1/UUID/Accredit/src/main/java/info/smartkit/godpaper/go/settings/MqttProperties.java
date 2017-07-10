@@ -65,17 +65,30 @@ public class MqttProperties {
         private String tag_vs;
         private String tag_play;
 
-        public MqttProperties() {
+        @Override public String toString() {
+                return "MqttProperties{" + "brokerUrl='" + brokerUrl + '\'' + ", clientId='" + clientId + '\'' + ", qos=" + qos + ", tag_vs='" + tag_vs + '\'' + ", tag_play='" + tag_play + '\'' + ", ip='" + ip + '\'' + '}';
         }
 
-        public MqttProperties(String brokerUrl, String clientId, int qos) {
-
+        public MqttProperties(String brokerUrl, String clientId, int qos, String tag_vs, String tag_play, String ip) {
                 this.brokerUrl = brokerUrl;
                 this.clientId = clientId;
                 this.qos = qos;
+                this.tag_vs = tag_vs;
+                this.tag_play = tag_play;
+                this.ip = ip;
         }
 
-        @Override public String toString() {
-                return "MqttProperties{" + "brokerUrl='" + brokerUrl + '\'' + ", clientId='" + clientId + '\'' + ", qos=" + qos + '}';
+        public String getIp() {
+
+                return ip;
+        }
+
+        public void setIp(String ip) {
+                this.ip = ip;
+        }
+
+        private String ip;
+
+        public MqttProperties() {
         }
 }

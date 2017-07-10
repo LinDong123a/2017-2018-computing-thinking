@@ -120,8 +120,8 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/player/{userId}")
-        public String runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                return dockerService.runPlayer(userId);
+        public void runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+                dockerService.runPlayer(userId);
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/agent/{name}")

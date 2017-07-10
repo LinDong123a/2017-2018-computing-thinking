@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
             //Random rank
             Random rank_generator = new Random();
             int rRank = aiProperties.getRanks() - rank_generator.nextInt(aiProperties.getRanks());
-            user.setRank(rRank);
+            user.setRank(String.valueOf(rRank));
             //Random policy
             Random policy_generator = new Random();
             int size_policy = aiProperties.getPolicys().size();

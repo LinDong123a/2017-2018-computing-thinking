@@ -8,17 +8,18 @@
   <ion-content class="has-header" has-header="true" padding="true">
   <div class="list">
     <label class="item item-input item-stacked-label">
-    <span class="input-label">名称:</span> <input type="text" placeholder="127.0.0.1" ng-model="anewUser.name">
+    <span class="input-label">名称:</span> <input type="text" placeholder="" ng-model="anewUser.name">
     </label>
     <label class="item item-input item-stacked-label">
-      <span class="input-label">AI:</span><input type="number" placeholder="0"  min="0" max="3" ng-model="anewUser.rank">
+      <span class="input-label">AI:</span><select ng-model='anewUser.rank' ng-options='item.name as item.name for item in $root.aierList track by item.id'>
+      <option value="">---请选择---</option> <!-- not selected / blank option -->
     </label>
     <label class="item item-input item-stacked-label">
       <span class="input-label">策略:</span><select ng-model='anewUser.policy' ng-options='v as v for (k,v) in policysObj'>
       <option value="">---请选择---</option> <!-- not selected / blank option -->
     </select>
     </label>
-    <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"ng-click="createUser()">确定</button>
+    <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty" ng-disabled="anewUser.name==null"  ng-click="createUser()">确定</button>
   </div>
 </ion-content>
 </div>

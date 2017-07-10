@@ -82,14 +82,20 @@ angular.module('app.services', [])
       ,
       runPlayer: function(callback){
         $http.get(envInfo.api.url+"/docker/run/player/"+this.rPlayerId).success(function(data) {
-          console.log("paired gamers:",data);
+          console.log("runPlayer:",data);
           callback(data);
         });
       }
       ,
-      trainAgent: function(callback){
+      runAgent: function(callback){
         $http.get(envInfo.api.url+"/docker/run/agent/"+this.curAgentId).success(function(data) {
-          console.log("paired gamers:",data);
+          console.log("runAgent:",data);
+          callback(data);
+        });
+      },
+      trainAgent: function(callback){
+        $http.get(envInfo.api.url+"/docker/train/agent/"+this.curAgentId).success(function(data) {
+          console.log("trainAgent:",data);
           callback(data);
         });
       }
@@ -135,6 +141,57 @@ angular.module('app.services', [])
       }
     };
   }])
+  .service('UserService', ['$http','envInfo',function($http,envInfo){
+    //
+    return {
+      delUserId:null,
+      getUsers:function(callback){
+        $http.get(envInfo.api.url+"/user").success(function(data) {
+          console.log("get users:",data);
+          callback(data);
+        });
+      }
+      ,
+      createUser:function(callback){
+        $http.post(envInfo.api.url+"/user",this.anewUser).success(function(data) {
+          console.log("one user created:",data);
+          callback(data);
+        });
+      }
+      ,
+      deleteUser:function(callback){
+        $http.delete(envInfo.api.url+"/user/"+this.delUserId).success(function(data) {
+          console.log("one user deleted.:",data);
+          callback(data);
+        });
+      }
+    }
+  }])
+  .service('AierService', ['$http','envInfo',function($http,envInfo){
+    //
+    return {
+      aierId : '',
+      anewAier : null,
+      getOne: function(callback){
+        $http.get(envInfo.api.url+"/ai"+this.aierId).success(function(data) {
+          console.log("one Aier info:",data);
+          callback(data);
+        })
+      },
+      getAll: function(callback){
+        $http.get(envInfo.api.url+"/ai").success(function(data) {
+          console.log("all aiers:",data);
+          callback(data);
+        });
+      },
+      createOne:function(callback){
+      $http.post(envInfo.api.url+"/ai",this.anewAier).success(function(data) {
+        console.log("one user created:",data);
+        callback(data);
+      });
+    }
+    }
+  }])
 
   ///@see: http://forum.ionicframework.com/t/ionicloading-in-http-interceptor/4599/7
   .factory('TrendicityInterceptor',
@@ -166,7 +223,7 @@ angular.module('app.services', [])
         responseError: function (rejection) {
           hideLoadingModalIfNecessary();
           //http status code check
-          $log.error("detected what appears to be an oAuth error...", rejection);
+          $log.error("detected what appears to be an server error...", rejection);
           if (rejection.status == 400) {
             rejection.status = 401; // Set the status to 401 so that angular-http-auth inteceptor will handle it
           }

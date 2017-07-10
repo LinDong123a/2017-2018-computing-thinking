@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -14,10 +14,20 @@ angular.module('app.controllers', [])
         }).then(function(modal) {
         $rootScope.modal_settings = modal;
       });
+      //Load the modal from the given template URL
+      $rootScope.modal_aier_add  = null;
+      $ionicModal.fromTemplateUrl("templates/modal_aier_add.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $rootScope.modal_aier_add = modal;
+      });
       //
       $rootScope.curGamerId = null;
       $rootScope.gamerIds = [];
       $rootScope.tableInfo = null;
+      $rootScope.aierList = [];
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo) {
         var gameTableDiv = document.getElementById("gameTableDiv");
@@ -42,6 +52,14 @@ angular.module('app.controllers', [])
         //
         console.log("updated envInfo:",envInfo);
         $scope.modal_settings.hide();
+      }
+
+      $rootScope.getAiers = function () {
+        AierService.getAll(function(data){
+          console.log("AierService.getAll:", data);
+          $rootScope.aierList = data;
+          console.log("$rootScope.aierList:", $rootScope.aierList);
+        });
       }
 
   }])
@@ -158,6 +176,11 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     });
   }
 
+  $scope.runAgent = function () {
+    GameService.runAgent(function(data){
+      console.log("GameService.runAgent:", data);
+    });
+  }
   $scope.trainAgent = function () {
     GameService.trainAgent(function(data){
       console.log("GameService.trainAgent:", data);
@@ -179,6 +202,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       console.info("envInfo:",envInfo);
       //
       $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
+      $scope.anewAI  = {name:Enum.getUUID(),historical:true};
       //Load the modal from the given template URL
       $scope.modal_user_add  = null;
       $ionicModal.fromTemplateUrl("templates/modal_user_add.html",
@@ -188,7 +212,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
         }).then(function(modal) {
         $scope.modal_user_add = modal;
       });
-
+//
       $scope.addUser = function () {
         $scope.modal_user_add.show();
         $scope.anewUser = {name:Enum.getUUID(),rank:0,policy:"random"};
@@ -238,4 +262,26 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       }
       //default calls
       $scope.getUsers();
+    }])
+  .controller('gameAierCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','AierService','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,AierService,Enum) {
+      console.info("envInfo:",envInfo);
+      //
+      $scope.placeholder  = Enum.getTimestamp();
+      $scope.anewAier = {name:null,model:null};
+
+      $scope.createAier = function () {
+        console.log("$scope.anewAier:",$scope.anewAier);
+        AierService.anewAier = $scope.anewAier;
+        AierService.createOne(function(data){
+          console.log("AierService.createOne:", data);
+          //refresh.
+          $scope.getAll();
+          $rootScope.modal_aier_add.hide();
+        });
+      }
+      //default calls
+      $rootScope.getAiers();
     }])

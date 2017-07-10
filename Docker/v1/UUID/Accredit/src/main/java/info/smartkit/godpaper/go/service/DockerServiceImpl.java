@@ -9,10 +9,13 @@ import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.settings.AIProperties;
 import info.smartkit.godpaper.go.settings.AIVariables;
+import info.smartkit.godpaper.go.settings.MqttProperties;
+import info.smartkit.godpaper.go.utils.ServerUtil;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -30,7 +33,11 @@ import java.util.Map;
 public class DockerServiceImpl implements DockerService{
 
         @Autowired AIProperties aiProperties;
+        @Autowired MqttProperties mqttProperties;
+        @Autowired ServerProperties serverProperties;
+
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
+
         final DockerClient docker = DefaultDockerClient.fromEnv().build();
 
         public DockerServiceImpl() throws DockerCertificateException {
@@ -50,12 +57,15 @@ public class DockerServiceImpl implements DockerService{
                 docker.pull(aiProperties.getPlayer());
                 // Create container
                 List<String> envStrings = new ArrayList<>();
-                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
-                envStrings.add("IP_MQTT=192.168.0.11");
-                //
+                String UriString = mqttProperties.getIp()+":"+serverProperties.getPort()+serverProperties.getContextPath();
+//                                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
+//                                envStrings.add("IP_MQTT=192.168.0.11");
+                envStrings.add("URI_API=http://"+ UriString+"/");//http://192.168.0.11:8095/accredit/
+                envStrings.add("IP_MQTT="+mqttProperties.getIp());//192.168.0.11,ServerUtil.getInetAddress().getHostAddress()
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getPlayer())
                         .env(envStrings)
+//                        .hostConfig()
                         .build();
                 final ContainerCreation creation = docker.createContainer(config, name);
                 final String id = creation.id();
@@ -139,11 +149,57 @@ public class DockerServiceImpl implements DockerService{
 //                                        .readOnly(true)
                                         .build())
                                 .build();
+//                final HostConfig hostConfig =
+//                        HostConfig.builder()
+//                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
+//                                        .to("/savedmodel")
+//                                        //                                        .readOnly(true)
+//                                        .build())
+//                                .build();
                 //
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getAgent())
                         .hostConfig(hostConfig)
 //                        .env(envStrings)
+                        .build();
+                final ContainerCreation creation = docker.createContainer(config, name);
+                final String id = creation.id();
+
+                // Start container
+                docker.startContainer(id);
+                //inspect mounts
+                final ContainerInfo info = docker.inspectContainer(id);
+                LOG.info("Inspect mounts:"+info.mounts().toString());
+                final String logs;
+                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                        logs = stream.readFully();
+                        LOG.info("Docker(Agent) logs:"+logs.toString());
+                }
+                return id;
+        }
+
+        @Override public String trainAgent(String name) throws DockerException, InterruptedException, DockerCertificateException {
+                //default call.
+                this.runAgent(name);
+                //then trainAgent
+                docker.pull(aiProperties.getAgent());
+                // Create container
+                List<String> envStrings = new ArrayList<>();
+                //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
+                //                envStrings.add("IP_MQTT=192.168.0.11");
+                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
+                final HostConfig hostConfig =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
+                                        .to("/savedmodel")
+                                        //                                        .readOnly(true)
+                                        .build())
+                                .build();
+                //
+                final ContainerConfig config = ContainerConfig.builder()
+                        .image(aiProperties.getAgent())
+                        .hostConfig(hostConfig)
+                        .entrypoint("main.py","train","processed_data/","--save-file=/sgf/savedmodel")//python main.py train processed_data/ --save-file=/tmp/savedmodel --epochs=1 --logdir=logs/my_training_run
                         .build();
                 final ContainerCreation creation = docker.createContainer(config, name);
                 final String id = creation.id();

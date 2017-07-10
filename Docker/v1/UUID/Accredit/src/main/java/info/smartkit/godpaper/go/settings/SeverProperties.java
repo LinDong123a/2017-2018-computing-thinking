@@ -12,5 +12,22 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "server")
 public class SeverProperties {
         private String contextPath;
+
+        public String getContextPath() {
+                return contextPath;
+        }
+
+        public void setContextPath(String contextPath) {
+                this.contextPath = contextPath;
+        }
+
+        public int getPort() {
+                return port;
+        }
+
+        public void setPort(int port) {
+                this.port = port;
+        }
+
         private int port;
 }

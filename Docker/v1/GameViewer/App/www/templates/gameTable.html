@@ -4,15 +4,15 @@
   </ion-nav-title>
   <ion-nav-buttons side="right">
 
-    <button class="button ion-ios-analytics-outline" ng-click="trainAgent()">训练AI
+    <button class="button ion-ios-analytics-outline" ng-disabled="sgfDto.url==null" ng-click="$root.modal_aier_add.show()">新建AI
     </button>
-    <button class="button ion-ios-pulse" ng-show="sgfDto.url!=null" ng-click="trainAgent()">思维图谱
+    <button class="button ion-ios-analytics" ng-disabled="anewAier.model==null"  ng-click="trainAgent()">训练AI
     </button>
   </ion-nav-buttons>
   <ion-nav-buttons side="left">
     <button class="button ion-android-refresh" ng-click="$root.getOneTable()">刷新
     </button>
-    <button class="button ion-ios-filing-outline" ng-show="$root.tableInfo!=null" ng-click="getSgf()">保存棋谱
+    <button class="button ion-ios-filing-outline" ng-disabled="$root.tableInfo.id==null" ng-click="getSgf()">保存棋谱
     </button>
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">

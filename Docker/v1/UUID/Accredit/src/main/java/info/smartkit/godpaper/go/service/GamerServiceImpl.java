@@ -7,9 +7,9 @@ import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.settings.*;
-import info.smartkit.godpaper.go.utils.ServerUtil;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -162,21 +162,27 @@ public class GamerServiceImpl implements GamerService {
                 String sgfTail = ")";
                         //
                 LOG.info("sgfHeader:"+sgfHeader);
-                sgfDto.setCmd(sgfHeader+sgfTail);
+                sgfDto.setCmd(sgfHeader);
                 //
                 if(filed)//Save to disk sgf file.
                 {
-                       File sgfFile =  Sgf.writeToFile(gamer.getSgf());
+                       File sgfFile =  Sgf.writeToFile(gamer.getSgf()+sgfTail);
                        LOG.info("sgfFile:"+sgfFile.toString());
-
                        String destFileStr =SgfUtil.getSgfLocal(sgfFile.getName());
                        File destFile = new File(destFileStr);
                         try {
-                               FileUtils.copyFile(sgfFile,destFile);
+                               FileUtils.copyFile(sgfFile,destFile);//only for url.
                                LOG.info("copy sgf file success.");
                                //
                                String sgfUrl = SgfUtil.getSgfRemote(serverProperties.getPort(),serverProperties.getContextPath(),sgfFile.getName());
                                sgfDto.setUrl(sgfUrl);
+                                //mkdir
+                                File sgfFolder = new File(SgfUtil.getSgfLocal(gamer.getId()));
+//                                FileUtils.forceMkdir(sgfFolder);
+                                //cp
+                                FileUtils.copyFileToDirectory(sgfFile,sgfFolder);// for agent training.
+                                //
+                               sgfDto.setName(gamer.getId());
                         } catch (IOException e) {
                                 e.printStackTrace();
                         }

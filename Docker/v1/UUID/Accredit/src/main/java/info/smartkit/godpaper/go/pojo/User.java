@@ -55,15 +55,15 @@ public class User {
     private int score;
 
 
-    public int getRank() {
+    public String getRank() {
         return rank;
     }
 
-    public void setRank(int rank) {
+    public void setRank(String rank) {
         this.rank = rank;
     }
 
-    private int rank=0;//rank of game;
+    private String rank="0";//rank of game;
 
     public int getStatus() {
         return status;

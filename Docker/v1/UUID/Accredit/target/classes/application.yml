@@ -4,18 +4,19 @@ spring:
 ---
 spring:
   profiles: dev
-  data.mongodb.uri: mongodb://localhost:27017/toyhouse
+  data.mongodb.uri: mongodb://${mqtt.ip}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
 mqtt:
-  brokerUrl: tcp://localhost:1883
+  ip: 192.168.0.11
+  brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_
   tag_vs: _vs_
   tag_play: _play_
 chain:
-  baseUrl: http://localhost:7050
+  baseUrl: http://${mqtt.ip}:7050
 #  host: 127.0.0.1
 #  port: 7050
   enrollId: jim
@@ -29,18 +30,19 @@ ai:
 ---
 spring:
   profiles: test
-  data.mongodb.uri: mongodb://118.190.96.120:27017/toyhouse
+  data.mongodb.uri: mongodb://${mqtt.ip}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
 mqtt:
-  brokerUrl: tcp://118.190.96.120:1883
+  ip: 118.190.152.88
+  brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_
   tag_vs: _vs_
   tag_play: _play_
 chain:
-  baseUrl: http://118.190.96.120:7050
+  baseUrl: http://${mqtt.ip}:7050
 #  host: 118.190.96.120
 #  port: 7050
   enrollId: jim
