@@ -159,3 +159,7 @@ docker import your.tar your/container
 ```
 docker run -p 27017:27017 -d --name mongodb our/container entrypoint/command 
 ```
+
+### Deployment
+
+![Screenshot of DockerDeploymentDiagram](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/DockerDeploymentDiagram.png)
