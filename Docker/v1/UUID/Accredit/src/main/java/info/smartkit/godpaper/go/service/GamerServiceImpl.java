@@ -8,6 +8,7 @@ import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.SgfUtil;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.LogManager;
@@ -18,7 +19,9 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,12 +227,21 @@ public class GamerServiceImpl implements GamerService {
                         header.append("KM[").append("0").append("]");
                         //DateTime
                         header.append("DT[").append(gamer.getCreated()).append("]");
-                        //TODO:Result
-                        header.append("RE[B+R];");
+                        //gnugo/ogs
+                        header.append(this.getScore());//default.
                         //
                 return header.toString();
         }
 
+        private Komi getKomi(double value){
+                return new Komi(value);
+        }
+
+
+        private String getScore() {
+                //TOFO
+                return "RE[B+R];";
+        }
 
         private String getEscaped(String text)
         {

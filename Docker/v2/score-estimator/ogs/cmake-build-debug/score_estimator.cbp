@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="score_estimator"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="score_estimator">
+				<Option output="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/score_estimator" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.1.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 score_estimator"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="score_estimator/fast">
+				<Option output="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/score_estimator" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.1.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 score_estimator/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/Dockerfile">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/Makefile">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/README.md">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/estimator.cc">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/estimator.h">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/jsbindings.cc">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/main.cc">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/1776378.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2686282.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2686658.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2695200.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2697990.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2704027.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2733454.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2733986.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2743191.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2765606.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2795631.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2797036.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2820787.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2833755.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2901637.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2910148.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/2927622.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3029489.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3085363.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3190829.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3227995.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3245224.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3247364.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3285190.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3320531.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3359805.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3365042.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3463236.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3939078.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3941535.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/test_games/3962847.game">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/tools/fetch_ogs_game.py">
+			<Option target="score_estimator"/>
+		</Unit>
+		<Unit filename="/Users/smartkit/git/2017-2018-computing-thinking/Docker/v2/score-estimator/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
