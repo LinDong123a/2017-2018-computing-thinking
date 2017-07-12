@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.service;
 
+import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
@@ -13,7 +14,9 @@ import java.util.List;
  */
 public interface GamerService {
         List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException;
-        List<Gamer> playAll() throws MqttException;
-        Gamer playOne(String gamerId) throws MqttException;
-        SgfDto toSgf(Gamer gamer,Boolean filed) throws IOException;
+        List<Gamer> playAll() throws MqttException, DockerException, InterruptedException;
+        Gamer playOne(String gamerId) throws MqttException, DockerException, InterruptedException;
+        SgfDto saveSgf(Gamer gamer,Boolean filed) throws IOException, DockerException, InterruptedException;
+        void createFolder(String name) throws IOException;
+        void deleteFolder(String name) throws IOException;
 }

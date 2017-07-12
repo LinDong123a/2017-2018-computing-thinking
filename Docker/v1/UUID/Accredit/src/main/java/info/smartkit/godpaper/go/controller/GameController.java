@@ -3,8 +3,6 @@ package info.smartkit.godpaper.go.controller;
 
 import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
-import com.spotify.docker.client.messages.ContainerInfo;
-import com.spotify.docker.client.messages.ContainerStats;
 import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
@@ -40,8 +38,10 @@ public class GameController {
         @Autowired DockerService dockerService;
 
         @RequestMapping(method = RequestMethod.POST)
-        public Gamer createOne(@RequestBody Gamer gamer){
+        public Gamer createOne(@RequestBody Gamer gamer) throws IOException {
                 Gamer result = repository.save(gamer);
+                //gamer folder creating.
+                service.createFolder(result.getId());
                 return result;
         }
         @RequestMapping(method = RequestMethod.GET,value="/pair")
@@ -55,12 +55,12 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play")
-        public List<Gamer> playAll() throws MqttException {
+        public List<Gamer> playAll() throws MqttException, DockerException, InterruptedException {
                 return service.playAll();
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play/{gamerId}")
-        public Gamer playOne(@PathVariable String gamerId) throws MqttException {
+        public Gamer playOne(@PathVariable String gamerId) throws MqttException, DockerException, InterruptedException {
                 return service.playOne(gamerId);
         }
 
@@ -81,7 +81,7 @@ public class GameController {
 
 
         @RequestMapping(method = RequestMethod.DELETE, value="/{gamerId}")
-        public void deleteOne(@PathVariable String gamerId) throws MqttException {
+        public void deleteOne(@PathVariable String gamerId) throws MqttException, IOException {
                 //Dismiss gamer's user
                 Gamer gamer = repository.findOne(gamerId);
                 //unsubscribe
@@ -94,6 +94,8 @@ public class GameController {
                 userRepository.save(player2);
                 //
                 repository.delete(gamerId);
+                //gamer folder deleting.
+                service.deleteFolder(gamerId);
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
         public void deleteAll() throws MqttException {
@@ -114,9 +116,20 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/sgf/{gamerId}")
-        public SgfDto saveSgfByid(@PathVariable String gamerId) throws IOException {
+        public SgfDto saveSgfById(@PathVariable String gamerId) throws IOException, DockerException, InterruptedException {
                 Gamer gamer = repository.findOne(gamerId);
-                return service.toSgf(gamer,true);
+                return service.saveSgf(gamer,true);
+        }
+
+        @RequestMapping(method = RequestMethod.GET, value="/score/{gamerId}")
+        public String getScoreById(@PathVariable String gamerId) throws IOException, DockerException, InterruptedException {
+                //
+                Gamer gamer = repository.findOne(gamerId);
+                if(gamer.getStatus()!=GameStatus.SAVED.getIndex()){
+                        service.saveSgf(gamer,true);
+                }
+                //
+                return dockerService.runScorer(gamerId);
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/player/{userId}")

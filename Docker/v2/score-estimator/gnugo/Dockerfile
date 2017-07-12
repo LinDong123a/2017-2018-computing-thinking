@@ -17,12 +17,18 @@ RUN apt-get --yes install libboost-all-dev
 COPY . /app
 WORKDIR /app
 
-# Define default command.
-#ENTRYPOINT ["make"]
 
-CMD ["./configure"]
-CMD ["make"]
-CMD ["make","install"]
-CMD ["gnugo"]
+#gnugo install
+RUN ./configure \
+	&& make \
+	&& make install
+
+# Define default command.
+#ENTRYPOINT ["gnugo"]
+
+#CMD ["./configure"]
+#CMD ["make"]
+#CMD ["make","install"]
+#CMD ["gnugo"]
 #CMD ["./estimator", "test_games/1776378.game"]
-CMD ["gnugo" "--score estimate", "-l", "106.sgf"]
+CMD gnugo --score estimate -l /sgfs/*.sgf

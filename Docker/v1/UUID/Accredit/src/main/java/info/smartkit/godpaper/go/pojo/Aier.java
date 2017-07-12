@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.pojo;
 
+import info.smartkit.godpaper.go.settings.AierStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -51,6 +52,17 @@ public class Aier {
         private Date created = new Date();
 
         @Override public String toString() {
-                return "Aier{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", model='" + model + '\'' + ", created=" + created + '}';
+                return "Aier{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", model='" + model + '\'' + ", created=" + created + ", status=" + status + '}';
         }
+
+        public int getStatus() {
+                return status;
+        }
+
+        public void setStatus(int status) {
+                this.status = status;
+        }
+
+        private int status= AierStatus.STANDBY.getIndex();
+
 }

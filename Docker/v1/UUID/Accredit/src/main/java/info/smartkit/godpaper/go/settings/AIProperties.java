@@ -31,10 +31,6 @@ public class AIProperties {
                 LOG.info("setPolicys:"+AIVariables.policys.toString());
         }
 
-        @Override public String toString() {
-                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agent='" + agent + '\'' + '}';
-        }
-
         public int getRanks() {
                 return ranks;
         }
@@ -72,4 +68,18 @@ public class AIProperties {
         }
 
         private String agent;
+
+        @Override public String toString() {
+                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agent='" + agent + '\'' + ", scorer='" + scorer + '\'' + '}';
+        }
+
+        public String getScorer() {
+                return scorer;
+        }
+
+        public void setScorer(String scorer) {
+                this.scorer = scorer;
+        }
+
+        private String scorer;
 }

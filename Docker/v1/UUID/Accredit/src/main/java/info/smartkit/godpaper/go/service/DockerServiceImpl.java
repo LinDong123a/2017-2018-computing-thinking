@@ -12,6 +12,7 @@ import info.smartkit.godpaper.go.settings.AIVariables;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.utils.ServerUtil;
 import info.smartkit.godpaper.go.utils.SgfUtil;
+import info.smartkit.godpaper.go.utils.StringUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +63,18 @@ public class DockerServiceImpl implements DockerService{
 //                                envStrings.add("IP_MQTT=192.168.0.11");
                 envStrings.add("URI_API=http://"+ UriString+"/");//http://192.168.0.11:8095/accredit/
                 envStrings.add("IP_MQTT="+mqttProperties.getIp());//192.168.0.11,ServerUtil.getInetAddress().getHostAddress()
+                //
+                final HostConfig hostConfig =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getAiFilesLocal(""))
+                                        .to("/AI_FILEs")
+                                        //                                        .readOnly(true)
+                                        .build())
+                                .build();
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getPlayer())
                         .env(envStrings)
-//                        .hostConfig()
+                        .hostConfig(hostConfig)
                         .build();
                 final ContainerCreation creation = docker.createContainer(config, name);
                 final String id = creation.id();
@@ -176,6 +185,61 @@ public class DockerServiceImpl implements DockerService{
                         LOG.info("Docker(Agent) logs:"+logs.toString());
                 }
                 return id;
+        }
+
+        @Override public String runScorer(String gamerId) throws DockerException, InterruptedException {
+                //docker run -it -v /Users/smartkit/sgf:/sgfs smartkit/godpaper-go-score-estimator-gnugo
+                // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
+                // Pull an image
+                docker.pull(aiProperties.getScorer());
+                // Create container
+                List<String> envStrings = new ArrayList<>();
+                //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
+                //                envStrings.add("IP_MQTT=192.168.0.11");
+                ///rename file to submit2gnugo.sgf
+                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
+                String fromSgfs = SgfUtil.getSgfLocal(gamerId);
+                LOG.info("fromSgfs:"+fromSgfs);
+                final HostConfig hostConfig =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(fromSgfs)
+                                        .to("/sgfs")
+                                        .readOnly(true)
+                                        .build())
+                                .build();
+                //                final HostConfig hostConfig =
+                //                        HostConfig.builder()
+                //                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
+                //                                        .to("/savedmodel")
+                //                                        //                                        .readOnly(true)
+                //                                        .build())
+                //                                .build();
+                //
+                final ContainerConfig config = ContainerConfig.builder()
+                        .image(aiProperties.getScorer())
+                        .hostConfig(hostConfig)
+                        //                        .env(envStrings)
+                        .build();
+                //
+                String uuidName = StringUtil.getUuidString("gnugo",6);
+                //
+                final ContainerCreation creation = docker.createContainer(config, uuidName);
+                final String id = creation.id();
+
+                // Start container
+                docker.startContainer(id);
+                //inspect mounts
+//                final ContainerInfo info = docker.inspectContainer(id);
+//                LOG.info("Inspect mounts:"+info.mounts().toString());
+                final String logs;
+                String resultStr = "";
+                try (LogStream stream = docker.logs(uuidName, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                        logs = stream.readFully();
+                        //only one string for result.
+                        resultStr = logs.toString();
+                        LOG.info("Docker(Scorer) logs:"+resultStr);
+                }
+                return resultStr;
         }
 
         @Override public String trainAgent(String name) throws DockerException, InterruptedException, DockerCertificateException {

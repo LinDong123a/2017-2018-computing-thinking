@@ -91,6 +91,8 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     GameService.curGamerId = $gid;
     GameService.playOne(function(data){
       console.log("GameService.playOne:",  data);
+      //then refresh
+      $scope.getAll();
     });
   }
   $scope.playAll = function(){
@@ -202,7 +204,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       console.info("envInfo:",envInfo);
       //
       $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
-      $scope.anewAI  = {name:Enum.getUUID(),historical:true};
       //Load the modal from the given template URL
       $scope.modal_user_add  = null;
       $ionicModal.fromTemplateUrl("templates/modal_user_add.html",
@@ -215,7 +216,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
 //
       $scope.addUser = function () {
         $scope.modal_user_add.show();
-        $scope.anewUser = {name:Enum.getUUID(),rank:0,policy:"random"};
+        $scope.anewUser = {name:Enum.getUUID(6),rank:0,policy:"random"};
       };
       $scope.userList = [];
       $scope.createUser = function () {

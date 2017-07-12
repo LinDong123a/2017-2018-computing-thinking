@@ -174,7 +174,7 @@ if __name__ == '__main__':
                     # print("assembled message_json_s:", message_json_s)
                     # msg response
                     logging.info("send to plainAI message_json_s:%s",message_json_s)
-                    rank_model_path = os.getcwd() + "/"+str(v_player_rank)+ "/savedmodel"
+                    rank_model_path = os.getcwd() + "/AI_FILEs/"+str(v_player_rank)+ "/savedmodel"
                     logging.info("rank_model_path:%s", rank_model_path)
                     logging.info("v_player_policy:%s", v_player_policy)
                     result = plainAI.AI(message_json_s,rank_model_path,v_player_policy)
