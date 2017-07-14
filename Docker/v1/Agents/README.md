@@ -3,9 +3,24 @@
 
 ### Mugo:
 
-1.docker pull smartkit/godpaper-tensorflow-mugo
+1.docker pull
 
-2.docker rm mugo && docker run --name mugo -v /Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/UUID/Accredit/target/classes/sgf:/sgf smartkit/godpaper-go-tensorflow-mugo:latest
+```
+docker pull smartkit/godpaper-go-ai-agent-mugo-prep
+```
+```
+docker pull smartkit/godpaper-go-ai-agent-mugo-train
+```
+
+2.docker run
+
+```
+docker run -v /Users/yangboz/sgfs/test:/sgfs/ -v /Users/yangboz/sgfs/test/processed_data/:/processed_data/ smartkit/godpaper-go-ai-agent-mugo-prep
+```
+
+```
+docker run -v /Users/yangboz/sgfs/test:/sgfs/ -v /Users/yangboz/sgfs/test/processed_data/:/processed_data/ -v /Users/yangboz/sgfs/test/saved_model:/saved_model/ smartkit/godpaper-go-ai-agent-mugo-train
+```
 
 3.docker inspect -f {{.Volumes}} mugo
 
