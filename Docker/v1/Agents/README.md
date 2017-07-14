@@ -18,7 +18,7 @@ docker pull smartkit/godpaper-go-ai-agent-mugo-train
 2.docker run
 
 ```
-docker rm mugo && docker run --name mugo -v /Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/UUID/Accredit/target/classes/sgf:/sgf smartkit/godpaper-go-ai-agent-mugo-prep:latest
+docker run -v /Users/yangboz/sgfs/test:/sgfs/  -v /Users/yangboz/sgfs/test:processed_data smartkit/godpaper-go-ai-agent-mugo-prep
 ```
 
 ```
