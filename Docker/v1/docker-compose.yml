@@ -1,5 +1,5 @@
 membersrvc:
-  image: hyperledger/fabric-membersrvc:x86_64-1.0.0-rc1
+  image: hyperledger/fabric-membersrvc
   ports:
     - "7054:7054"
   command: membersrvc
@@ -23,4 +23,12 @@ vp0:
   links:
     - membersrvc
   command: sh -c "sleep 5; peer node start --peer-chaincodedev"
+mongodb:
+  image: smartkit/godpaper-go-mongodb
+  ports:
+    - "27017:27017"
+activemq:
+  image: smartkit/godpaper-go-message-broker-activemq
+  ports:
+    - "1883:1883"
 

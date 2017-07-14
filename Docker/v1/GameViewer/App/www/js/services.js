@@ -172,6 +172,7 @@ angular.module('app.services', [])
     return {
       aierId : '',
       anewAier : null,
+      curAgentId : "mugo",
       getOne: function(callback){
         $http.get(envInfo.api.url+"/ai"+this.aierId).success(function(data) {
           console.log("one Aier info:",data);
@@ -184,12 +185,18 @@ angular.module('app.services', [])
           callback(data);
         });
       },
-      createOne:function(callback){
-      $http.post(envInfo.api.url+"/ai",this.anewAier).success(function(data) {
-        console.log("one user created:",data);
-        callback(data);
-      });
-    }
+      createOne:function(callback) {
+        $http.post(envInfo.api.url + "/ai", this.anewAier).success(function (data) {
+          console.log("one user created:", data);
+          callback(data);
+        });
+      },
+      runAgent: function(callback){
+        $http.get(envInfo.api.url+"/docker/run/agent/"+this.curAgentId).success(function(data) {
+          console.log("runAgent:",data);
+          callback(data);
+        });
+      }
     }
   }])
 

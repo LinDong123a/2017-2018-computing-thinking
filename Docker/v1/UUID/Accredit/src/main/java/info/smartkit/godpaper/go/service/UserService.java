@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface UserService {
         List<User> createRandomUsers(int numbers);
-        User tenant() throws MqttException, DockerException, InterruptedException;
-        User untenant(String userId) throws MqttException, DockerException, InterruptedException;
+        void tenant(User updater)  throws MqttException, DockerException, InterruptedException;
+        void untenant(User updater) throws MqttException, DockerException, InterruptedException;
 }

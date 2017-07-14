@@ -4,7 +4,13 @@ import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerInfo;
 import com.spotify.docker.client.messages.ContainerStats;
+import info.smartkit.godpaper.go.pojo.Aier;
+import info.smartkit.godpaper.go.pojo.User;
+import info.smartkit.godpaper.go.repository.AierRepository;
+import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.DockerService;
+import info.smartkit.godpaper.go.settings.AierStatus;
+import info.smartkit.godpaper.go.settings.UserStatus;
 import info.smartkit.godpaper.go.utils.StringUtil;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.LogManager;
@@ -24,21 +30,49 @@ import org.springframework.web.bind.annotation.RestController;
 public class DockerController {
         //
         @Autowired DockerService dockerService;
+        @Autowired AierRepository aierRepository;
+        @Autowired UserRepository userRepository;
         private static Logger LOG = LogManager.getLogger(DockerController.class);
 
         @RequestMapping(method = RequestMethod.GET,value="/run/player/{userId}")
-        public String runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                return dockerService.runPlayer(userId);
-        }
+        public User runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+                //update user status
+                User updater = userRepository.findOne(userId);
+                updater.setStatus(UserStatus.unTENANTED.getIndex());
+                User updated = userRepository.save(updater);
+                LOG.info("updated:"+updated.toString());
+                //
+                dockerService.runPlayer(userId);
+                //
+                return updated;
 
-        @RequestMapping(method = RequestMethod.GET,value="/run/agent/{name}")
-        public String trainAgent(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                return dockerService.runAgent(StringUtil.getUuidString(name,6));
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/run/scorer/{name}")
         public String runScorer(@PathVariable String name) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
                 return dockerService.runScorer(StringUtil.getUuidString(name,6));
+        }
+
+        @RequestMapping(method = RequestMethod.GET,value="/run/agent/{id}")
+        public Aier runAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+                //update status
+                Aier aier = aierRepository.findOne(id);
+                aier.setStatus(AierStatus.TRAINING.getIndex());
+                Aier updater = aierRepository.save(aier);
+                //
+                dockerService.runAgent(id,aier.getModel());
+                //
+                return updater;
+        }
+
+        @RequestMapping(method = RequestMethod.GET,value="/train/agent/{id}")
+        public String trainAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+                //update status
+                Aier aier = aierRepository.findOne(id);
+                aier.setStatus(AierStatus.TRAINING.getIndex());
+                aierRepository.save(aier);
+                //
+                return dockerService.trainAgent(id,aier.getModel());
         }
 
 //        @RequestMapping(method = RequestMethod.GET,value="/info/{id}")

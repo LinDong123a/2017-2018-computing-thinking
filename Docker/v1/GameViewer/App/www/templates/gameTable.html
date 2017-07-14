@@ -4,9 +4,9 @@
   </ion-nav-title>
   <ion-nav-buttons side="right">
 
-    <button class="button ion-ios-analytics-outline" ng-disabled="sgfDto.url==null" ng-click="$root.modal_aier_add.show()">新建AI
+    <button class="button ion-ios-analytics-outline" ng-click="$root.modal_aier_add.show()">新建AI
     </button>
-    <button class="button ion-ios-analytics" ng-disabled="anewAier.model==null"  ng-click="trainAgent()">训练AI
+    <button class="button ion-ios-analytics" ng-disabled="sgfDto.url==null"  ng-click="$root.modal_aier_train.show()">训练AI
     </button>
   </ion-nav-buttons>
   <ion-nav-buttons side="left">

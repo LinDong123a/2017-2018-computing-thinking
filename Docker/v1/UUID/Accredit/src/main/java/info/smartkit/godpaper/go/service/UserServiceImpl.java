@@ -57,43 +57,31 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
-    @Override public User tenant() throws MqttException, DockerException, InterruptedException {
-        //User tenant
-        User untenantedOne = repository.findByStatus(UserStatus.unTENANTED.getIndex()).get(0);
-        //update status
-        untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
-        User updated = repository.save(untenantedOne);
-        LOG.info("tenantedUser:"+updated.toString());
+    @Override public void tenant(User updater) throws MqttException, DockerException, InterruptedException {
+
+        LOG.info("tenantedUser:"+updater.toString());
         //MqttClient tenant
         //produce message topic by uuid
-        mqttService.connect(mqttProperties.getBrokerUrl(), updated.getTopicName());
+        mqttService.connect(mqttProperties.getBrokerUrl(), updater.getTopicName());
         //and subscribe
-        mqttService.subscribe(updated.getTopicName());
+        mqttService.subscribe(updater.getTopicName());
         //
         //TODO:ChainCode register
         //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
-        return updated;
     }
 
-    @Override public User untenant(String userId) throws MqttException, DockerException, InterruptedException {
-        //User tenant
-        User tenantUeser = repository.findOne(userId);
-        //update status
-        tenantUeser.setStatus(UserStatus.unTENANTED.getIndex());
-        User updated = repository.save(tenantUeser);
-        LOG.info("untenantedUser:"+updated.toString());
+    @Override public void untenant(User updater) throws MqttException, DockerException, InterruptedException {
         //MqttClient untenant
         //produce message topic by uuid
         //                mqttService.disconnect(mqttProperties.getBrokerUrl(), updated.getTopicName());
         //and unsubscribe
-        mqttService.unsubscribe(updated.getTopicName());
+        mqttService.unsubscribe(updater.getTopicName());
         //
         //TODO:ChainCode un-register
         //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
 
         //Container related.
-        dockerService.stopContainer(updated.getId(),1);
-        dockerService.removeContainer(updated.getId());
-        return updated;
+        dockerService.stopContainer(updater.getId(),1);
+        dockerService.removeContainer(updater.getId());
     }
 }

@@ -4,7 +4,7 @@ package info.smartkit.godpaper.go.settings;
  * Created by smartkit on 22/06/2017.
  */
 public enum UserStatus {
-        unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
+        unTENANTED("untenanted", 1), STANDBY("standby", 0), PLAYING("playing", 3),TENANTED("tenanted",2);
 
         UserStatus(String name, int index) {
                 this.name = name;

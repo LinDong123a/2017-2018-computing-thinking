@@ -23,6 +23,15 @@ angular.module('app.controllers', [])
         }).then(function(modal) {
         $rootScope.modal_aier_add = modal;
       });
+      //Load the modal from the given template URL
+      $rootScope.modal_aier_train  = null;
+      $ionicModal.fromTemplateUrl("templates/modal_aier_train.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $rootScope.modal_aier_train = modal;
+      });
       //
       $rootScope.curGamerId = null;
       $rootScope.gamerIds = [];
@@ -183,11 +192,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       console.log("GameService.runAgent:", data);
     });
   }
-  $scope.trainAgent = function () {
-    GameService.trainAgent(function(data){
-      console.log("GameService.trainAgent:", data);
-    });
-  }
 
   //default calls
   if($rootScope.curGamerId!=null) {
@@ -259,6 +263,8 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
         GameService.rPlayerId = $id;
         GameService.runPlayer(function(data){
           console.log("GameService.runPlayer:", data);
+          //refresh
+          $scope.getUsers();
         });
       }
       //default calls
@@ -279,8 +285,17 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
         AierService.createOne(function(data){
           console.log("AierService.createOne:", data);
           //refresh.
-          $scope.getAll();
+          $rootScope.getAiers();
           $rootScope.modal_aier_add.hide();
+        });
+      }
+      //
+      $scope.trainAgent = function ($id) {
+        AierService.curAgentId = $id;
+        AierService.runAgent(function(data){
+          console.log("AierService.trainAgent:", data);
+          //refresh.
+          $rootScope.getAiers();
         });
       }
       //default calls

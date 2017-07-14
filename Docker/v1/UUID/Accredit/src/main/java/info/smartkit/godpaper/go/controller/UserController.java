@@ -61,7 +61,7 @@ public class UserController {
     public void deleteByUserId(@PathVariable String userId) throws InterruptedException, DockerException, MqttException {
             User targetUser = repository.findOne(userId);
             if( repository.findByStatus(UserStatus.TENANTED.getIndex()).contains(targetUser)) {
-                    service.untenant(userId);
+                    service.untenant(targetUser);
             }
             repository.delete(userId);
     }
@@ -89,13 +89,31 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/tenant")
-    public User tenant() throws MqttException, DockerException, InterruptedException {
-            return service.tenant();
+    public User tenant() throws InterruptedException, DockerException, MqttException {
+            //
+            //User tenant
+            User untenantedOne = repository.findByStatus(UserStatus.unTENANTED.getIndex()).get(0);
+            //update status
+            untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
+            User updater = repository.save(untenantedOne);
+            //
+            service.tenant(updater);
+            //
+            return updater;
     }
     @RequestMapping(method = RequestMethod.DELETE, value="/tenant/{userId}")
     public User untenant(@PathVariable String userId) throws MqttException, DockerException, InterruptedException {
             //
-            return service.untenant(userId);
+            //User tenant
+            User tenantUeser = repository.findOne(userId);
+            //update status
+            tenantUeser.setStatus(UserStatus.unTENANTED.getIndex());
+            User updated = repository.save(tenantUeser);
+            LOG.info("untenantedUser:"+updated.toString());
+            //
+            service.untenant(updated);
+            //
+            return updated;
     }
 
 }

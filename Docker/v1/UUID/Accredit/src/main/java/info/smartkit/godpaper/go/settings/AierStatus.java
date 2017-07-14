@@ -5,7 +5,7 @@ package info.smartkit.godpaper.go.settings;
  */
 public enum AierStatus {
 
-        STANDBY("standby", 0), TRAINING("standby", 1),TRAINED("trained",2);
+        STANDBY("standby", 0), TRAINING("training", 1),TRAINED("trained",2);
 
         AierStatus(String name, int index) {
                 this.name = name;

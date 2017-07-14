@@ -142,7 +142,7 @@ public class DockerServiceImpl implements DockerService{
                 return id;
         }
 
-        @Override public String runAgent(String name) throws DockerException, InterruptedException, DockerCertificateException {
+        @Override public String runAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
                 docker.pull(aiProperties.getAgent());
@@ -153,7 +153,7 @@ public class DockerServiceImpl implements DockerService{
                 //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
                 final HostConfig hostConfig =
                         HostConfig.builder()
-                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(""))
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
                                         .to("/sgf")
 //                                        .readOnly(true)
                                         .build())
@@ -171,7 +171,8 @@ public class DockerServiceImpl implements DockerService{
                         .hostConfig(hostConfig)
 //                        .env(envStrings)
                         .build();
-                final ContainerCreation creation = docker.createContainer(config, name);
+                String uName =  StringUtil.getUuidString(name,6);
+                final ContainerCreation creation = docker.createContainer(config,uName);
                 final String id = creation.id();
 
                 // Start container
@@ -242,9 +243,9 @@ public class DockerServiceImpl implements DockerService{
                 return resultStr;
         }
 
-        @Override public String trainAgent(String name) throws DockerException, InterruptedException, DockerCertificateException {
+        @Override public String trainAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
                 //default call.
-                this.runAgent(name);
+                this.runAgent(name,hSgf);
                 //then trainAgent
                 docker.pull(aiProperties.getAgent());
                 // Create container
@@ -265,7 +266,8 @@ public class DockerServiceImpl implements DockerService{
                         .hostConfig(hostConfig)
                         .entrypoint("main.py","train","processed_data/","--save-file=/sgf/savedmodel")//python main.py train processed_data/ --save-file=/tmp/savedmodel --epochs=1 --logdir=logs/my_training_run
                         .build();
-                final ContainerCreation creation = docker.createContainer(config, name);
+                String uName =  StringUtil.getUuidString(name,6);
+                final ContainerCreation creation = docker.createContainer(config, uName);
                 final String id = creation.id();
 
                 // Start container

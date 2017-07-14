@@ -11,9 +11,9 @@ import com.spotify.docker.client.messages.ContainerStats;
  */
 public interface DockerService {
         String runPlayer(String name) throws DockerException, InterruptedException, DockerCertificateException;
-        String runAgent(String name) throws DockerException, InterruptedException, DockerCertificateException;
+        String runAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException;
         String runScorer(String name) throws DockerException, InterruptedException;
-        String trainAgent(String name) throws DockerException, InterruptedException, DockerCertificateException;
+        String trainAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException;
         ContainerInfo info(String id) throws DockerException, InterruptedException, DockerCertificateException;
         ContainerStats stats(String id) throws DockerException, InterruptedException, DockerCertificateException;
         void stopContainer(String id,int delay) throws DockerException, InterruptedException;

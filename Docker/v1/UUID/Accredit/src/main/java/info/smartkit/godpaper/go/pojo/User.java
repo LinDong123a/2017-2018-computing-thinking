@@ -73,7 +73,7 @@ public class User {
         this.status = status;
     }
 
-    private int status= UserStatus.unTENANTED.getIndex();//0:untenanted,3:playing,2:standby,2:tenanted
+    private int status= UserStatus.STANDBY.getIndex();//0:untenanted,3:playing,2:standby,2:tenanted
 
     public String getTopicName() {
         return MqttVariables.clientId+id;
