@@ -18,7 +18,7 @@ docker pull smartkit/godpaper-go-ai-agent-mugo-train
 2.docker run
 
 ```
-docker run -v /Users/yangboz/sgfs/test:/sgfs/  -v /Users/yangboz/sgfs/test:processed_data smartkit/godpaper-go-ai-agent-mugo-prep
+docker run -v /Users/yangboz/sgfs/test:/sgfs/ -v /Users/yangboz/sgfs/test/processed_data/:/processed_data/ smartkit/godpaper-go-ai-agent-mugo-prep
 ```
 
 ```
