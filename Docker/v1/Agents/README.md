@@ -6,9 +6,6 @@
 1.docker pull
 
 ```
-docker pull smartkit/godpaper-go-ai-agent-mugo
-```
-```
 docker pull smartkit/godpaper-go-ai-agent-mugo-prep
 ```
 ```
