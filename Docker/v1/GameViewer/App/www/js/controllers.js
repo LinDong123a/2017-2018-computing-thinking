@@ -298,6 +298,14 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
           $rootScope.getAiers();
         });
       }
+      //
+      $scope.getAllByStatus = function ($index) {
+        AierService.curStatusIndex = $index;
+        AierService.getAllByStatus(function(data){
+          console.log("AierService.getAllByStatus:", data);
+          $rootScope.aierList = data;
+        });
+      }
       //default calls
       $rootScope.getAiers();
     }])

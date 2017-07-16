@@ -1,0 +1,102 @@
+[{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "48_KGS_",
+  "model": "48_KGS_",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "17000_KGS_",
+  "model": "17000_KGS_",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "180000_KGS_",
+  "model": "180000_KGS_",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "2302_KGS2001",
+  "model": "2302_KGS2001",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "3646_KGS2002",
+  "model": "3646_KGS2002",
+  "status": 2
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "7582_KGS2003",
+  "model": "KGS2003",
+  "status": 1
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "12108_KGS2004",
+  "model": "KGS2004",
+  "status": 0
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "13941_KGS2005",
+  "model": "KGS2005",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "10388_KGS2006",
+  "model": "KGS2006",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "11644_KGS2007",
+  "model": "KGS2007",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "14002_KGS2008",
+  "model": "KGS2008",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "18837_KGS2009",
+  "model": "KGS2009",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "17536_KGS2010",
+  "model": "KGS2010",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "19099_KGS2011",
+  "model": "KGS2011",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "13665_KGS2012",
+  "model": "KGS2012",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "13783_KGS2013",
+  "model": "KGS2013",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "13029_KGS2014",
+  "model": "KGS2014",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "8133_KGS2015",
+  "model": "KGS2015",
+  "status": 3
+}, {
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "756_KGS2016_01",
+  "model": "KGS201601",
+  "status": 3
+},{
+  "_class": "info.smartkit.godpaper.go.pojo.Aier",
+  "name": "733_KGS2017_01",
+  "model": "KGS201701",
+  "status": 3
+}
+]

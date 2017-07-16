@@ -2,9 +2,11 @@ package info.smartkit.godpaper.go.controller;
 
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.pojo.Aier;
+import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.service.AierService;
+import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,16 +46,21 @@ public class AierController {
                 repository.delete(Id);
         }
 
-        //
-        //        @RequestMapping(method = RequestMethod.DELETE, value="/")
-        //        public void deleteAll(){
-        //                repository.deleteAll();
-        //        }
+
+        @RequestMapping(method = RequestMethod.DELETE, value="/")
+        public void deleteAll(){
+                repository.deleteAll();
+        }
 
 
         @RequestMapping(method = RequestMethod.GET)
         public List<Aier> listAll(){
                 return repository.findAll();
+        }
+
+        @RequestMapping(method = RequestMethod.GET, value="/status/{index}")
+        public List<Aier> listByStatus(@PathVariable int index){
+                return repository.findByStatus(index);
         }
 
 

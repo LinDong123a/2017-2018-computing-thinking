@@ -53,17 +53,17 @@ public class DockerController {
                 return dockerService.runScorer(StringUtil.getUuidString(name,6));
         }
 
-        @RequestMapping(method = RequestMethod.GET,value="/run/agent/{id}")
-        public Aier runAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
-                //update status
-                Aier aier = aierRepository.findOne(id);
-                aier.setStatus(AierStatus.TRAINING.getIndex());
-                Aier updater = aierRepository.save(aier);
-                //
-                dockerService.runAgent(id,aier.getModel());
-                //
-                return updater;
-        }
+//        @RequestMapping(method = RequestMethod.GET,value="/run/agent/{id}")
+//        public Aier runAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+//                //update status
+//                Aier aier = aierRepository.findOne(id);
+//                aier.setStatus(AierStatus.TRAINING.getIndex());
+//                Aier updater = aierRepository.save(aier);
+//                //
+//                dockerService.runAgent(id,aier.getModel());
+//                //
+//                return updater;
+//        }
 
         @RequestMapping(method = RequestMethod.GET,value="/train/agent/{id}")
         public String trainAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {

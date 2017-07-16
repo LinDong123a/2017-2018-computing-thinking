@@ -173,6 +173,7 @@ angular.module('app.services', [])
       aierId : '',
       anewAier : null,
       curAgentId : "mugo",
+      curStatusIndex: 3,//or 0
       getOne: function(callback){
         $http.get(envInfo.api.url+"/ai"+this.aierId).success(function(data) {
           console.log("one Aier info:",data);
@@ -181,6 +182,12 @@ angular.module('app.services', [])
       },
       getAll: function(callback){
         $http.get(envInfo.api.url+"/ai").success(function(data) {
+          console.log("all aiers:",data);
+          callback(data);
+        });
+      },
+      getAllByStatus: function(callback){
+        $http.get(envInfo.api.url+"/ai/status/"+this.curStatusIndex).success(function(data) {
           console.log("all aiers:",data);
           callback(data);
         });

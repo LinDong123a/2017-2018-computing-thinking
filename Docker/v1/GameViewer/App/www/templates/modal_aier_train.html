@@ -1,6 +1,12 @@
 <div class="modal" ng-controller="gameAierCtrl">
   <header class="bar bar-header bar-positive">
     <h1 class="title">训练AI</h1>
+    <button class="button ion-android-cloud-done" ng-click="getAllByStatus(3)">已训练
+    </button>
+    <button class="button ion-ios-unlocked-outline" ng-click="getAllByStatus(0)">未训练
+    </button>
+    <button class="button ion-ios-unlocked" ng-click="getAllByStatus(2)">训练中
+    </button>
     <div class="button button-clear" ng-click="$root.modal_aier_train.hide()">
       <span class="icon ion-android-close"></span>
     </div>
@@ -13,9 +19,9 @@
           <h3>名称：{{aier.name}}</h3>
           <p>历史棋局数：{{aier.model}}局</p>
           <p>创建时间：{{aier.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
-          <p ng-show="aier.status==2">训练完成.</p>
-          <p style="font-style: italic" ng-show="aier.status==1">训练中...</p>
-          <button class="icon-right ion-ios-paperplane-outline" ng-show="aier.status==0" ng-click="trainAgent(aier.id)">开始训练</button>
+          <p style="font-style: italic" ng-show="aier.status==3" >训练完成.</p>
+          <p style="font-style: italic" ng-show="aier.status==2">训练中...</p>
+          <button class="icon-right ion-ios-paperplane-outline" ng-show="aier.status==0" ng-click="runAgent(aier.id)">开始训练</button>
           <ion-option-button class="button-assertive" ng-click="deleteOne(aier)">删除</ion-option-button>
         </ion-item>
       </ion-list>

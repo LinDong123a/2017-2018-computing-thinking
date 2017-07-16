@@ -142,7 +142,7 @@ public class DockerServiceImpl implements DockerService{
                 return id;
         }
 
-        @Override public String runAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
+        private String runAgentFunc(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
                 docker.pull(aiProperties.getAgent());
@@ -151,24 +151,11 @@ public class DockerServiceImpl implements DockerService{
 //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
 //                envStrings.add("IP_MQTT=192.168.0.11");
                 //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
-                final HostConfig hostConfig =
-                        HostConfig.builder()
-                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
-                                        .to("/sgf")
-//                                        .readOnly(true)
-                                        .build())
-                                .build();
-//                final HostConfig hostConfig =
-//                        HostConfig.builder()
-//                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
-//                                        .to("/savedmodel")
-//                                        //                                        .readOnly(true)
-//                                        .build())
-//                                .build();
                 //
                 final ContainerConfig config = ContainerConfig.builder()
                         .image(aiProperties.getAgent())
-                        .hostConfig(hostConfig)
+                        .hostConfig(this.getHostConfig_sgf(hSgf))
+                        .hostConfig(this.getHostConfig_processed_data(hSgf))
 //                        .env(envStrings)
                         .build();
                 String uName =  StringUtil.getUuidString(name,6);
@@ -184,6 +171,8 @@ public class DockerServiceImpl implements DockerService{
                 try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(Agent) logs:"+logs.toString());
+                        //
+                        this.runAgentFunc(name,hSgf);
                 }
                 return id;
         }
@@ -244,43 +233,8 @@ public class DockerServiceImpl implements DockerService{
         }
 
         @Override public String trainAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
-                //default call.
-                this.runAgent(name,hSgf);
-                //then trainAgent
-                docker.pull(aiProperties.getAgent());
-                // Create container
-                List<String> envStrings = new ArrayList<>();
-                //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
-                //                envStrings.add("IP_MQTT=192.168.0.11");
-                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
-                final HostConfig hostConfig =
-                        HostConfig.builder()
-                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
-                                        .to("/savedmodel")
-                                        //                                        .readOnly(true)
-                                        .build())
-                                .build();
-                //
-                final ContainerConfig config = ContainerConfig.builder()
-                        .image(aiProperties.getAgent())
-                        .hostConfig(hostConfig)
-                        .entrypoint("main.py","train","processed_data/","--save-file=/sgf/savedmodel")//python main.py train processed_data/ --save-file=/tmp/savedmodel --epochs=1 --logdir=logs/my_training_run
-                        .build();
-                String uName =  StringUtil.getUuidString(name,6);
-                final ContainerCreation creation = docker.createContainer(config, uName);
-                final String id = creation.id();
-
-                // Start container
-                docker.startContainer(id);
-                //inspect mounts
-                final ContainerInfo info = docker.inspectContainer(id);
-                LOG.info("Inspect mounts:"+info.mounts().toString());
-                final String logs;
-                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
-                        logs = stream.readFully();
-                        LOG.info("Docker(Agent) logs:"+logs.toString());
-                }
-                return id;
+                //preprocess data then savedmodel
+                return this.runAgentFunc(name,hSgf);
         }
 
         @Override public ContainerInfo info(String id) throws DockerException, InterruptedException, DockerCertificateException {
@@ -323,4 +277,77 @@ public class DockerServiceImpl implements DockerService{
         @Override public void restartContainer(String id, int delay) throws DockerException, InterruptedException {
                 docker.restartContainer(id,delay);
         }
+
+        private HostConfig getHostConfig_sgf(String hSgf){
+                final HostConfig hostConfig_sgf =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
+                                        .to("/sgf")
+                                        //                                        .readOnly(true)
+                                        .build())
+                                .build();
+                return hostConfig_sgf;
+        }
+
+        private HostConfig getHostConfig_processed_data(String hSgf){
+                final HostConfig hostConfig_sgf =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
+                                        .to("/sgf")
+                                        //                                        .readOnly(true)
+                                        .build())
+                                .build();
+                return hostConfig_sgf;
+        }
+
+        private HostConfig getHostConfig_saved_data(String hSgf){
+                final HostConfig hostConfig_sgf =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
+                                        .to("/sgf")
+                                        //                                        .readOnly(true)
+                                        .build())
+                                .build();
+                return hostConfig_sgf;
+        }
+
+        private String trainAgentFunc(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
+                //then trainAgent
+                docker.pull(aiProperties.getAgent());
+                // Create container
+                List<String> envStrings = new ArrayList<>();
+                //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
+                //                envStrings.add("IP_MQTT=192.168.0.11");
+                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
+                final HostConfig hostConfig =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
+                                        .to("/savedmodel")
+                                        //                                        .readOnly(true)
+                                        .build())
+                                .build();
+                //
+                final ContainerConfig config = ContainerConfig.builder()
+                        .image(aiProperties.getAgent())
+                        .hostConfig(this.getHostConfig_sgf(hSgf))
+                        .hostConfig(this.getHostConfig_processed_data(hSgf))
+                        .hostConfig(this.getHostConfig_saved_data(hSgf))
+                        //                        .entrypoint("main.py","train","processed_data/","--save-file=/sgf/savedmodel")//python main.py train processed_data/ --save-file=/tmp/savedmodel --epochs=1 --logdir=logs/my_training_run
+                        .build();
+                String uName =  StringUtil.getUuidString(name,6);
+                final ContainerCreation creation = docker.createContainer(config, uName);
+                final String id = creation.id();
+                // Start container
+                docker.startContainer(id);
+                //inspect mounts
+                final ContainerInfo info = docker.inspectContainer(id);
+                LOG.info("Inspect mounts:"+info.mounts().toString());
+                final String logs;
+                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                        logs = stream.readFully();
+                        LOG.info("Docker(Agent) logs:"+logs.toString());
+                }
+                return id;
+        }
 }
+

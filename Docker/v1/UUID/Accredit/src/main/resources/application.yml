@@ -26,7 +26,8 @@ ai:
   ranks: 3
   policys: random,best_move,random_move,mcts
   player: smartkit/godpaper-go-ai-player:latest
-  agent: smartkit/godpaper-go-ai-agent-mugo:latest
+  agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep:latest
+  agentTrain: smartkit/godpaper-go-ai-agent-mugo-train:latest
   scorer: smartkit/godpaper-go-score-estimator-gnugo:latest
 ---
 spring:
@@ -53,5 +54,6 @@ ai:
   ranks: 3
   policys: random,best_move,random_move,mcts
   player: smartkit/godpaper-go-ai-player
-  agent: smartkit/godpaper-go-ai-agent-mugo
+  agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
+  agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
   scorer: smartkit/godpaper-go-score-estimator-gnugo
