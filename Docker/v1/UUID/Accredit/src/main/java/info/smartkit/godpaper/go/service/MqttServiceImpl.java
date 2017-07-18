@@ -84,7 +84,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
 
         @Override public void connectionLost(Throwable throwable) {
                 LOG.warn("MQTT connection lost:"+throwable.toString());
-                throwable.printStackTrace();
+//                throwable.printStackTrace();
                 //reconnect?
         }
 
@@ -94,8 +94,8 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
 //                LOG.debug("MQTT messageArrived payload:"+playingMessage);//594dd2e0e4b0dbacf6b3d0e3_play_W[pd]
                 if (playingMessage.contains(MqttVariables.tag_play)) {
                         String[] gameIdMessage =  playingMessage.split(MqttVariables.tag_play);
-                        String gamerId =gameIdMessage[0];
-                        LOG.info("gameIdMessage("+gameIdMessage.length+"),gamerId:"+gamerId);
+                        String playerId =gameIdMessage[0];
+                        LOG.info("gameIdMessage("+gameIdMessage.length+"),playerId:"+playerId);
                         //Except first hand.
                         if(gameIdMessage.length==2) {
                                 String gamerMessage = gameIdMessage[1];
@@ -109,10 +109,9 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                                 String sgfString = playingGamer.getSgf().concat(gamerMessage).concat(";");//(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
                                 playingGamer.setSgf(sgfString);
                                 //update to ChainCode invoke
-                                String[] putArgs = {playingGamer.getId(),playingGamer.getSgf()};
+                                String[] putArgs = {playingGamer.getId(),playerId,gamerMessage};
+                                //
                                 chainCodeService.invoke(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
-                                //Saved to real sgf file.
-
                                 //
                                 playingGamer.setStatus(GameStatus.SAVED.getIndex());
                                 Gamer updatedGamer = gamerRepository.save(playingGamer);

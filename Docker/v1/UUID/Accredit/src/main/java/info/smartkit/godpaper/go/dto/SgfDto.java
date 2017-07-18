@@ -37,10 +37,6 @@ public class SgfDto {
 
         private String url;
 
-        @Override public String toString() {
-                return "SgfDto{" + "cmd='" + cmd + '\'' + ", name='" + name + '\'' + ", url='" + url + '\'' + ", local='" + local + '\'' + '}';
-        }
-
         public String getLocal() {
                 return local;
         }
@@ -50,5 +46,19 @@ public class SgfDto {
         }
 
         private String local;
+
+        @Override public String toString() {
+                return "SgfDto{" + "cmd='" + cmd + '\'' + ", name='" + name + '\'' + ", url='" + url + '\'' + ", local='" + local + '\'' + ", result='" + result + '\'' + '}';
+        }
+
+        public String getResult() {
+                return result;
+        }
+
+        public void setResult(String result) {
+                this.result = result;
+        }
+
+        private String result;
 
 }

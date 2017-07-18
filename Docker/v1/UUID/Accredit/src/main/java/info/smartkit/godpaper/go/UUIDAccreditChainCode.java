@@ -70,7 +70,6 @@ public class UUIDAccreditChainCode extends ChaincodeBase {
         }
 
         @Override public String getChaincodeID() {
-
                 return ChainCodeVariables.chainName;
         }
 

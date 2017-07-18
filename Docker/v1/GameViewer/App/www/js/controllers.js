@@ -32,11 +32,21 @@ angular.module('app.controllers', [])
         }).then(function(modal) {
         $rootScope.modal_aier_train = modal;
       });
+      //Load the modal from the given template URL
+      $rootScope.modal_sgf_post  = null;
+      $ionicModal.fromTemplateUrl("templates/modal_sgf_post.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $rootScope.modal_sgf_post = modal;
+      });
       //
       $rootScope.curGamerId = null;
       $rootScope.gamerIds = [];
       $rootScope.tableInfo = null;
       $rootScope.aierList = [];
+      $rootScope.sgfDto = null;
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo) {
         var gameTableDiv = document.getElementById("gameTableDiv");
@@ -180,10 +190,11 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       console.log("GameService.getSgf:",  data);
       $scope.sgfDto = data;
       //alert message
-      $ionicPopup.alert({
-        title: '保存成功！',
-        template: "http://"+data.url
-      });
+      // $ionicPopup.alert({
+      //   title: '保存成功！',
+      //   template: "http://"+data.url
+      // });
+      $rootScope.modal_sgf_post.show();
     });
   }
 
@@ -191,6 +202,11 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     GameService.runAgent(function(data){
       console.log("GameService.runAgent:", data);
     });
+  }
+  $scope.publishSgf = function () {
+    console.log("$scope.publishSgf called...");
+    //
+    $rootScope.modal_sgf_post.hide();
   }
 
   //default calls

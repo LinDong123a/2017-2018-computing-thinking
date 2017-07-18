@@ -1,0 +1,23 @@
+<div class="modal">
+  <header class="bar bar-header bar-positive">
+    <h1 class="title">新棋谱</h1>
+    <div class="button button-clear" ng-click="modal_sgf_post.hide()">
+      <span class="icon ion-android-close"></span>
+    </div>
+  </header>
+  <ion-content class="has-header" has-header="true" padding="true">
+    <div class="list">
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">名称:</span> <input type="text" placeholder="" ng-model="sgfDto.name">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">比赛结果:</span> <input type="text" placeholder="" ng-model="sgfDto.result">
+      </label>
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">URL:</span> <input type="url" placeholder="" ng-model="sgfDto.url">
+      </label>
+      </label>
+      <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty" ng-disabled="sgfDto.url==null"  ng-click="publishSgf()">发布</button>
+    </div>
+  </ion-content>
+</div>

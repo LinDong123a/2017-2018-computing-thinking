@@ -188,7 +188,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.6.0</version>
+            <version>3.8.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
@@ -226,6 +226,12 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.shekhargulati.reactivex</groupId>
+            <artifactId>rx-docker-client</artifactId>
+            <version>0.2.2</version>
+            <type>jar</type>
         </dependency>
 
 

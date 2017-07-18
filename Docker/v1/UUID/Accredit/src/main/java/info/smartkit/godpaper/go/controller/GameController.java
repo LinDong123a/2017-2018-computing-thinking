@@ -122,7 +122,7 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET, value="/sgf/{gamerId}")
         public SgfDto saveSgfById(@PathVariable String gamerId) throws IOException, DockerException, InterruptedException {
                 Gamer gamer = repository.findOne(gamerId);
-                return service.saveSgf(gamer,true);
+                return service.saveSgf(gamer,true,true);
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/score/{gamerId}")
@@ -130,7 +130,7 @@ public class GameController {
                 //
                 Gamer gamer = repository.findOne(gamerId);
                 if(gamer.getStatus()!=GameStatus.SAVED.getIndex()){
-                        service.saveSgf(gamer,true);
+                        service.saveSgf(gamer,true,false);
                 }
                 //
                 return dockerService.runScorer(gamerId);
