@@ -29,8 +29,11 @@ public class UUIDAccreditApplication{
 		System.setProperty("https.protocols", "TLSv1.1");
 		SpringApplication.run(UUIDAccreditApplication.class, args);
 		//ChainCode stub initialization with default chain name.
+		LOG.info("ChainCodeVariables.enabled:"+ChainCodeVariables.enabled);
 		LOG.info("ChainCodeVariables.chainName:"+ChainCodeVariables.chainName);
-		new UUIDAccreditChainCode().start(null);
+		if (ChainCodeVariables.enabled) {
+			new UUIDAccreditChainCode().start(null);
+		}
 		//ChainCode deploy default?
 	}
 
@@ -43,7 +46,7 @@ public class UUIDAccreditApplication{
 		boolean db_rebuildMongoData = true;
 		if(db_rebuildMongoData){
 			//
-			Resource initData = new ClassPathResource("init_Aier.json");
+			Resource initData = new ClassPathResource("init_aier.json");
 			factory.setResources(new Resource[]{initData});
 		}else{
 			factory.setResources(new Resource[]{});

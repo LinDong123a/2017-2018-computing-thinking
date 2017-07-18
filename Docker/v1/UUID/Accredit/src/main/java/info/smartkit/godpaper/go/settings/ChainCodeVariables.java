@@ -7,6 +7,7 @@ import info.smartkit.godpaper.go.UUIDAccreditChainCode;
  */
 public class ChainCodeVariables {
         // Static variables for chain code storage here:
+        static public boolean enabled = false;
         static public String baseUrl = null;
         static public String enrollId = null;
         static public String enrollSecret = null;

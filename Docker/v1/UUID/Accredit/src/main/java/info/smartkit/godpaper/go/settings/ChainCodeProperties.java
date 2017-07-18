@@ -23,10 +23,6 @@ public class ChainCodeProperties {
                 this.chainName = chainName;
         }
 
-        @Override public String toString() {
-                return "ChainProperties{" + "baseUrl='" + baseUrl + '\'' + ", enrollSecret='" + enrollSecret + '\'' + ", chainName='" + chainName + '\'' + '}';
-        }
-
         public ChainCodeProperties() {
         }
 
@@ -83,4 +79,20 @@ public class ChainCodeProperties {
         }
 
         private String chainName;
+
+        public boolean getEnabled() {
+                return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+                ChainCodeVariables.enabled = enabled;
+                LOG.info("enabled:" + ChainCodeVariables.enabled);
+        }
+
+        @Override public String toString() {
+                return "ChainCodeProperties{" + "baseUrl='" + baseUrl + '\'' + ", enrollId='" + enrollId + '\'' + ", enrollSecret='" + enrollSecret + '\'' + ", chainName='" + chainName + '\'' + ", enabled=" + enabled + '}';
+        }
+
+        private boolean enabled;
 }

@@ -16,6 +16,7 @@ mqtt:
   tag_vs: _vs_
   tag_play: _play_
 chain:
+  enabled: true
   baseUrl: http://${mqtt.ip}:7050
 #  host: 127.0.0.1
 #  port: 7050
@@ -44,6 +45,7 @@ mqtt:
   tag_vs: _vs_
   tag_play: _play_
 chain:
+  enabled: false
   baseUrl: http://${mqtt.ip}:7050
 #  host: 118.190.96.120
 #  port: 7050

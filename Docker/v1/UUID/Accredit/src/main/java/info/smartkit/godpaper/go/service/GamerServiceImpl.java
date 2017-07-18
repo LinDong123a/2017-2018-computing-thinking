@@ -17,7 +17,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
-import sun.jvm.hotspot.types.basic.BasicOopField;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,9 +145,11 @@ public class GamerServiceImpl implements GamerService {
                 LOG.info("savedGamer#"+index+":"+savedGamer.toString());
                 //subscribe game topic
                 mqttService.subscribe(gamer.getTopic());
-                //Register to ChainCode after deploy
-                String[] putArgs = {gamer.getId(),gamer.getSgf()};
-                chainCodeService.invoke(chainCodeProperties.getChainName(),chainCodeProperties.getEnrollId(),putArgs);
+                if(chainCodeProperties.getEnabled()) {
+                        //Register to ChainCode after deploy
+                        String[] putArgs = { gamer.getId(), gamer.getSgf() };
+                        chainCodeService.invoke(chainCodeProperties.getChainName(), chainCodeProperties.getEnrollId(), putArgs);
+                }
                 return gamer;
         }
 //SGF block
