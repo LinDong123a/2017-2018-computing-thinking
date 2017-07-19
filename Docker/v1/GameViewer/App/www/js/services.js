@@ -85,13 +85,6 @@ angular.module('app.services', [])
           console.log("runPlayer:",data);
           callback(data);
         });
-      }
-      ,
-      runAgent: function(callback){
-        $http.get(envInfo.api.url+"/docker/run/agent/"+this.curAgentId).success(function(data) {
-          console.log("runAgent:",data);
-          callback(data);
-        });
       },
       trainAgent: function(callback){
         $http.get(envInfo.api.url+"/docker/train/agent/"+this.curAgentId).success(function(data) {
@@ -203,7 +196,13 @@ angular.module('app.services', [])
           console.log("runAgent:",data);
           callback(data);
         });
-      }
+      },
+      trainAgent: function(callback){
+        $http.get(envInfo.api.url+"/docker/train/agent/"+this.curAgentId).success(function(data) {
+          console.log("runAgent:",data);
+          callback(data);
+        });
+      },
     }
   }])
 

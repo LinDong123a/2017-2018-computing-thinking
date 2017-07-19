@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static info.smartkit.godpaper.go.settings.AIVariables.rank;
-
 /**
  * Created by smartkit on 04/07/2017.
  */
@@ -26,9 +24,6 @@ public class AIProperties {
 
         public void setPolicys(List<String> policys) {
                 this.policys = policys;
-                //
-                AIVariables.policys = policys;
-                LOG.info("setPolicys:"+AIVariables.policys.toString());
         }
 
         public int getRanks() {
@@ -48,29 +43,32 @@ public class AIProperties {
 
         public void setPlayer(String player) {
                 this.player = player;
-                //
-                AIVariables.player = player;
-                LOG.info("setPlayer:"+AIVariables.player);
         }
 
 
         private String player;
 
-        public String getAgent() {
-                return agent;
+        public String getAgentPrep() {
+                return agentPrep;
         }
 
-        public void setAgent(String agent) {
-                this.agent = agent;
-                //
-                AIVariables.agent = agent;
-                LOG.info("setAgent:"+AIVariables.agent);
+        public void setAgentPrep(String agentPrep) {
+                this.agentPrep = agentPrep;
         }
 
-        private String agent;
+        public String getAgentTrain() {
+                return agentTrain;
+        }
+
+        public void setAgentTrain(String agentTrain) {
+                this.agentTrain = agentTrain;
+        }
+
+        private String agentPrep;
+        private String agentTrain;
 
         @Override public String toString() {
-                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agent='" + agent + '\'' + ", scorer='" + scorer + '\'' + '}';
+                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + '}';
         }
 
         public String getScorer() {

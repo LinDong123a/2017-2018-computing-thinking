@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface AierRepository extends MongoRepository<Aier,String> {
         List<Aier> findByStatus(int status);
+        List<Aier> findByStatusOrderByCreatedDesc(int status);
+        List<Aier> findAllByOrderByCreatedDesc();
 }

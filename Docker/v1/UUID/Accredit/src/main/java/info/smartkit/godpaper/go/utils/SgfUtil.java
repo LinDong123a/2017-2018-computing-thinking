@@ -26,8 +26,5 @@ public class SgfUtil {
                 return getWorkingDir() + "/target/classes/AI_FILEs/" + context;
         }
 
-        public static String getSgfRemote(int port,String contextPath,String sgfName){
-                return ServerUtil.getUrl(port,contextPath)+"/sgf/"+sgfName;
-        }
 
 }

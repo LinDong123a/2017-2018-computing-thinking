@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 /**
  * Created by smartkit on 07/07/2017.
  */
@@ -66,13 +68,13 @@ public class DockerController {
 //        }
 
         @RequestMapping(method = RequestMethod.GET,value="/train/agent/{id}")
-        public String trainAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
+        public String trainAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException, IOException {
                 //update status
                 Aier aier = aierRepository.findOne(id);
                 aier.setStatus(AierStatus.TRAINING.getIndex());
                 aierRepository.save(aier);
                 //
-                return dockerService.trainAgent(id,aier.getModel());
+                return dockerService.trainAgent(aier);
         }
 
 //        @RequestMapping(method = RequestMethod.GET,value="/info/{id}")

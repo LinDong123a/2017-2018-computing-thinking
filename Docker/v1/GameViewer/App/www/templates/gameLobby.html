@@ -16,11 +16,11 @@
       <ion-list>
         <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList" >
           <!--<i class="icon-right ion-android-laptop"></i>-->
-          <h3>挑战名称：{{lobby.player1.name}} VS {{lobby.player2.name}}</h3>
-          <p>挑战等级：{{lobby.player1.rank}}段 VS {{lobby.player2.rank}}段</p>
-          <p>挑战策略：{{lobby.player1.policy}} VS {{lobby.player2.policy}}</p>
-          <p>挑战分数：{{lobby.player1.score}} VS {{lobby.player2.score}}</p>
-          <p>挑战时间: {{lobby.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+          <h3>名称：{{lobby.player1.name}} VS {{lobby.player2.name}}</h3>
+          <p>等级：{{lobby.player1.rank}} VS {{lobby.player2.rank}}</p>
+          <p>策略：{{lobby.player1.policy}} VS {{lobby.player2.policy}}</p>
+          <p>分数：{{lobby.player1.score}} VS {{lobby.player2.score}}</p>
+          <p>时间: {{lobby.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
           <button class="icon ion-ios-game-controller-a button button-icon"></button>
           <button class="icon-right ion-play" ng-show="lobby.status==1" ng-click="playOne(lobby.id)">比赛</button>
           <button class="icon-right ion-pause" ng-disabled="true" ng-show="lobby.status!=1" ng-click="">暂停</button>

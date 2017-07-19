@@ -8,10 +8,14 @@
   <ion-content class="has-header" has-header="true" padding="true">
     <div class="list">
       <label class="item item-input item-stacked-label">
-        <span class="input-label">名称:</span> <input type="text" ng-model="anewAier.name" placeholder="{{placeholder | date:'yyyy_MM_dd_HH_mm_ss'}}" required>
+        <span class="input-label">名称:</span> <input type="text" ng-model="$root.anewAier.name" required>
+        <input type="text" placeholder="{{placeholder_aier | date:'yyyy_MM_dd_HH_mm_ss'}}" disabled>
       </label>
       <label class="item item-input item-stacked-label" >
-        <span class="input-label">历史棋谱:</span><select ng-model='anewAier.model' ng-options='item.name as item.name for item in $root.aierList track by item.id'>
+        <span class="input-label">当前棋谱ID:</span><input type="url" placeholder="" ng-model="$root.tableInfo.id" disabled>
+      </label>
+      <label class="item item-input item-stacked-label disabled">
+        <span class="input-label disabled">基于历史棋谱:</span><select disabled ng-model='$root.anewAier.model' ng-options='item.name as item.name for item in $root.aierList track by item.id'>
         <option value="">---请选择---</option> <!-- not selected / blank option -->
       </select>
       </label>

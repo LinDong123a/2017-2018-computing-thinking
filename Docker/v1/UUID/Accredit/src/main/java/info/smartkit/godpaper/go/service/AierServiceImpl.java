@@ -13,9 +13,13 @@ import java.util.List;
  */
 @Service
 public class AierServiceImpl implements AierService{
-        @Override public void createModelFolder(String name) throws IOException {
+        @Override public File createModelFolder(String name) throws IOException {
                 String folderPathStr = SgfUtil.getAiFilesLocal(name);
-                FileUtils.forceMkdir(new File(folderPathStr));
+                File folderFile = new File(folderPathStr);
+                if(!folderFile.exists()) {
+                        FileUtils.forceMkdir(folderFile);
+                }
+                return folderFile;
         }
 
         @Override public void copySgfFiles(String srcDir,String destDir) throws IOException {

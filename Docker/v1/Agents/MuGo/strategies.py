@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import copy
 import math
 import random
 import sys
 import time
-import numpy as np
+
 import gtp
+import numpy as np
 
 import go
 import utils
@@ -44,6 +48,8 @@ def select_weighted_random(position, move_probabilities):
         return selected_move
     else:
         # fallback in case the selected move was illegal
+        print("Using fallback move; position was %s\n, selected %s" % (
+            position, selected_move))
         return select_most_likely(position, move_probabilities)
 
 

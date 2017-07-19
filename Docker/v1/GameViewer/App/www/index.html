@@ -45,6 +45,20 @@
         list-style-type: decimal;
         padding-left:40px;
       }
+      .input-label.disabled {
+        filter: Alpha(Opacity=30);
+        opacity: .3;
+        zoom: 1;
+        cursor: default !important;
+        pointer-events: none;
+      }
+      .item-select.disabled {
+        filter: Alpha(Opacity=30);
+        opacity: .3;
+        zoom: 1;
+        cursor: default !important;
+        pointer-events: none;
+      }
     </style>
 
     <script src="js/app.js"></script>
@@ -72,6 +86,9 @@
     <!-- Only required for Tab projects w/ pages in multiple tabs
     <script src="lib/ionicuirouter/ionicUIRouter.js"></script>
     -->
+    <!--Moment-->
+    <script src="libs/moment/moment.js"></script>
+    <script src="libs/angular-moment/angular-moment.js"></script>
 
   </head>
   <body ng-app="app" animation="slide-left-right-ios7">

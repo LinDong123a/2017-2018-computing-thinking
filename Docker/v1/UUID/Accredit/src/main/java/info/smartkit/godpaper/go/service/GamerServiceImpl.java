@@ -15,7 +15,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
+import info.smartkit.godpaper.go.settings.SKServerProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class GamerServiceImpl implements GamerService {
         private ChainCodeService chainCodeService;
 
         @Autowired ChainCodeProperties chainCodeProperties;
-        @Autowired ServerProperties serverProperties;
+        @Autowired SKServerProperties serverProperties;
 
         @Autowired UserRepository userRepository;
         @Autowired DockerService dockerService;
@@ -188,6 +188,11 @@ public class GamerServiceImpl implements GamerService {
                 //
                 if(filed)//Save to disk sgf file.at least once for score-estimator usage
                 {
+//                        //remove last move of o.IllegalMove
+//                        int lenOfSgf = gamer.getSgf().length();
+//                        String validSgf = gamer.getSgf().substring(0,lenOfSgf-5);//B[sd];
+//                        gamer.setSgf(validSgf);
+                        //
                        File sgfFile =  Sgf.writeToFile(gamer.getSgf()+sgfTail);
                        LOG.info("sgfFile:"+sgfFile.toString());
                        String sgfFileName = gamer.getId()+"/"+sgfFile.getName();
@@ -201,7 +206,7 @@ public class GamerServiceImpl implements GamerService {
                                FileUtils.copyFile(sgfFile,destFile);//for url.
                                LOG.info("copy sgf file to sgf/{gamerId} folder success:"+sgfFileName);
                                 //url
-                                String sgfUrl = "http://"+SgfUtil.getSgfRemote(serverProperties.getPort(),serverProperties.getContextPath(),sgfFileName);
+                                String sgfUrl = serverProperties.getApi()+"sgf/"+sgfFileName;
                                 sgfDto.setUrl(sgfUrl);
                                 //update game status
                                 gamer.setStatus(GameStatus.SAVED.getIndex());

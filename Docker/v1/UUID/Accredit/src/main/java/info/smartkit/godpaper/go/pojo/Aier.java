@@ -48,12 +48,22 @@ public class Aier {
 
         private String name;
         private String model;
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        private Date created = new Date();
 
         @Override public String toString() {
-                return "Aier{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", model='" + model + '\'' + ", created=" + created + ", status=" + status + '}';
+                return "Aier{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", model='" + model + '\'' + ", files='" + files + '\'' + ", created=" + created + ", status=" + status + ", gid='" + gid + '\'' + '}';
         }
+
+        public String getFiles() {
+                return files;
+        }
+
+        public void setFiles(String files) {
+                this.files = files;
+        }
+
+        private String files;//ai model files absolute path.
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        private Date created = new Date();
 
         public int getStatus() {
                 return status;
@@ -64,5 +74,15 @@ public class Aier {
         }
 
         private int status= AierStatus.STANDBY.getIndex();
+
+        public String getGid() {
+                return gid;
+        }
+
+        public void setGid(String gid) {
+                this.gid = gid;
+        }
+
+        private String gid;//related gamer id.
 
 }

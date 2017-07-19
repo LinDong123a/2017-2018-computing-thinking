@@ -5,6 +5,7 @@
     "ionic": "driftyco/ionic-bower#1.3.3"
   },
   "dependencies": {
-    "random-name-generator": "^0.0.5"
+    "random-name-generator": "^0.0.5",
+    "angular-moment": "^1.0.1"
   }
 }

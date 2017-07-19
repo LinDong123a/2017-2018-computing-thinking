@@ -1,11 +1,14 @@
-import logging
-logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',level=logging.INFO,datefmt='%Y-%m-%d %H:%M:%S')
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import argparse
 import argh
+from contextlib import contextmanager
 import os
 import random
 import re
 import sys
+import time
+
 import gtp as gtp_lib
 
 from policy import PolicyNetwork
@@ -13,6 +16,14 @@ from strategies import RandomPlayer, PolicyNetworkBestMovePlayer, PolicyNetworkR
 from load_data_sets import DataSet, parse_data_sets
 
 TRAINING_CHUNK_RE = re.compile(r"train\d+\.chunk.gz")
+
+@contextmanager
+def timer(message):
+    tick = time.time()
+    yield
+    tock = time.time()
+    print("%s: %.3f" % (message, (tock - tick)))
+
 
 def gtp(strategy, read_file=None):
     n = PolicyNetwork(use_cpu=True)
@@ -43,7 +54,7 @@ def gtp(strategy, read_file=None):
             sys.stdout.write(engine_reply)
             sys.stdout.flush()
 
-def preprocess(*data_sets, processed_dir="processed_data"):
+def preprocess(*data_sets, processed_dir="/processed_data/"):
     processed_dir = os.path.join(os.getcwd(), processed_dir)
     if not os.path.isdir(processed_dir):
         os.mkdir(processed_dir)
@@ -51,7 +62,7 @@ def preprocess(*data_sets, processed_dir="processed_data"):
     test_chunk, training_chunks = parse_data_sets(*data_sets)
     print("Allocating %s positions as test; remainder as training" % len(test_chunk), file=sys.stderr)
 
-    logging.info("preprocess_Writing test chunk.")
+    print("Writing test chunk")
     test_dataset = DataSet.from_positions_w_context(test_chunk, is_test=True)
     test_filename = os.path.join(processed_dir, "test.chunk.gz")
     test_dataset.write(test_filename)
@@ -59,20 +70,22 @@ def preprocess(*data_sets, processed_dir="processed_data"):
     training_datasets = map(DataSet.from_positions_w_context, training_chunks)
     for i, train_dataset in enumerate(training_datasets):
         if i % 10 == 0:
-            logging.info("Writing training chunk %s" % i)
+            print("Writing training chunk %s" % i)
         train_filename = os.path.join(processed_dir, "train%s.chunk.gz" % i)
         train_dataset.write(train_filename)
-        logging.info("%s chunks written" % (i+1))
+    print("%s chunks written" % (i+1))
 
-def train(processed_dir, read_file=None, save_file=None, epochs=10, logdir=None, checkpoint_freq=10000):
+def train(processed_dir, save_file="/saved_model/", epochs=10, logdir=None, checkpoint_freq=10000):
     test_dataset = DataSet.read(os.path.join(processed_dir, "test.chunk.gz"))
     train_chunk_files = [os.path.join(processed_dir, fname) 
         for fname in os.listdir(processed_dir)
         if TRAINING_CHUNK_RE.match(fname)]
-    if read_file is not None:
-        read_file = os.path.join(os.getcwd(), save_file)
+    save_file = os.path.join(os.getcwd(), save_file)
     n = PolicyNetwork()
-    n.initialize_variables(read_file)
+    try:
+        n.initialize_variables(save_file)
+    except:
+        n.initialize_variables(None)
     if logdir is not None:
         n.initialize_logging(logdir)
     last_save_checkpoint = 0
@@ -81,10 +94,13 @@ def train(processed_dir, read_file=None, save_file=None, epochs=10, logdir=None,
         for file in train_chunk_files:
             print("Using %s" % file)
             train_dataset = DataSet.read(file)
-            n.train(train_dataset)
+            train_dataset.shuffle()
+            with timer("training"):
+                n.train(train_dataset)
             n.save_variables(save_file)
             if n.get_global_step() > last_save_checkpoint + checkpoint_freq:
-                n.check_accuracy(test_dataset)
+                with timer("test set evaluation"):
+                    n.check_accuracy(test_dataset)
                 last_save_checkpoint = n.get_global_step()
 
 

@@ -1,34 +1,28 @@
 package info.smartkit.godpaper.go.service;
 
 import com.shekhargulati.reactivex.docker.client.RxDockerClient;
-import com.shekhargulati.reactivex.docker.client.representations.DockerContainerRequest;
-import com.shekhargulati.reactivex.docker.client.representations.DockerContainerRequestBuilder;
 import com.spotify.docker.client.DefaultDockerClient;
-import com.spotify.docker.client.DockerCertificates;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
 import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
+import info.smartkit.godpaper.go.pojo.Aier;
 import info.smartkit.godpaper.go.settings.AIProperties;
-import info.smartkit.godpaper.go.settings.AIVariables;
 import info.smartkit.godpaper.go.settings.MqttProperties;
-import info.smartkit.godpaper.go.utils.ServerUtil;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import info.smartkit.godpaper.go.utils.StringUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
-import rx.Observable;
 
-import java.net.URI;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by smartkit on 06/07/2017.
@@ -41,6 +35,7 @@ public class DockerServiceImpl implements DockerService{
         @Autowired AIProperties aiProperties;
         @Autowired MqttProperties mqttProperties;
         @Autowired ServerProperties serverProperties;
+        @Autowired AierService aierService;
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
 
@@ -87,58 +82,7 @@ public class DockerServiceImpl implements DockerService{
 
                 // Start container
                 docker.startContainer(id);
-                // Inspect container
-//                final ContainerInfo info = docker.inspectContainer(id);
-
-                // Bind container ports to host ports
-//                final String[] ports = {"80", "22"};
-//                final Map<String, List<PortBinding>> portBindings = new HashMap<>();
-//                for (String port : ports) {
-//                        List<PortBinding> hostPorts = new ArrayList<>();
-//                        hostPorts.add(PortBinding.of("0.0.0.0", port));
-//                        portBindings.put(port, hostPorts);
-//                }
-
-                // Bind container port 443 to an automatically allocated available host port.
-//                List<PortBinding> randomPort = new ArrayList<>();
-//                randomPort.add(PortBinding.randomPort("0.0.0.0"));
-////                portBindings.put("443", randomPort);
-//
-//                final HostConfig hostConfig = HostConfig.builder().portBindings(portBindings).build();
-//
-//                // Create container with exposed ports
-//                final ContainerConfig containerConfig = ContainerConfig.builder()
-//                        .hostConfig(hostConfig)
-//                        .image("smartkit/godpaper-go-ai-player")
-////                        .exposedPorts(ports)
-////                        .cmd("sh", "-c", "while :; do sleep 1; done")
-//                        .build();
-//
-//                final ContainerCreation creation = docker.createContainer(containerConfig);
-//                final String id = creation.id();
-//
-//                // Inspect container
-//                final ContainerInfo info = docker.inspectContainer(id);
-//
-//                // Start container
-//                docker.startContainer(id);
-//
-//                // Exec command inside running container with attached STDOUT and STDERR
-//                final String[] command = {"bash", "-c", "ls"};
-//                final ExecCreation execCreation = docker.execCreate(
-//                        id, command, DockerClient.ExecCreateParam.attachStdout(),
-//                        DockerClient.ExecCreateParam.attachStderr());
-//                final LogStream output = docker.execStart(execCreation.id());
-//                final String execOutput = output.readFully();
-
-                // Kill container
-//                docker.killContainer(id);
-
-                // Remove container
-//                docker.removeContainer(id);
-
-                // Close the docker client
-//                docker.close();
+               //
                 final String logs;
                 try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
@@ -148,20 +92,15 @@ public class DockerServiceImpl implements DockerService{
                 return id;
         }
 
-        private String runAgentFunc(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
+        private String runAgentPrep(String name,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
-                docker.pull(aiProperties.getAgent());
+                docker.pull(aiProperties.getAgentPrep());
                 // Create container
-                List<String> envStrings = new ArrayList<>();
-//                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
-//                envStrings.add("IP_MQTT=192.168.0.11");
-                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
                 //
                 final ContainerConfig config = ContainerConfig.builder()
-                        .image(aiProperties.getAgent())
-                        .hostConfig(this.getHostConfig_sgf(hSgf))
-                        .hostConfig(this.getHostConfig_processed_data(hSgf))
+                        .image(aiProperties.getAgentPrep())
+                        .hostConfig(this.getHostConfig_sgf_mugo_prep(hSgf))
 //                        .env(envStrings)
                         .build();
                 String uName =  StringUtil.getUuidString(name,6);
@@ -174,35 +113,47 @@ public class DockerServiceImpl implements DockerService{
                 final ContainerInfo info = docker.inspectContainer(id);
                 LOG.info("Inspect mounts:"+info.mounts().toString());
                 final String logs;
+                //Pause for 15 seconds
+                Thread.sleep(15000);//wait for docker execution.
                 try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
-                        LOG.info("Docker(Agent) logs:"+logs.toString());
+                        LOG.info("Docker(AgentPrep) logs:"+logs.toString());
                         //
-                        this.runAgentFunc(name,hSgf);
+//                        this.runAgentTrain(name,hSgf,modelDest);
                 }
                 return id;
         }
+        private String runAgentTrain(String name,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
+                // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
+                // Pull an image
+                docker.pull(aiProperties.getAgentTrain());
+                // Create container
+                //
+                final ContainerConfig config = ContainerConfig.builder()
+                        .image(aiProperties.getAgentTrain())
+                        .hostConfig(this.getHostConfig_sgf_mugo_train(hSgf))
+                        //                        .env(envStrings)
+                        .build();
+                String uName =  StringUtil.getUuidString(name,6);
+                final ContainerCreation creation = docker.createContainer(config,uName);
+                final String id = creation.id();
 
-//        @Override public String runScorer(String gamerId) throws DockerException, InterruptedException {
-//                // pull the latest image from Docker Hub
-//                Observable<String> pullImageObs = rxDockerClient.pullImageObs(aiProperties.getScorer());
-//                pullImageObs.subscribe(System.out::println,
-//                        e -> System.err.println("Encountered exception >> " + e.getMessage()),
-//                        () -> System.out.println("Successfully completed"));
-//                //Create and start container
-//                String fromSgfs = SgfUtil.getSgfLocal(gamerId);
-//                DockerContainerRequestBuilder request = new DockerContainerRequestBuilder()
-//                        .setImage(aiProperties.getScorer());
-////                                .setHostConfig(this.getHostConfig_sgf(fromSgfs)
-////                        .createDockerContainerRequest();
-//
-//                String container = StringUtil.getUuidString("gnugo",6);
-//                rxDockerClient.createContainerObs(String.valueOf(request), container)
-//                        .flatMap(res -> rxDockerClient.startContainerObs(res.getId()))
-//                        .subscribe(System.out::println);
-//
-//                return "";
-//        }
+                // Start container
+                docker.startContainer(id);
+                //inspect mounts
+                final ContainerInfo info = docker.inspectContainer(id);
+                LOG.info("Inspect mounts:"+info.mounts().toString());
+                final String logs;
+                //wait for docker execution.
+                Thread.sleep(15000);
+                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                        logs = stream.readFully();
+                        LOG.info("Docker(AgentTrain) logs:"+logs.toString());
+                        //cp saved_model to AI_Files.
+                        FileUtils.copyDirectory(new File(hSgf+"/saved_model/"),new File(modelDest),true);
+                }
+                return id;
+        }
 
         @Override public String runScorer(String gamerId) throws DockerException, InterruptedException {
                 //docker run -it -v /Users/smartkit/sgf:/sgfs smartkit/godpaper-go-score-estimator-gnugo
@@ -247,9 +198,11 @@ public class DockerServiceImpl implements DockerService{
                 return resultStr;
         }
 
-        @Override public String trainAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
+        @Override public String trainAgent(Aier aier) throws DockerException, InterruptedException, DockerCertificateException, IOException {
                 //preprocess data then savedmodel
-                return this.runAgentFunc(name,hSgf);
+                String fromSgfs = SgfUtil.getSgfLocal(aier.getGid());
+                LOG.info("Aier for trainAgent:"+aier.toString());
+                return this.runAgentPrep(aier.getId(),fromSgfs,aier.getFiles());
         }
 
         @Override public ContainerInfo info(String id) throws DockerException, InterruptedException, DockerCertificateException {
@@ -303,66 +256,41 @@ public class DockerServiceImpl implements DockerService{
                                 .build();
                 return hostConfig_sgf;
         }
-
-        private HostConfig getHostConfig_processed_data(String hSgf){
-                final HostConfig hostConfig_sgf =
-                        HostConfig.builder()
-                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
-                                        .to("/processed_data")
-                                        //                                        .readOnly(true)
-                                        .build())
-                                .build();
-                return hostConfig_sgf;
-        }
-
-        private HostConfig getHostConfig_saved_data(String hSgf){
-                final HostConfig hostConfig_sgf =
-                        HostConfig.builder()
-                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal(hSgf))
-                                        .to("/saved_model")
-                                        //                                        .readOnly(true)
-                                        .build())
-                                .build();
-                return hostConfig_sgf;
-        }
-
-        private String trainAgentFunc(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException {
-                //then trainAgent
-                docker.pull(aiProperties.getAgent());
-                // Create container
-                List<String> envStrings = new ArrayList<>();
-                //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
-                //                envStrings.add("IP_MQTT=192.168.0.11");
-                //@see:https://github.com/spotify/docker-client/blob/master/docs/user_manual.md#mounting-volumes-in-a-container
-                final HostConfig hostConfig =
-                        HostConfig.builder()
-                                .appendBinds(HostConfig.Bind.from(SgfUtil.getSgfLocal("savedmodel"))
-                                        .to("/savedmodel")
-                                        //                                        .readOnly(true)
-                                        .build())
-                                .build();
+        private HostConfig getHostConfig_sgf_mugo_prep(String hSgf){
                 //
-                final ContainerConfig config = ContainerConfig.builder()
-                        .image(aiProperties.getAgent())
-                        .hostConfig(this.getHostConfig_sgf(hSgf))
-                        .hostConfig(this.getHostConfig_processed_data(hSgf))
-                        .hostConfig(this.getHostConfig_saved_data(hSgf))
-                        //                        .entrypoint("main.py","train","processed_data/","--save-file=/sgf/savedmodel")//python main.py train processed_data/ --save-file=/tmp/savedmodel --epochs=1 --logdir=logs/my_training_run
-                        .build();
-                String uName =  StringUtil.getUuidString(name,6);
-                final ContainerCreation creation = docker.createContainer(config, uName);
-                final String id = creation.id();
-                // Start container
-                docker.startContainer(id);
-                //inspect mounts
-                final ContainerInfo info = docker.inspectContainer(id);
-                LOG.info("Inspect mounts:"+info.mounts().toString());
-                final String logs;
-                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
-                        logs = stream.readFully();
-                        LOG.info("Docker(Agent) logs:"+logs.toString());
-                }
-                return id;
+                final HostConfig hostConfig_sgf =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(hSgf)
+                                        .to("/sgfs/")
+                                        .readOnly(false)
+                                        .build())
+                                .appendBinds(HostConfig.Bind.from(hSgf+"/processed_data/")
+                                        .to("/processed_data/")
+                                        .readOnly(false)
+                                        .build())
+                                .build();
+                return hostConfig_sgf;
         }
+
+
+        private HostConfig getHostConfig_sgf_mugo_train(String hSgf){
+                final HostConfig hostConfig_sgf =
+                        HostConfig.builder()
+                                .appendBinds(HostConfig.Bind.from(hSgf)
+                                        .to("/sgfs/")
+                                        .readOnly(true)
+                                        .build())
+                                .appendBinds(HostConfig.Bind.from(hSgf+"/processed_data/")
+                                        .to("/processed_data/")
+                                        .readOnly(false)
+                                        .build())
+                                .appendBinds(HostConfig.Bind.from(hSgf+"/saved_model/")
+                                        .to("/saved_model/")
+                                        .readOnly(false)
+                                        .build())
+                                .build();
+                return hostConfig_sgf;
+        }
+
 }
 

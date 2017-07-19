@@ -47,6 +47,8 @@ angular.module('app.controllers', [])
       $rootScope.tableInfo = null;
       $rootScope.aierList = [];
       $rootScope.sgfDto = null;
+      $rootScope.anewAier = {name:null,model:null,gid:null};
+      $rootScope.placeholder_aier = null;
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo) {
         var gameTableDiv = document.getElementById("gameTableDiv");
@@ -64,6 +66,7 @@ angular.module('app.controllers', [])
           console.log("GameService.getOne:",  data);
           $rootScope.tableInfo = data;
           $rootScope.renderGameTable(data);
+          //
         });
       };
 
@@ -118,6 +121,8 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     console.log("game start!:");
     GameService.playAll(function(data){
       console.log("GameService.playAll:",  data);
+      //then refresh
+      $scope.getAll();
     });
   }
   $scope.dismissAll = function(){
@@ -155,37 +160,14 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
 
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup) {
+function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum) {
 //
-  $scope.gamers = [];
-  $scope.tableIndex = 0;
-  $scope.tableInfo = {};
-  $scope.sgfDto = {cmd:null,url:null};
-  //
-  // console.log("scope.gamerIds[$scope.tableIndex]:",$scope.gamerIds[$scope.tableIndex]);
-  $scope.nextOne = function(){
-    // console.log("LobbyService.gamerIds:", LobbyService.gamerIds);
-    // TableService.gamerId = LobbyService.gamerIds[$scope.tableIndex];
-    // console.log("TableService.gamerId:", TableService.gamerId);
-    $scope.tableInfo = $scope.gamers[$scope.tableIndex];
-    // $scope.tableInfo = TableService.getOne(function(data){
-    console.info("$scope.tableInfo:",$scope.tableInfo);
-    //TODO:ChainCode Verify
-    // ChainCodeService.gamerId = $scope.tableInfo.id;
-    // console.log("ChainCodeService.gamerId:", ChainCodeService.gamerId);
-
-      $rootScope.renderGameTable($scope.tableInfo);
-      //
-      $scope.tableIndex++;
-      if($scope.tableIndex==$scope.gamers.length){
-        $scope.tableIndex = 0; //next round.
-      }
-    };
-
   $scope.getSgf = function(){
+    $rootScope.modal_sgf_post.show();
+    //
     GameService.getSgf(function(data){
       console.log("GameService.getSgf:",  data);
       $scope.sgfDto = data;
@@ -194,7 +176,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       //   title: '保存成功！',
       //   template: "http://"+data.url
       // });
-      $rootScope.modal_sgf_post.show();
     });
   }
 
@@ -207,6 +188,10 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     console.log("$scope.publishSgf called...");
     //
     $rootScope.modal_sgf_post.hide();
+  }
+  $scope.addAier = function () {
+    $rootScope.modal_aier_add.show();
+    $rootScope.placeholder_aier = $scope.placeholder_aier = Enum.getTimestamp();
   }
 
   //default calls
@@ -275,7 +260,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       }
 
       $scope.runPlayer = function ($id) {
-
+//
         GameService.rPlayerId = $id;
         GameService.runPlayer(function(data){
           console.log("GameService.runPlayer:", data);
@@ -291,13 +276,15 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
     function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,AierService,Enum) {
       console.info("envInfo:",envInfo);
-      //
-      $scope.placeholder  = Enum.getTimestamp();
-      $scope.anewAier = {name:null,model:null};
-
+//
       $scope.createAier = function () {
-        console.log("$scope.anewAier:",$scope.anewAier);
-        AierService.anewAier = $scope.anewAier;
+        //
+        var suffix = new Date($rootScope.placeholder_aier);
+        var formatted_suffix = suffix.toJSON();
+        $rootScope.anewAier.name = $rootScope.anewAier.name +"_"+formatted_suffix;
+        $rootScope.anewAier.gid = $rootScope.tableInfo.id;
+        console.log("$rootScope.anewAier:",$rootScope.anewAier);
+        AierService.anewAier = $rootScope.anewAier;
         AierService.createOne(function(data){
           console.log("AierService.createOne:", data);
           //refresh.
@@ -308,7 +295,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       //
       $scope.trainAgent = function ($id) {
         AierService.curAgentId = $id;
-        AierService.runAgent(function(data){
+        AierService.trainAgent(function(data){
           console.log("AierService.trainAgent:", data);
           //refresh.
           $rootScope.getAiers();

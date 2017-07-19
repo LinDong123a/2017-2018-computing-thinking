@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 A board is a NxN numpy array.
 A Coordinate is a tuple index into the board.
@@ -376,6 +378,7 @@ class Position():
         return pos
 
     def score(self):
+        'Return score from B perspective. If W is winning, score is negative.'
         working_board = np.copy(self.board)
         while EMPTY in working_board:
             unassigned_spaces = np.where(working_board == EMPTY)

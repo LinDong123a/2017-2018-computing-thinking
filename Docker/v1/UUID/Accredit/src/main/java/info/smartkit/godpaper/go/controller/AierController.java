@@ -27,9 +27,10 @@ public class AierController {
         @RequestMapping(method = RequestMethod.POST)
         public Aier createOne(@RequestBody Aier value) throws IOException {
                 //file operation for trainning
-                aierService.createModelFolder(value.getName());
+                value.setFiles(aierService.createModelFolder(value.getName()).getAbsolutePath());
                 if(value.getModel()!=null){
-                        aierService.copySgfFiles(value.getModel(),value.getName());
+                        //TODO:
+//                        aierService.copySgfFiles(value.getModel(),value.getName());
                 }
                 //
                 return repository.save(value);
@@ -55,12 +56,14 @@ public class AierController {
 
         @RequestMapping(method = RequestMethod.GET)
         public List<Aier> listAll(){
-                return repository.findAll();
+
+                return repository.findAllByOrderByCreatedDesc();
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/status/{index}")
         public List<Aier> listByStatus(@PathVariable int index){
-                return repository.findByStatus(index);
+
+                return repository.findByStatusOrderByCreatedDesc(index);
         }
 
 
