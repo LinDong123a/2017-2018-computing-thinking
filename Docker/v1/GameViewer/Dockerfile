@@ -18,7 +18,7 @@ RUN apt-get update &&  \
 COPY tools /opt/tools
 
 # Install npm packages
-RUN npm install -g cordova ionic
+RUN npm install -g cordova ionic@1.3
 RUN npm install -g grunt-cli
 RUN npm install -g gulp
 RUN npm install -g bower

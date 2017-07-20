@@ -157,12 +157,12 @@ public class GamerServiceImpl implements GamerService {
 //SGF block
 
         //remove last move of o.IllegalMove
-        private void removeSgfLastMove(Gamer gamer) throws InterruptedException, DockerException, IOException {
+        private void removeSgfIllegalMove(Gamer gamer) throws InterruptedException, DockerException, IOException {
                 int lenOfSgf = gamer.getSgf().length();
                 String validSgf = gamer.getSgf().substring(0, lenOfSgf - 6);//;B[sd]
                 gamer.setSgf(validSgf+SGF_TAIL_FIXTURE);
                 //
-                LOG.info("removeSgfLastMove:"+gamer.getSgf());
+                LOG.info("removeSgfIllegalMove:"+gamer.getSgf());
         }
 
         private String saveSgfFileLocal(Gamer gamer) throws IOException, DockerException, InterruptedException {
@@ -196,7 +196,7 @@ public class GamerServiceImpl implements GamerService {
                 //
                 SgfDto sgfDto = new SgfDto();
                 //
-                this.removeSgfLastMove(gamer);
+                this.removeSgfIllegalMove(gamer);
                 //for agent training.
                 sgfDto.setName(gamer.getId());
                 sgfDto.setLocal(this.saveSgfFileLocal(gamer));

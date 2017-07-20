@@ -3,13 +3,13 @@ membersrvc:
   ports:
     - "7054:7054"
   command: membersrvc
-vp0:
+v1_vp0_1:
   image: hyperledger/fabric-peer
   ports:
     - "7050:7050"
     - "7051:7051"
     - "7053:7053"
-  container_name: v1_vp0_1
+  #container_name: v1_vp0_1
   environment:
     - CORE_PEER_ADDRESSAUTODETECT=true
     - CORE_VM_ENDPOINT=unix:///var/run/docker.sock
@@ -28,7 +28,7 @@ mongodb:
   image: smartkit/godpaper-go-mongodb
   ports:
     - "27017:27017"
-  container_name: mongodb
+  #container_name: mongodb
 activemq:
   image: smartkit/godpaper-go-message-broker-activemq
   ports:
@@ -38,5 +38,14 @@ activemq:
     - "61613:61613"
     - "61614:61614"
     - "61616:61616"
-  container_name: activemq
+  #container_name: activemq
+#uuid-accredit:
+#  image: smartkit/godpaper-go-uuid-accredit
+#  links:
+#    - v1_vp0_1
+#    - mongodb
+#    - activemq
+#  ports:
+ #   - "8095:8095"
+  #container_name: uuid-accredit
 
