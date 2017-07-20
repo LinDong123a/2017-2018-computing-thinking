@@ -41,12 +41,12 @@ cd BlockChain/HyperLedger & docker-compose up -d
 
 _1.Docker run_
 ```
-docker run -p 8095:8095 -d --name accredit --link mongodb --link activemq smartkit/godpaper-go-uuid-accredit
+docker run  --name uuid-accredit --link mongodb --link activemq --link v1_vp0_1 -p 8095:8095 smartkit/godpaper-go-uuid-accredit
 ```
 
 or:
 ```
-java -Dspring.data.mongodb.uri=mongodb://mongodb/toyhouse -Djava.security.egd=file:/dev/./urandom -Dmqtt.brokerUrl=tcp://activemq:1883 -jar build/libs/Accredit-0.0.1-SNAPSHOT.jar
+java -Dspring.data.mongodb.uri=mongodb://mongodb/toyhouse -Djava.security.egd=file:/dev/./urandom -Dmqtt.brokerUrl=tcp://activemq:1883 -Dchain.baseUrl=http://v1_vp0_1:7050 -jar build/libs/Accredit-0.0.1-SNAPSHOT.jar
 ```
 
 _2. RESTful API:_
