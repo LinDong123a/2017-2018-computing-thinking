@@ -162,6 +162,10 @@ docker import your.tar your/container
 ```
 docker run -p 27017:27017 -d --name mongodb our/container entrypoint/command 
 ```
+7.stop all containers by image name
+```
+docker stop $(docker ps -q --filter ancestor=<image-name> )
+```
 
 ### Deployment
 
