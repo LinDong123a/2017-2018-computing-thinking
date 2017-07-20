@@ -38,7 +38,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 connOpts.setCleanSession(true);
                 connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
                 mqttClient.connect(connOpts);
-                LOG.info("MQTT Connecting to broker: "+brokerUrl);
+                LOG.info("MQTT Connecting to broker: "+brokerUrl+",clientId:"+clientId);
 
         }
 
@@ -47,7 +47,9 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                         this.connect(mqttProperties.getBrokerUrl(),topic);
                 }
                 //
-                mqttClient.subscribe(topic);
+                if(mqttClient.isConnected()) {
+                        mqttClient.subscribe(topic);
+                }
                 //ONLY PLAYING GAME TOPIC.
                 if(topic.contains(MqttVariables.tag_vs)) {
                         LOG.info("MQTT subscribed game topic:"+topic);
@@ -106,7 +108,8 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                                 //by gamer id and update SGF info
 //                                Game sgfGame = Sgf.createFromString(gamerMessage);
 //                                LOG.info("sgfGame:"+sgfGame.toString());
-                                String sgfString = playingGamer.getSgf().concat(gamerMessage).concat(";");//(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
+                                String movePrefix = ";";
+                                String sgfString = playingGamer.getSgf().concat(movePrefix).concat(gamerMessage);//(;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
                                 playingGamer.setSgf(sgfString);
                                 //update to ChainCode invoke
                                 if(chainCodeProperties.getEnabled()) {
@@ -115,7 +118,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                                         chainCodeService.invoke(chainCodeProperties.getChainName(), chainCodeProperties.getEnrollId(), putArgs);
                                 }
                                 //
-                                playingGamer.setStatus(GameStatus.SAVED.getIndex());
+                                playingGamer.setStatus(GameStatus.PLAYING.getIndex());
                                 Gamer updatedGamer = gamerRepository.save(playingGamer);
                                 LOG.info("updatedGamer.sgf:"+updatedGamer.getSgf());
                         }

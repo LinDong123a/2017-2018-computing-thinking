@@ -14,9 +14,10 @@ import java.util.List;
  */
 public interface GamerService {
         List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException;
-        List<Gamer> playAll() throws MqttException, DockerException, InterruptedException;
-        Gamer playOne(String gamerId) throws MqttException, DockerException, InterruptedException;
-        SgfDto saveSgf(Gamer gamer,Boolean filed,Boolean resulted) throws IOException, DockerException, InterruptedException;
+        List<Gamer> playAll() throws MqttException, DockerException, InterruptedException, IOException;
+        Gamer playOne(String gamerId) throws MqttException, DockerException, InterruptedException, IOException;
+        SgfDto saveSgf(Gamer gamer) throws IOException, DockerException, InterruptedException;
+        String getSgfResult(Gamer gamer) throws IOException, DockerException, InterruptedException;
         void createFolder(String name) throws IOException;
         void deleteFolder(String name) throws IOException;
 }

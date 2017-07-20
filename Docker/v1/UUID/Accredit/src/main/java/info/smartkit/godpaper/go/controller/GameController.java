@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.support.HandlerMethodInvocationException;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,12 +60,12 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play")
-        public List<Gamer> playAll() throws MqttException, DockerException, InterruptedException {
+        public List<Gamer> playAll() throws MqttException, DockerException, InterruptedException, IOException {
                 return service.playAll();
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play/{gamerId}")
-        public Gamer playOne(@PathVariable String gamerId) throws MqttException, DockerException, InterruptedException {
+        public Gamer playOne(@PathVariable String gamerId) throws MqttException, DockerException, InterruptedException, IOException {
                 return service.playOne(gamerId);
         }
 
@@ -122,18 +123,18 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET, value="/sgf/{gamerId}")
         public SgfDto saveSgfById(@PathVariable String gamerId) throws IOException, DockerException, InterruptedException {
                 Gamer gamer = repository.findOne(gamerId);
-                return service.saveSgf(gamer,true,true);
+                return service.saveSgf(gamer);
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/score/{gamerId}")
-        public String getScoreById(@PathVariable String gamerId) throws IOException, DockerException, InterruptedException {
+        public String getScoreById(@PathVariable String gamerId) throws Exception {
                 //
                 Gamer gamer = repository.findOne(gamerId);
                 if(gamer.getStatus()!=GameStatus.SAVED.getIndex()){
-                        service.saveSgf(gamer,true,false);
+                        return service.getSgfResult(gamer);
+                }else {
+                        throw new Exception("Invalid sgf status.");
                 }
-                //
-                return dockerService.runScorer(gamerId);
         }
 
 }

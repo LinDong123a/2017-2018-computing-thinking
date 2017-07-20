@@ -1,11 +1,11 @@
 <div class="modal" ng-controller="gameAierCtrl">
   <header class="bar bar-header bar-positive">
     <h1 class="title">训练AI</h1>
-    <button class="button ion-android-cloud-done" ng-click="getAllByStatus(3)">已训练
+    <button class="button ion-android-cloud-done" ng-click="$root.getAiersByStatus(3)">已训练
     </button>
-    <button class="button ion-ios-unlocked-outline" ng-click="getAllByStatus(0)">未训练
+    <button class="button ion-ios-unlocked-outline" ng-click="$root.getAiersByStatus(0)">未训练
     </button>
-    <button class="button ion-ios-unlocked" ng-click="getAllByStatus(2)">训练中
+    <button class="button ion-ios-unlocked" ng-click="$root.getAiersByStatus(2)">训练中
     </button>
     <div class="button button-clear" ng-click="$root.modal_aier_train.hide()">
       <span class="icon ion-android-close"></span>

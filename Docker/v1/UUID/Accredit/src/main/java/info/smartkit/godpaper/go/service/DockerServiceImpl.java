@@ -8,7 +8,9 @@ import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.pojo.Aier;
+import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.settings.AIProperties;
+import info.smartkit.godpaper.go.settings.AierStatus;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import info.smartkit.godpaper.go.utils.StringUtil;
@@ -35,7 +37,8 @@ public class DockerServiceImpl implements DockerService{
         @Autowired AIProperties aiProperties;
         @Autowired MqttProperties mqttProperties;
         @Autowired ServerProperties serverProperties;
-        @Autowired AierService aierService;
+        @Autowired AierRepository aierRepository;
+
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
 
@@ -92,7 +95,7 @@ public class DockerServiceImpl implements DockerService{
                 return id;
         }
 
-        private String runAgentPrep(String name,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
+        private String runAgentPrep(Aier aier,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
                 docker.pull(aiProperties.getAgentPrep());
@@ -103,7 +106,7 @@ public class DockerServiceImpl implements DockerService{
                         .hostConfig(this.getHostConfig_sgf_mugo_prep(hSgf))
 //                        .env(envStrings)
                         .build();
-                String uName =  StringUtil.getUuidString(name,6);
+                String uName =  StringUtil.getUuidString(aier.getName(),6);
                 final ContainerCreation creation = docker.createContainer(config,uName);
                 final String id = creation.id();
 
@@ -118,12 +121,16 @@ public class DockerServiceImpl implements DockerService{
                 try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(AgentPrep) logs:"+logs.toString());
+
+                        //update aier status
+                        aier.setStatus(AierStatus.PROPROCESS.getIndex());
+                        Aier uAier = aierRepository.save(aier);
                         //
-//                        this.runAgentTrain(name,hSgf,modelDest);
+                        this.runAgentTrain(uAier,hSgf,modelDest);
                 }
                 return id;
         }
-        private String runAgentTrain(String name,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
+        private String runAgentTrain(Aier aier,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
                 docker.pull(aiProperties.getAgentTrain());
@@ -134,7 +141,7 @@ public class DockerServiceImpl implements DockerService{
                         .hostConfig(this.getHostConfig_sgf_mugo_train(hSgf))
                         //                        .env(envStrings)
                         .build();
-                String uName =  StringUtil.getUuidString(name,6);
+                String uName =  StringUtil.getUuidString(aier.getName(),6);
                 final ContainerCreation creation = docker.createContainer(config,uName);
                 final String id = creation.id();
 
@@ -145,12 +152,15 @@ public class DockerServiceImpl implements DockerService{
                 LOG.info("Inspect mounts:"+info.mounts().toString());
                 final String logs;
                 //wait for docker execution.
-                Thread.sleep(15000);
+                Thread.sleep(30000);
                 try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(AgentTrain) logs:"+logs.toString());
                         //cp saved_model to AI_Files.
                         FileUtils.copyDirectory(new File(hSgf+"/saved_model/"),new File(modelDest),true);
+                        //update aier status
+                        aier.setStatus(AierStatus.TRAINED.getIndex());
+                        aierRepository.save(aier);
                 }
                 return id;
         }
@@ -202,7 +212,7 @@ public class DockerServiceImpl implements DockerService{
                 //preprocess data then savedmodel
                 String fromSgfs = SgfUtil.getSgfLocal(aier.getGid());
                 LOG.info("Aier for trainAgent:"+aier.toString());
-                return this.runAgentPrep(aier.getId(),fromSgfs,aier.getFiles());
+                return this.runAgentPrep(aier,fromSgfs,aier.getFiles());
         }
 
         @Override public ContainerInfo info(String id) throws DockerException, InterruptedException, DockerCertificateException {

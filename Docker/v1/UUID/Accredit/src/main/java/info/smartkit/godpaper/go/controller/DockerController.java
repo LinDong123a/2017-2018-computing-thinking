@@ -68,13 +68,13 @@ public class DockerController {
 //        }
 
         @RequestMapping(method = RequestMethod.GET,value="/train/agent/{id}")
-        public String trainAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException, IOException {
+        public void trainAgent(@PathVariable String id) throws MqttException, InterruptedException, DockerException, DockerCertificateException, IOException {
                 //update status
                 Aier aier = aierRepository.findOne(id);
                 aier.setStatus(AierStatus.TRAINING.getIndex());
                 aierRepository.save(aier);
                 //
-                return dockerService.trainAgent(aier);
+                dockerService.trainAgent(aier);
         }
 
 //        @RequestMapping(method = RequestMethod.GET,value="/info/{id}")

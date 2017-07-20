@@ -49,6 +49,8 @@ angular.module('app.controllers', [])
       $rootScope.sgfDto = null;
       $rootScope.anewAier = {name:null,model:null,gid:null};
       $rootScope.placeholder_aier = null;
+      //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
+      //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo) {
         var gameTableDiv = document.getElementById("gameTableDiv");
@@ -83,6 +85,14 @@ angular.module('app.controllers', [])
           console.log("$rootScope.aierList:", $rootScope.aierList);
         });
       }
+      //
+      $rootScope.getAiersByStatus = function ($index) {
+        AierService.curStatusIndex = $index;
+        AierService.getAllByStatus(function(data){
+          console.log("AierService.getAllByStatus:", data);
+          $rootScope.aierList = data;
+        });
+      }
 
   }])
 
@@ -98,7 +108,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   // envInfo.mqtt.url = envInfo.mqtt.host+envInfo.mqtt.port;
   //
   $scope.envInfo = envInfo;
-  //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), SAVED("saved", 3);
+  //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
   //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
   $scope.pairAll = function () {
     console.log("GameService:",GameService);
@@ -220,6 +230,9 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       });
 //
       $scope.addUser = function () {
+        //get Aiers by status = trained.
+        $rootScope.getAiersByStatus(3);
+        //
         $scope.modal_user_add.show();
         $scope.anewUser = {name:Enum.getUUID(6),rank:0,policy:"random"};
       };
@@ -279,8 +292,8 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
 //
       $scope.createAier = function () {
         //
-        var suffix = new Date($rootScope.placeholder_aier);
-        var formatted_suffix = suffix.toJSON();
+        var suffix = new Date($rootScope.placeholder_aier)
+        var formatted_suffix = suffix.toJSON().slice(0,13); //e.g. "2016-11-11T08:00:00.000Z"
         $rootScope.anewAier.name = $rootScope.anewAier.name +"_"+formatted_suffix;
         $rootScope.anewAier.gid = $rootScope.tableInfo.id;
         console.log("$rootScope.anewAier:",$rootScope.anewAier);
@@ -299,14 +312,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
           console.log("AierService.trainAgent:", data);
           //refresh.
           $rootScope.getAiers();
-        });
-      }
-      //
-      $scope.getAllByStatus = function ($index) {
-        AierService.curStatusIndex = $index;
-        AierService.getAllByStatus(function(data){
-          console.log("AierService.getAllByStatus:", data);
-          $rootScope.aierList = data;
         });
       }
       //default calls

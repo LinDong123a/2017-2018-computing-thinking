@@ -6,10 +6,10 @@ spring:
   profiles: dev
   data.mongodb.uri: mongodb://${mqtt.ip}:27017/toyhouse
 server:
-  ip: 192.168.0.11
+  host: 192.168.0.11
   contextPath: /accredit
   port: 8095
-  api: http://${server.ip}:${server.port}${server.contextPath}/
+  api: http://${server.host}:${server.port}${server.contextPath}/
 mqtt:
   ip: 192.168.0.11
   brokerUrl: tcp://${mqtt.ip}:1883
@@ -37,10 +37,10 @@ spring:
   profiles: test
   data.mongodb.uri: mongodb://${mqtt.ip}:27017/toyhouse
 server:
-  ip: 118.190.152.88
+  host: 118.190.152.88
   contextPath: /accredit
   port: 8095
-  api: http://${server.ip}:${server.port}${server.contextPath}/
+  api: http://${server.host}:${server.port}${server.contextPath}/
 mqtt:
   ip: 118.190.152.88
   brokerUrl: tcp://${mqtt.ip}:1883

@@ -15,7 +15,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
-import info.smartkit.godpaper.go.settings.SKServerProperties;
+import info.smartkit.godpaper.go.settings.ApiProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class GamerServiceImpl implements GamerService {
         private ChainCodeService chainCodeService;
 
         @Autowired ChainCodeProperties chainCodeProperties;
-        @Autowired SKServerProperties serverProperties;
+        @Autowired ApiProperties apiProperties;
 
         @Autowired UserRepository userRepository;
         @Autowired DockerService dockerService;
@@ -48,6 +48,7 @@ public class GamerServiceImpl implements GamerService {
         private static final String VERSION = "0.0.1";
         private static final int m_size = 19;
         private static final String RESULT_FIXTURE = "B?R";
+        private static final String SGF_TAIL_FIXTURE = ")";
 
         @Override public List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException {
                 int arraySize = tenantedUsers.size();
@@ -93,7 +94,7 @@ public class GamerServiceImpl implements GamerService {
                 return gamers;
         }
 
-        @Override public List<Gamer> playAll() throws MqttException, DockerException, InterruptedException {
+        @Override public List<Gamer> playAll() throws MqttException, DockerException, InterruptedException, IOException {
                 List<Gamer> pairedGames = gamerRepository.findByStatus(GameStatus.PAIRED.getIndex());
 //                List<Gamer> playingGames = gamerRepository.findByStatus(GameStatus.PLAYING.getIndex());//TODO:resume-able game.
 //                List<Gamer> playableGames = (pairedGames.size()>0)?pairedGames:playingGames;
@@ -108,7 +109,7 @@ public class GamerServiceImpl implements GamerService {
                 return updatedPairedGames;
         }
 
-        @Override public Gamer playOne(String gamerId) throws MqttException, DockerException, InterruptedException {
+        @Override public Gamer playOne(String gamerId) throws MqttException, DockerException, InterruptedException, IOException {
                 Gamer curGamer = gamerRepository.findOne(gamerId);
                 //update users status
                 User player1 = curGamer.getPlayer1();
@@ -120,7 +121,7 @@ public class GamerServiceImpl implements GamerService {
                 return this.play(curGamer,1);
         }
 
-        private Gamer play(Gamer gamer,int index) throws MqttException, DockerException, InterruptedException {
+        private Gamer play(Gamer gamer,int index) throws MqttException, DockerException, InterruptedException, IOException {
                 LOG.info("this.play:#"+index+",is:"+gamer.toString());
                 User player1 = gamer.getPlayer1();
                 User player2 = gamer.getPlayer2();
@@ -138,7 +139,8 @@ public class GamerServiceImpl implements GamerService {
                 //Save game status
                 gamer.setTopic(gamer.getTopic());
                 //
-                gamer.setSgf(this.saveSgf(gamer,false,false).getCmd());
+//                gamer.setSgf(this.saveSgf(gamer,false,false).getCmd());
+                gamer.setSgf(this.getSgfHeader(chainCodeProperties.getChainName(),VERSION,gamer,RESULT_FIXTURE));
                 gamer.setStatus(GameStatus.PLAYING.getIndex());
                 //
                 Gamer savedGamer = gamerRepository.save(gamer);
@@ -154,68 +156,62 @@ public class GamerServiceImpl implements GamerService {
         }
 //SGF block
 
-        //@see: https://github.com/jromang/gogui/blob/master/src/net/sf/gogui/sgf/SgfWriter.java
-        @Override public SgfDto saveSgf(Gamer gamer,Boolean filed,Boolean resulted) throws DockerException, InterruptedException {
+        //remove last move of o.IllegalMove
+        private void removeSgfLastMove(Gamer gamer) throws InterruptedException, DockerException, IOException {
+                int lenOfSgf = gamer.getSgf().length();
+                String validSgf = gamer.getSgf().substring(0, lenOfSgf - 6);//;B[sd]
+                gamer.setSgf(validSgf+SGF_TAIL_FIXTURE);
                 //
-                SgfDto sgfDto = new SgfDto();
-                //                                Game sgfGame = Sgf.createFromString(gamerMessage);
-                //                                LOG.info("sgfGame:"+sgfGame.toString());
-//                String fixture = "(";//;FF[4]GM[1]SZ[19]CA[UTF-8]SO[go.toyhouse.cc]BC[cn]WC[cn]PB[aa]BR[9p]PW[bb]WR[5p]KM[7.5]DT[2012-10-21]RE[B+R];
-                //
-                String resultStr = RESULT_FIXTURE;//default
-                this.updateSgfDto(gamer, filed, sgfDto,resultStr);
-                //
-                if(resulted && !resultStr.equals("")){//at least got score estimated
-                        resultStr =  dockerService.runScorer(gamer.getId());
-                        sgfDto.setResult(resultStr);
-                        //update again
-                        this.updateSgfDto(gamer, filed, sgfDto,resultStr);
-                }
-                //
-                LOG.info("sgfDto:"+sgfDto.toString());
-                return sgfDto;
+                LOG.info("removeSgfLastMove:"+gamer.getSgf());
         }
 
-        private void updateSgfDto(Gamer gamer, Boolean filed, SgfDto sgfDto,String resultStr) {
-                String sgfHeader = this.getHeader(chainCodeProperties.getChainName(),VERSION,gamer,resultStr);
-                String sgfTail = ")";
+        private String saveSgfFileLocal(Gamer gamer) throws IOException, DockerException, InterruptedException {
                 //
-                LOG.info("sgfHeader:"+sgfHeader);
-                sgfDto.setCmd(sgfHeader);
-                //replace RE[B?R] string.
-                String sgfUpdater = gamer.getSgf().replace(RESULT_FIXTURE,resultStr);
-                gamer.setSgf(sgfUpdater);
+                String sgfFileName = gamer.getId()+"/"+this.writeSgfFile(gamer).getName();
+                String destFileStr = SgfUtil.getSgfLocal(sgfFileName);
+                //copy sgf file to sgf/gamerId folder.
+                File destFile = new File(destFileStr);
+                FileUtils.copyFile(sgfFile,destFile);//for url.
+                LOG.info("copy sgf file to sgf/{gamerId} folder success:"+sgfFileName);
+                return destFileStr;
+        }
+
+        private File sgfFile;
+        private File writeSgfFile(Gamer gamer){
                 //
-                if(filed)//Save to disk sgf file.at least once for score-estimator usage
-                {
-//                        //remove last move of o.IllegalMove
-//                        int lenOfSgf = gamer.getSgf().length();
-//                        String validSgf = gamer.getSgf().substring(0,lenOfSgf-5);//B[sd];
-//                        gamer.setSgf(validSgf);
-                        //
-                       File sgfFile =  Sgf.writeToFile(gamer.getSgf()+sgfTail);
-                       LOG.info("sgfFile:"+sgfFile.toString());
-                       String sgfFileName = gamer.getId()+"/"+sgfFile.getName();
-                       String destFileStr = SgfUtil.getSgfLocal(sgfFileName);
-                        //for agent training.
-                       sgfDto.setName(gamer.getId());
-                       sgfDto.setLocal(destFileStr);
-                       //copy sgf file to sgf/gamerId folder.
-                       File destFile = new File(destFileStr);
-                        try {
-                               FileUtils.copyFile(sgfFile,destFile);//for url.
-                               LOG.info("copy sgf file to sgf/{gamerId} folder success:"+sgfFileName);
-                                //url
-                                String sgfUrl = serverProperties.getApi()+"sgf/"+sgfFileName;
-                                sgfDto.setUrl(sgfUrl);
-                                //update game status
-                                gamer.setStatus(GameStatus.SAVED.getIndex());
-                                Gamer updated = gamerRepository.save(gamer);
-                                LOG.info("gamer status to SAVED:"+updated.toString());
-                        } catch (IOException e) {
-                                e.printStackTrace();
-                        }
-                }
+                sgfFile =  Sgf.writeToFile(gamer.getSgf());
+                LOG.info("sgfFile:"+sgfFile.toString());
+                return sgfFile;
+        }
+
+        public String getSgfResult(Gamer gamer) throws IOException, DockerException, InterruptedException {
+                String resultStr =  dockerService.runScorer(gamer.getId());
+                //remove temp sgf files.
+//                FileUtils.cleanDirectory(new File(SgfUtil.getSgfLocal(gamer.getId())));
+               return resultStr;
+        }
+
+        //@see: https://github.com/jromang/gogui/blob/master/src/net/sf/gogui/sgf/SgfWriter.java
+        @Override public SgfDto saveSgf(Gamer gamer) throws IOException, DockerException, InterruptedException {
+                //
+                SgfDto sgfDto = new SgfDto();
+                //
+                this.removeSgfLastMove(gamer);
+                //for agent training.
+                sgfDto.setName(gamer.getId());
+                sgfDto.setLocal(this.saveSgfFileLocal(gamer));
+                //url
+                String sgfFileName = gamer.getId()+"/"+sgfFile.getName();
+                String sgfUrl = apiProperties.getUrl()+"sgf/"+sgfFileName;
+                sgfDto.setUrl(sgfUrl);
+                //result
+                sgfDto.setResult(this.getSgfResult(gamer));
+                //update game status
+                gamer.setStatus(GameStatus.SAVED.getIndex());
+                Gamer updated = gamerRepository.save(gamer);
+                LOG.info("gamer status to SAVED:"+updated.toString());
+                //
+                return sgfDto;
         }
 
         @Override public void createFolder(String name) throws IOException {
@@ -228,7 +224,7 @@ public class GamerServiceImpl implements GamerService {
                 FileUtils.deleteDirectory(new File(SgfUtil.getSgfLocal(name)));
         }
 
-        private String getHeader(String application, String version,Gamer gamer,String resultStr)
+        private String getSgfHeader(String application, String version,Gamer gamer,String resultStr)
         {
                 StringBuilder header = new StringBuilder(128);
                 header.append("(;FF[4]CA[");
@@ -268,17 +264,11 @@ public class GamerServiceImpl implements GamerService {
                         //DateTime
                         header.append("DT[").append(gamer.getCreated()).append("]");
                         //gnugo/ogs
-                        header.append("RE[").append(resultStr).append("];");//default.
+                        header.append("RE[").append(resultStr).append("]");//default.
                         //
                 return header.toString();
         }
 
-
-
-        private String getScore() {
-                //future update/replace string.
-                return "RE[B+R];";
-        }
 
         private String getEscaped(String text)
         {
