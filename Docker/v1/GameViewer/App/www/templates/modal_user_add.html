@@ -16,7 +16,7 @@
     </select>
     </label>
     <label class="item item-input item-stacked-label">
-      <span class="input-label">策略:</span><select ng-model='anewUser.policy' ng-options='v as v for (k,v) in policysObj'>
+      <span class="input-label">策略:</span><select ng-model='anewUser.policy' ng-options='k as k for (k,v) in $root.policysObj'>
       <option value="">---请选择---</option> <!-- not selected / blank option -->
     </select>
     </label>

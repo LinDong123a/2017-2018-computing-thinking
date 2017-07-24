@@ -38,14 +38,17 @@ activemq:
     - "61613:61613"
     - "61614:61614"
     - "61616:61616"
-  #container_name: activemq
+  container_name: activemq
+#WordpressWiki
+
 #uuid-accredit:
-#  image: smartkit/godpaper-go-uuid-accredit
-#  links:
-#    - v1_vp0_1
-#    - mongodb
-#    - activemq
-#  ports:
- #   - "8095:8095"
+ # image: smartkit/godpaper-go-uuid-accredit
+ # links:
+  #  - v1_vp0_1
+  #  - mongodb
+  # - activemq
+  #ports:
+  #- "8095:8095"
   #container_name: uuid-accredit
+
 

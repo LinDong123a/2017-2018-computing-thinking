@@ -42,8 +42,8 @@ public class DockerServiceImpl implements DockerService{
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
 
-        final DockerClient docker = DefaultDockerClient.fromEnv().build();
-        RxDockerClient rxDockerClient = RxDockerClient.fromDefaultEnv();
+        final DockerClient dockerClient = DefaultDockerClient.fromEnv().build();
+//        RxDockerClient rxDockerClient = RxDockerClient.fromDefaultEnv();
 
         public DockerServiceImpl() throws DockerCertificateException {
         }
@@ -59,7 +59,7 @@ public class DockerServiceImpl implements DockerService{
                         // Set various options
 //                        .build();
                 // Pull an image
-                docker.pull(aiProperties.getPlayer());
+                dockerClient.pull(aiProperties.getPlayer());
                 // Create container
                 List<String> envStrings = new ArrayList<>();
                 String UriString = mqttProperties.getIp()+":"+serverProperties.getPort()+serverProperties.getContextPath();
@@ -80,14 +80,14 @@ public class DockerServiceImpl implements DockerService{
                         .env(envStrings)
                         .hostConfig(hostConfig)
                         .build();
-                final ContainerCreation creation = docker.createContainer(config, name);
+                final ContainerCreation creation = dockerClient.createContainer(config, name);
                 final String id = creation.id();
 
                 // Start container
-                docker.startContainer(id);
+                dockerClient.startContainer(id);
                //
                 final String logs;
-                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                try (LogStream stream = dockerClient.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(Player) logs:"+logs.toString());
                 }
@@ -98,7 +98,7 @@ public class DockerServiceImpl implements DockerService{
         private String runAgentPrep(Aier aier,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
-                docker.pull(aiProperties.getAgentPrep());
+                dockerClient.pull(aiProperties.getAgentPrep());
                 // Create container
                 //
                 final ContainerConfig config = ContainerConfig.builder()
@@ -107,18 +107,18 @@ public class DockerServiceImpl implements DockerService{
 //                        .env(envStrings)
                         .build();
                 String uName =  StringUtil.getUuidString(aier.getName(),6);
-                final ContainerCreation creation = docker.createContainer(config,uName);
+                final ContainerCreation creation = dockerClient.createContainer(config,uName);
                 final String id = creation.id();
 
                 // Start container
-                docker.startContainer(id);
+                dockerClient.startContainer(id);
                 //inspect mounts
-                final ContainerInfo info = docker.inspectContainer(id);
+                final ContainerInfo info = dockerClient.inspectContainer(id);
                 LOG.info("Inspect mounts:"+info.mounts().toString());
                 final String logs;
                 //Pause for 15 seconds
                 Thread.sleep(15000);//wait for docker execution.
-                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                try (LogStream stream = dockerClient.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(AgentPrep) logs:"+logs.toString());
 
@@ -133,7 +133,7 @@ public class DockerServiceImpl implements DockerService{
         private String runAgentTrain(Aier aier,String hSgf,String modelDest) throws DockerException, InterruptedException, DockerCertificateException, IOException {
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
-                docker.pull(aiProperties.getAgentTrain());
+                dockerClient.pull(aiProperties.getAgentTrain());
                 // Create container
                 //
                 final ContainerConfig config = ContainerConfig.builder()
@@ -142,18 +142,18 @@ public class DockerServiceImpl implements DockerService{
                         //                        .env(envStrings)
                         .build();
                 String uName =  StringUtil.getUuidString(aier.getName(),6);
-                final ContainerCreation creation = docker.createContainer(config,uName);
+                final ContainerCreation creation = dockerClient.createContainer(config,uName);
                 final String id = creation.id();
 
                 // Start container
-                docker.startContainer(id);
+                dockerClient.startContainer(id);
                 //inspect mounts
-                final ContainerInfo info = docker.inspectContainer(id);
+                final ContainerInfo info = dockerClient.inspectContainer(id);
                 LOG.info("Inspect mounts:"+info.mounts().toString());
                 final String logs;
                 //wait for docker execution.
                 Thread.sleep(30000);
-                try (LogStream stream = docker.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                try (LogStream stream = dockerClient.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(AgentTrain) logs:"+logs.toString());
                         //cp saved_model to AI_Files.
@@ -169,7 +169,7 @@ public class DockerServiceImpl implements DockerService{
                 //docker run -it -v /Users/smartkit/sgf:/sgfs smartkit/godpaper-go-score-estimator-gnugo
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
                 // Pull an image
-                docker.pull(aiProperties.getScorer());
+                dockerClient.pull(aiProperties.getScorer());
                 // Create container
                 List<String> envStrings = new ArrayList<>();
                 //                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
@@ -186,11 +186,11 @@ public class DockerServiceImpl implements DockerService{
                 //
                 String uuidName = StringUtil.getUuidString("gnugo",6);
                 //
-                final ContainerCreation creation = docker.createContainer(config, uuidName);
+                final ContainerCreation creation = dockerClient.createContainer(config, uuidName);
                 final String id = creation.id();
 
                 // Start container
-                docker.startContainer(id);
+                dockerClient.startContainer(id);
                 //inspect mounts
 //                final ContainerInfo info = docker.inspectContainer(id);
 //                LOG.info("Inspect mounts:"+info.mounts().toString());
@@ -199,7 +199,7 @@ public class DockerServiceImpl implements DockerService{
                 //Pause for 10 seconds
                 Thread.sleep(10000);//wait for docker execution.
                 //
-                try (LogStream stream = docker.logs(uuidName, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
+                try (LogStream stream = dockerClient.logs(uuidName, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         //only one string for result.
                         resultStr = logs.toString();
@@ -216,44 +216,44 @@ public class DockerServiceImpl implements DockerService{
         }
 
         @Override public ContainerInfo info(String id) throws DockerException, InterruptedException, DockerCertificateException {
-                final ContainerInfo info = docker.inspectContainer(id);
+                final ContainerInfo info = dockerClient.inspectContainer(id);
                 return info;
         }
 
         @Override public ContainerStats stats(String id) throws DockerException, InterruptedException, DockerCertificateException {
-                final ContainerStats stats = docker.stats(id);
+                final ContainerStats stats = dockerClient.stats(id);
                 return stats;
         }
 
         @Override public void stopContainer(String id, int delay) throws DockerException, InterruptedException {
                 // Stop container
-                docker.stopContainer(id,delay);
+                dockerClient.stopContainer(id,delay);
         }
 
         @Override public void killContainer(String id) throws DockerException, InterruptedException {
                 // Kill container
-                docker.killContainer(id);
+                dockerClient.killContainer(id);
         }
 
         @Override public void removeContainer(String id) throws DockerException, InterruptedException {
                 // Remove container
-                docker.removeContainer(id);
+                dockerClient.removeContainer(id);
         }
 
         @Override public void pauseContainer(String id) throws DockerException, InterruptedException {
-                docker.pauseContainer(id);
+                dockerClient.pauseContainer(id);
         }
 
         @Override public void unpauseContainer(String id) throws DockerException, InterruptedException {
-                docker.unpauseContainer(id);
+                dockerClient.unpauseContainer(id);
         }
 
         @Override public void startContainer(String id) throws DockerException, InterruptedException {
-                docker.startContainer(id);
+                dockerClient.startContainer(id);
         }
 
         @Override public void restartContainer(String id, int delay) throws DockerException, InterruptedException {
-                docker.restartContainer(id,delay);
+                dockerClient.restartContainer(id,delay);
         }
 
         private HostConfig getHostConfig_sgf(String hSgf){

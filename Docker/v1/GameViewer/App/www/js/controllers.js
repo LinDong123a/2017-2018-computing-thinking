@@ -51,6 +51,7 @@ angular.module('app.controllers', [])
       $rootScope.placeholder_aier = null;
       //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
+      $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo) {
         var gameTableDiv = document.getElementById("gameTableDiv");
@@ -170,10 +171,10 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
 
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum','Base64','WpWikiService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum) {
+function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum,Base64,WpWikiService) {
 //
   $scope.getSgf = function(){
     $rootScope.modal_sgf_post.show();
@@ -194,8 +195,38 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       console.log("GameService.runAgent:", data);
     });
   }
+  $scope.anewWpPost = {title:"", content:""};
   $scope.publishSgf = function () {
     console.log("$scope.publishSgf called...");
+    $scope.anewWpPost.title = $scope.sgfDto.name;
+    $scope.anewWpPost.content = "[wgo]"+
+      $scope.sgfDto.url +"[wgo]";
+    //
+    var username = 'user';
+    var password = 'bitnami';
+
+    // use our Base64 service to encode the user/pass
+    var base64 = Base64.encode( username + ':' + password );
+    // Some endpoint that needs auth
+    // var usersURL = 'http://localhost/wp-json/wp/v2/users';
+    var postsURL = 'http://localhost/wp-json/wp/v2/posts';
+    WpWikiService.getAuth( base64, postsURL ).then(function(response) {
+
+        $scope.data = response.data;
+
+        console.log('WpWikiService.getAuth response:');
+        console.log(response);
+        //then post a article.
+        WpWikiService.anewWpPost = $scope.anewWpPost;
+        WpWikiService.createPost(function(data){
+          console.log("WpWikiService.createPost:", data);
+        },function(response) {
+          console.log('WpWikiService.createPost Error:'+response);
+        });
+      }
+      ,function(response) {
+        console.log('WpWikiService.getAuth Error:'+response);
+    });
     //
     $rootScope.modal_sgf_post.hide();
   }
@@ -218,7 +249,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum) {
       console.info("envInfo:",envInfo);
       //
-      $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
+      // $scope.policysObj = {"RANDOM":"random", "BEST_MOVE":"best_move", "RANDOM_MOVE":"random_move", "MCTs":"mcts"};
       //Load the modal from the given template URL
       $scope.modal_user_add  = null;
       $ionicModal.fromTemplateUrl("templates/modal_user_add.html",
@@ -240,6 +271,8 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
       $scope.createUser = function () {
         //
         UserService.anewUser = $scope.anewUser;
+        //get actual value by key.
+        UserService.anewUser.policy = $rootScope.policysObj[$scope.anewUser.policy];
         console.info("UserService.anewUser:", UserService.anewUser);
         //
         console.log("envInfo:",envInfo);

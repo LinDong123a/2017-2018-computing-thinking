@@ -22,17 +22,17 @@
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "3646_KGS2002",
   "model": "3646_KGS2002",
-  "status": 2
+  "status": 3
 },{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "7582_KGS2003",
   "model": "7582_KGS2003",
-  "status": 1
+  "status": 3
 }, {
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "12108_KGS2004",
   "model": "KGS2004",
-  "status": 0
+  "status": 3
 },{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "13941_KGS2005",
