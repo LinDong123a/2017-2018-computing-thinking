@@ -215,11 +215,15 @@ angular.module('app.services', [])
 
         $http.defaults.headers.common['Authorization'] = 'Basic ' + base64;
 
-        var req = { method: 'GET', url: url }
+        var req = { method:'GET', url: url }
 
         return $http( req );
       },
-      createPost: function(url) {
+      createPost: function(callback) {
+        // $http.defaults.headers.common['Authorization'] = 'Basic ' + base64;
+        // $http.defaults.headers.common['Content-Type'] = 'application/json';
+        // $http.defaults.headers.common['X-WP-Nonce'] = 'nonce';
+        //
         $http.post(envInfo.api.host+"/wp-json/wp/v2/posts",this.anewWpPost).success(function(data) {
           console.log("anew post created:",data);
           callback(data);

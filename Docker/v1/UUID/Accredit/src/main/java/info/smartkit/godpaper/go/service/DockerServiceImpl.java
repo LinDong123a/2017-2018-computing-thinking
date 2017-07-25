@@ -42,7 +42,8 @@ public class DockerServiceImpl implements DockerService{
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
 
-        final DockerClient dockerClient = DefaultDockerClient.fromEnv().build();
+//        final DockerClient dockerClient = DefaultDockerClient.fromEnv().build();
+        final DockerClient dockerClient =new DefaultDockerClient("unix:///var/run/docker.sock");
 //        RxDockerClient rxDockerClient = RxDockerClient.fromDefaultEnv();
 
         public DockerServiceImpl() throws DockerCertificateException {

@@ -199,8 +199,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
   $scope.publishSgf = function () {
     console.log("$scope.publishSgf called...");
     $scope.anewWpPost.title = $scope.sgfDto.name;
-    $scope.anewWpPost.content = "[wgo]"+
-      $scope.sgfDto.url +"[wgo]";
+    $scope.anewWpPost.content = "[wgo]"+ $scope.sgfDto.url +"[/wgo]";
     //
     var username = 'user';
     var password = 'bitnami';
@@ -211,17 +210,11 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     // var usersURL = 'http://localhost/wp-json/wp/v2/users';
     var postsURL = 'http://localhost/wp-json/wp/v2/posts';
     WpWikiService.getAuth( base64, postsURL ).then(function(response) {
-
-        $scope.data = response.data;
-
-        console.log('WpWikiService.getAuth response:');
-        console.log(response);
+        console.log('WpWikiService.getAuth response:',response);
         //then post a article.
         WpWikiService.anewWpPost = $scope.anewWpPost;
-        WpWikiService.createPost(function(data){
-          console.log("WpWikiService.createPost:", data);
-        },function(response) {
-          console.log('WpWikiService.createPost Error:'+response);
+        WpWikiService.createPost(function(response) {
+          console.log('WpWikiService.createPost response:',response);
         });
       }
       ,function(response) {
