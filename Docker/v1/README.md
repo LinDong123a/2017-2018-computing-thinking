@@ -96,7 +96,7 @@ curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& 
 _1.Docker run_
 
 ```
-cd /v1/GameViewer/App && ionic serve
+cd /v1/GameViewer/App && ionic serve --address 172.31.228.77
 ```
 
 __7.5.Game Viewer__
