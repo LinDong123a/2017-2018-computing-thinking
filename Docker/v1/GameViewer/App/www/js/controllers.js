@@ -197,11 +197,13 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
       console.log("GameService.runAgent:", data);
     });
   }
-  $scope.anewWpPost = {title:"", content:""};
+  $scope.anewWpPost = {title:"", content:"",status:"publish",slug:"",excerpt:""};//see: v2.wp-api.org/reference/posts
   $scope.publishSgf = function () {
     console.log("$scope.publishSgf called...");
     $scope.anewWpPost.title = $scope.sgfDto.name;
     $scope.anewWpPost.content = "[wgo]"+ $scope.sgfDto.url +"[/wgo]";
+    $scope.anewWpPost.slug = ""+$rootScope.tableInfo.player1.name +"_VS_"+$rootScope.tableInfo.player2.name;
+    $scope.anewWpPost.excerpt = $scope.sgfDto.result;
     //warn: for testing only.
     var username = 'user';
     var password = 'bitnami';
@@ -215,6 +217,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.
         WpWikiService.anewWpPost = $scope.anewWpPost;
+        console.log("before post,WpWikiService.anewWpPost:",WpWikiService.anewWpPost);
         WpWikiService.createPost(function(response) {
           console.log('WpWikiService.createPost response:',response);
         });
