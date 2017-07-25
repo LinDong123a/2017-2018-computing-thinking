@@ -171,11 +171,13 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
 
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum','Base64','WpWikiService','envInfo',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','envInfo','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum','Base64','WpWikiService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum,Base64,envInfo,WpWikiService) {
-//
+function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum,Base64,WpWikiService) {
+  //
+  console.log("envInfo:",envInfo);
+  //
   $scope.getSgf = function(){
     $rootScope.modal_sgf_post.show();
     //
@@ -268,7 +270,6 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
         UserService.anewUser.policy = $rootScope.policysObj[$scope.anewUser.policy];
         console.info("UserService.anewUser:", UserService.anewUser);
         //
-        console.log("envInfo:",envInfo);
         UserService.createUser(function(data){
           console.log("UserService.createOne(:",  data);
           $scope.userList.push(data);
