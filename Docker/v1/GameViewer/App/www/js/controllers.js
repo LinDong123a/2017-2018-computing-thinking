@@ -171,10 +171,10 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
 
 }])
 
-.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum','Base64','WpWikiService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameTableCtrl', ['$scope','$rootScope','TableService','ChainCodeService','$ionicModal','GameService','$ionicPopup','Enum','Base64','WpWikiService','envInfo',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum,Base64,WpWikiService) {
+function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameService,$ionicPopup,Enum,Base64,envInfo,WpWikiService) {
 //
   $scope.getSgf = function(){
     $rootScope.modal_sgf_post.show();
@@ -200,7 +200,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     console.log("$scope.publishSgf called...");
     $scope.anewWpPost.title = $scope.sgfDto.name;
     $scope.anewWpPost.content = "[wgo]"+ $scope.sgfDto.url +"[/wgo]";
-    //
+    //warn: for testing only.
     var username = 'user';
     var password = 'bitnami';
 
@@ -208,7 +208,7 @@ function ($rootScope,$scope,TableService,ChainCodeService,$ionicModal,GameServic
     var base64 = Base64.encode( username + ':' + password );
     // Some endpoint that needs auth
     // var usersURL = 'http://localhost/wp-json/wp/v2/users';
-    var postsURL = 'http://localhost/wp-json/wp/v2/posts';
+    var postsURL = envInfo.api.host+'/wp-json/wp/v2/posts';
     WpWikiService.getAuth( base64, postsURL ).then(function(response) {
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.
