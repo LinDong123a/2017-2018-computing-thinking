@@ -184,11 +184,6 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
     GameService.getSgf(function(data){
       console.log("GameService.getSgf:",  data);
       $scope.sgfDto = data;
-      //alert message
-      // $ionicPopup.alert({
-      //   title: '保存成功！',
-      //   template: "http://"+data.url
-      // });
     });
   }
 
@@ -220,6 +215,11 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         console.log("before post,WpWikiService.anewWpPost:",WpWikiService.anewWpPost);
         WpWikiService.createPost(function(response) {
           console.log('WpWikiService.createPost response:',response);
+          // alert message
+          $ionicPopup.alert({
+            title: '发布成功！',
+            template: response.link
+          });
         });
       }
       ,function(response) {

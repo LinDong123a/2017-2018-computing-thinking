@@ -226,6 +226,8 @@ angular.module('app.services', [])
         //
         $http.post(envInfo.api.host+"/wp-json/wp/v2/posts",this.anewWpPost).success(function(data) {
           console.log("anew post created:",data);
+          //reset $http header
+          $http.defaults.headers.common = {};
           callback(data);
         });
       },
