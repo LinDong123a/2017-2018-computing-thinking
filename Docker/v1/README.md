@@ -10,7 +10,7 @@ Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.
 #### Docker Hubs
 
 ### FlowChartDiagram
-![Screenshot of v1FlowChart](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/FlowDiagram_ToyhouseGo.png)
+![Screenshot of v1FlowChart](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/FlowDiagram_ToyhouseGo_export.png)
 
 #### 1.smartkit/godpaper-go-message-broker-activemq
 
