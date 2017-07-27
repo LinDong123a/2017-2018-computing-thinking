@@ -42,16 +42,16 @@ activemq:
   container_name: activemq
 #WordpressWiki
 
-#uuid-accredit:
-  #image: smartkit/godpaper-go-uuid-accredit
-  #links:
-    #- v1_vp0_1
-    #- mongodb
-    #- activemq
-  #ports:
-    #- "8095:8095"
-  #container_name: uuid-accredit
-  #environment:
-    #- CORE_VM_ENDPOINT=unix:///var/run/docker.sock
+uuid-accredit:
+  image: smartkit/godpaper-go-uuid-accredit
+  links:
+    - v1_vp0_1
+    - mongodb
+    - activemq
+  ports:
+    - "8095:8095"
+  container_name: uuid-accredit
+  environment:
+    - CORE_VM_ENDPOINT=unix:///var/run/docker.sock
 
 
