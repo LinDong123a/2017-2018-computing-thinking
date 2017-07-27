@@ -18,4 +18,4 @@ RUN npm install -g cordova && cordova telemetry off && npm install -g ionic && n
 
 # Expose port: web (8100), livereload (35729)
 EXPOSE 8100 35729
-CMD ["ionic serve --nolivereload --nobrowser &"]
+CMD ["ionic serve","--nolivereload --nobrowser &"]
