@@ -9,7 +9,7 @@ docker pull smartkit/godpaper-go-uuid-accredit
 ```
 2.
 ```
-docker run  --name uuid-accredit --link mongodb --link activemq --link v1_vp0_1 -p 8095:8095 smartkit/godpaper-go-uuid-accredit
+docker run  --name uuid-accredit --link mongodb --link activemq --link v1_vp0_1 -v /var/run/docker.sock:/var/run/docker.sock -p 8095:8095 smartkit/godpaper-go-uuid-accredit
 ```
 
 #### Build
