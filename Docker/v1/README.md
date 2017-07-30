@@ -96,6 +96,10 @@ curl -X GET --header "Accept: */*" "http://localhost:8095/accredit/game/pair"&& 
 _1.Docker run_
 
 ```
+docker run -ti -p 8100:8100 -p 35729:35729 -v ~/git/2017-2018-computing-thinking/Docker/v1/GameViewer/App:/App smartkit/godpaper-go-ionic
+```
+
+```
 cd /v1/GameViewer/App && ionic serve --address 172.31.228.77
 ```
 
