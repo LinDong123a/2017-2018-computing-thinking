@@ -1,73 +1,65 @@
-FROM debian:wheezy
+FROM     ubuntu:16.04
+MAINTAINER z [at] smartkit [dot] info
 
-MAINTAINER  z@smartkit.info
+ENV DEBIAN_FRONTEND=noninteractive \
+    ANDROID_HOME=/opt/android-sdk-linux \
+    NODE_VERSION=6.11.1 \
+    NPM_VERSION=5.3.0 \
+    IONIC_VERSION=3.5.0 \
+    CORDOVA_VERSION=7.0.1
 
-# Install basics 
+# Install basics
 RUN apt-get update &&  \
-    apt-get install -y git wget curl && \
-    apt-get clean
+    apt-get install -y git wget curl unzip ruby ruby-dev gcc make && \
 
-RUN curl -sL https://deb.nodesource.com/setup | bash -
+    curl --retry 3 -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" && \
+    tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 && \
+    rm "node-v$NODE_VERSION-linux-x64.tar.gz" && \
+    npm install -g npm@"$NPM_VERSION" && \
+    npm install -g cordova@"$CORDOVA_VERSION" ionic@"$IONIC_VERSION" && \
+    npm cache clear --force && \
 
-RUN apt-get update &&  \
-    apt-get install -y nodejs nodejs-legacy build-essential && \
-    ln -s /usr/bin/nodejs /usr/local/bin/node && \ 
-    apt-get clean
-
-
-COPY tools /opt/tools
-
-# Install npm packages
-RUN npm install -g cordova ionic@1.3
-RUN npm install -g grunt-cli
-RUN npm install -g gulp
-RUN npm install -g bower
-
-#RUN ionic start ionic-demo sidemenu
-
-# Expose port: web (8100), livereload (35729)
-EXPOSE 8100 35729
-
-
+    gem install sass && \
+    git config --global user.email "you@example.com" && \
+    git config --global user.name "Your Name" && \
+    ionic start myApp sidemenu && \
 #ANDROID
 #JAVA
 
-# ENV DEBIAN_FRONTEND noninteractive
-RUN dpkg-reconfigure debconf -f Noninteractive
-
 # install python-software-properties (so you can do add-apt-repository)
-RUN apt-get update && apt-get install -y -q python-software-properties software-properties-common && apt-get clean
+   apt-get update && apt-get install -y -q python-software-properties software-properties-common  && \
 
-# install oracle java from PPA
-# RUN add-apt-repository ppa:webupd8team/java -y
-RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-#echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-# RUN apt-get update && apt-get -y install oracle-java7-installer && apt-get clean
+    add-apt-repository ppa:webupd8team/java -y && \
+    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
+    apt-get update && apt-get -y install oracle-java8-installer && \
 
-RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee /etc/apt/sources.list.d/webupd8team-java.list
-RUN echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
-RUN apt-get update &&  \
-    apt-get install -y oracle-java8-installer && \
-    apt-get clean
 
 #ANDROID STUFF
-RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y --force-yes expect ant wget libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 lib32z1 qemu-kvm kmod && apt-get clean
+    echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment && \
+    dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --force-yes expect ant wget libc6-i386 lib32stdc++6 lib32gcc1 lib32ncurses5 lib32z1 qemu-kvm kmod && \
+    apt-get clean && \
+    apt-get autoclean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
 
 # Install Android SDK
-RUN cd /opt && wget --output-document=android-sdk.tgz --quiet http://dl.google.com/android/android-sdk_r24.0.2-linux.tgz && tar xzf android-sdk.tgz && rm -f android-sdk.tgz
+    cd /opt && \
+    wget --output-document=android-sdk.tgz --quiet http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz && \
+    tar xzf android-sdk.tgz && \
+    rm -f android-sdk.tgz && \
+    chown -R root. /opt
 
 # Setup environment
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+
+ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:/opt/tools
 
 # Install sdk elements
-ENV PATH ${PATH}:/opt/tools
+COPY tools /opt/tools
 
-RUN echo ANDROID_HOME="${ANDROID_HOME}" >> /etc/environment
+RUN ["/opt/tools/android-accept-licenses.sh", "android update sdk --all --no-ui --filter platform-tools,tools,build-tools-23.0.2,android-23,extra-android-support,extra-android-m2repository,extra-google-m2repository"]
+RUN unzip ${ANDROID_HOME}/temp/*.zip -d ${ANDROID_HOME}
 
-RUN ["/opt/tools/android-accept-licenses.sh", "android update sdk --all --no-ui --filter platform-tools,tools,build-tools-21.1.2,android-19,addon-google_apis_x86-google-19,extra-android-support,extra-android-m2repository,extra-google-m2repository,sys-img-x86-android-21"]
-
-COPY . /App
-WORKDIR /App
-CMD ["ionic", "serve", "--all", "--port", "8100", "--livereload-port", "35729"]
+WORKDIR myApp
+EXPOSE 8100 35729
+CMD ["ionic", "serve"]

@@ -86,6 +86,17 @@ services:
     container_name: accredit
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+  #ionic-viewer
+  ionic-viewer:
+    image: smartkit/godpaper-go-ionic
+    depends_on:
+      - uuid-accredit
+    ports:
+      - "8100:8100"
+      - "35729:35729"
+    container_name: ionic-viewer
+    volumes:
+      - "~/git/2017-2018-computing-thinking/Docker/v1/GameViewer/App:/App"    
 
 volumes:
   mariadb_data:
