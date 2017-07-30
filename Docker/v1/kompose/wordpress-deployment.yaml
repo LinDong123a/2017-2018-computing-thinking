@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.service.type: nodeport
+  creationTimestamp: null
+  labels:
+    io.kompose.service: wordpress
+  name: wordpress
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: wordpress
+    spec:
+      containers:
+      - env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        - name: MARIADB_HOST
+          value: mariadb
+        - name: MARIADB_PORT_NUMBER
+          value: "3306"
+        - name: WORDPRESS_DATABASE_NAME
+          value: bitnami_wordpress
+        - name: WORDPRESS_DATABASE_USER
+          value: bn_wordpress
+        image: bitnami/wordpress:latest
+        name: wordpress
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+        volumeMounts:
+        - mountPath: /bitnami/wordpress
+          name: v1-wordpress-data
+        - mountPath: /bitnami/apache
+          name: v1-apache-data
+        - mountPath: /bitnami/php
+          name: v1-php-data
+      restartPolicy: Always
+      volumes:
+      - name: v1-wordpress-data
+        persistentVolumeClaim:
+          claimName: v1-wordpress-data
+      - name: v1-apache-data
+        persistentVolumeClaim:
+          claimName: v1-apache-data
+      - name: v1-php-data
+        persistentVolumeClaim:
+          claimName: v1-php-data
+status: {}

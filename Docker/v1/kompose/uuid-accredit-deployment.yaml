@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: uuid-accredit
+  name: uuid-accredit
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: uuid-accredit
+    spec:
+      containers:
+      - image: smartkit/godpaper-go-uuid-accredit
+        name: accredit
+        ports:
+        - containerPort: 8095
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: uuid-accredit-claim0
+      restartPolicy: Always
+      volumes:
+      - name: uuid-accredit-claim0
+        persistentVolumeClaim:
+          claimName: uuid-accredit-claim0
+status: {}

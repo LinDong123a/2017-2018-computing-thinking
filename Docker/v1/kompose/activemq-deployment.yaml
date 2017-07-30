@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: activemq
+  name: activemq
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: activemq
+    spec:
+      containers:
+      - image: smartkit/godpaper-go-message-broker-activemq
+        name: activemq
+        ports:
+        - containerPort: 1883
+        - containerPort: 8161
+        - containerPort: 5672
+        - containerPort: 61613
+        - containerPort: 61614
+        - containerPort: 61616
+        resources: {}
+      restartPolicy: Always
+status: {}

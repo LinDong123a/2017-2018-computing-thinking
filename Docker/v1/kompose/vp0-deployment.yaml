@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: vp0
+  name: vp0
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: vp0
+    spec:
+      containers:
+      - args:
+        - sh
+        - -c
+        - sleep 5; peer node start --peer-chaincodedev
+        env:
+        - name: CORE_LOGGING_LEVEL
+          value: DEBUG
+        - name: CORE_PEER_ADDRESSAUTODETECT
+          value: "true"
+        - name: CORE_PEER_ID
+          value: vp0
+        - name: CORE_PEER_PKI_ECA_PADDR
+          value: membersrvc:7054
+        - name: CORE_PEER_PKI_TCA_PADDR
+          value: membersrvc:7054
+        - name: CORE_PEER_PKI_TLSCA_PADDR
+          value: membersrvc:7054
+        - name: CORE_SECURITY_ENABLED
+          value: "false"
+        - name: CORE_SECURITY_ENROLLID
+          value: test_vp0
+        - name: CORE_SECURITY_ENROLLSECRET
+          value: MwYpmSRjupbT
+        - name: CORE_VM_ENDPOINT
+          value: unix:///var/run/docker.sock
+        image: hyperledger/fabric-peer:x86_64-1.0.0-rc1
+        name: vp0
+        ports:
+        - containerPort: 7050
+        - containerPort: 7051
+        - containerPort: 7053
+        resources: {}
+      restartPolicy: Always
+status: {}
