@@ -19,16 +19,16 @@ spec:
     spec:
       containers:
       - env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
         - name: MARIADB_HOST
           value: mariadb
         - name: MARIADB_PORT_NUMBER
           value: "3306"
-        - name: WORDPRESS_DATABASE_NAME
-          value: bitnami_wordpress
         - name: WORDPRESS_DATABASE_USER
           value: bn_wordpress
+        - name: WORDPRESS_DATABASE_NAME
+          value: bitnami_wordpress
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
         image: bitnami/wordpress:latest
         name: wordpress
         ports:

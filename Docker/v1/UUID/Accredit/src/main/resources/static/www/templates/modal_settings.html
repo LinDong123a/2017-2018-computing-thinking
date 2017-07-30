@@ -1,0 +1,15 @@
+<div class="modal">
+  <header class="bar bar-header bar-positive">
+    <h1 class="title">设置</h1>
+    <div class="button button-clear" ng-click="$root.modal_settings.hide()">
+      <span class="icon ion-android-close"></span>
+    </div>
+  </header>
+  <ion-content class="has-header" has-header="true" padding="true">
+  <div class="list"> <label class="item item-input item-stacked-label">
+    <span class="input-label">API服务器地址:</span> <input type="text" placeholder="127.0.0.1" ng-model="envInfo.api.host"> </label>
+    <label class="item item-input item-stacked-label"> <span class="input-label">消息服务器地址:</span> <input type="text" placeholder="192.168.0.11" ng-model="envInfo.mqtt.host"> </label>
+    <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"  ng-disabled="envInfo.api.host==null"  ng-click="$root.updateEnvInfo()">更新</button>
+  </div>
+</ion-content>
+</div>

@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
       - env:
-        - name: ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        - name: MARIADB_DATABASE
-          value: bitnami_wordpress
         - name: MARIADB_USER
           value: bn_wordpress
+        - name: MARIADB_DATABASE
+          value: bitnami_wordpress
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
         image: bitnami/mariadb:latest
         name: mariadb
         resources: {}
