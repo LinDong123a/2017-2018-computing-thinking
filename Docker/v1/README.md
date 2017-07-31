@@ -12,6 +12,13 @@ Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.
 ### FlowChartDiagram
 ![Screenshot of v1FlowChart](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/FlowDiagram_ToyhouseGo_export.png)
 
+
+#### Docker compose
+
+```
+cd ~/git/2017-2018-computing-thinking/Docker/v1 & docker-compose up -d
+```
+
 #### 1.smartkit/godpaper-go-message-broker-activemq
 
 _1.Docker pull_
