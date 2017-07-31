@@ -224,6 +224,10 @@ public class GamerServiceImpl implements GamerService {
                 FileUtils.deleteDirectory(new File(SgfUtil.getSgfLocal(name)));
         }
 
+        @Override public void rPlayNum(int gamerNum) {
+                LOG.info("//TODO:rPlayNum implements:"+gamerNum);
+        }
+
         private String getSgfHeader(String application, String version,Gamer gamer,String resultStr)
         {
                 StringBuilder header = new StringBuilder(128);

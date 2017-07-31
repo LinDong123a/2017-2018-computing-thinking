@@ -137,4 +137,9 @@ public class GameController {
                 }
         }
 
+        @RequestMapping(method = RequestMethod.GET,value="/play/r/{gamerNum}")
+        public Gamer playOne(@PathVariable int gamerNum) throws MqttException, DockerException, InterruptedException, IOException {
+                return service.rPlayNum(gamerNum);
+        }
+
 }

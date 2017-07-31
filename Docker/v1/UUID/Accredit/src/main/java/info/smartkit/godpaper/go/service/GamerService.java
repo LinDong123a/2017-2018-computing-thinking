@@ -20,4 +20,5 @@ public interface GamerService {
         String getSgfResult(Gamer gamer) throws IOException, DockerException, InterruptedException;
         void createFolder(String name) throws IOException;
         void deleteFolder(String name) throws IOException;
+        void rPlayNum(int gamerNum);
 }
