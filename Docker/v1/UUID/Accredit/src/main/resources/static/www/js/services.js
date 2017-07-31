@@ -73,6 +73,7 @@ angular.module('app.services', [])
       rPlayerId: null,//current running player.
       curGamerId : null,//current running gamer.
       curAgentId : "mugo",//current training agent.
+      rGamerNum: 5,
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -103,6 +104,12 @@ angular.module('app.services', [])
       playAll: function(callback){
         $http.get(envInfo.api.url+"/game/play").success(function(data) {
           console.log("played gamers:",data);
+          callback(data);
+        });
+      },
+      rPlayAll: function(callback){
+        $http.get(envInfo.api.url+"/game/play/r/"+this.rGamerNum).success(function(data) {
+          console.log("r played gamers:",data);
           callback(data);
         });
       },

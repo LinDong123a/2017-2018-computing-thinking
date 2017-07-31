@@ -9,10 +9,10 @@ server:
   contextPath: /accredit
   port: 8095
 api:
-  ip: 192.168.0.11
+  ip: 192.168.0.6
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
-  ip: 192.168.0.11
+  ip: 192.168.0.6
   brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_

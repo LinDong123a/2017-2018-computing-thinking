@@ -33,6 +33,15 @@ public class UserServiceImpl implements UserService {
 
     private static Logger LOG = LogManager.getLogger(UserServiceImpl.class);
 
+    private static int getRandomNumberInRange(int min, int max) {
+
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
 
     @Override
     public List<User> createRandomUsers(int numbers) {
@@ -42,13 +51,12 @@ public class UserServiceImpl implements UserService {
             user.setEmail(RandomStringUtils.randomAlphanumeric(7).toLowerCase().concat("@toyhouse.cc"));
             user.setName(RandomStringUtils.randomAlphanumeric(4).toUpperCase().concat(".").concat(RandomStringUtils.randomAlphanumeric(5).toUpperCase()));
             //Random rank
-            Random rank_generator = new Random();
-            int rRank = aiProperties.getRanks() - rank_generator.nextInt(aiProperties.getRanks());
+            int size_ranks = aiProperties.getPolicys().size();
+            int rRank = getRandomNumberInRange(0,size_ranks-1);
             user.setRank(String.valueOf(rRank));
             //Random policy
-            Random policy_generator = new Random();
             int size_policy = aiProperties.getPolicys().size();
-            int rPolicy = size_policy - policy_generator.nextInt(size_policy);
+            int rPolicy = getRandomNumberInRange(0,size_policy-1);
             String policy = aiProperties.getPolicys().get(rPolicy);
             user.setPolicy(policy);
             User saved = repository.save(user);

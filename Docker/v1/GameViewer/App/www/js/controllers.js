@@ -138,8 +138,8 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   }
   $scope.rPlayAll = function(){
     var promptPopup = $ionicPopup.prompt({
-      title: '快速设置',
-      template: '随机多局比赛',
+      title: '提示',
+      template: '请输入对局数',
       inputType: 'number',
       inputPlaceholder: '0',
       okText:"确定",

@@ -59,8 +59,37 @@
         cursor: default !important;
         pointer-events: none;
       }
+      .flex-container {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        border: none;
+        -ms-box-orient: horizontal;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -moz-flex;
+        display: -webkit-flex;
+        display: flex;
+      }
+      .wrap    {
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+      }
+      @media (max-width: 320px) {
+
+        .flex-container.wrap > div{
+          width: 50%;
+          max-width: 50%;
+          text-overflow: '';
+          white-space:nowrap;
+          overflow: hidden;
+        }
+
+      }
     </style>
 
+    <script src="js/helper.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/routes.js"></script>

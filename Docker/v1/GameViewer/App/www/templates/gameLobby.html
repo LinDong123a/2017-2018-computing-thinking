@@ -19,17 +19,15 @@
     -->
         <div class="item col-header item-icon-right">
           <div class="flex-container wrap">
-            <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item-tn" ng-repeat="lobby in lobbyList" >
+            <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList" >
               <div id="gameTableDiv{{lobby.id}}">
                 {{lobby.id}}
               </div>
-            </ion-item>
-            <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList" >
               <!--<i class="icon-right ion-android-laptop"></i>-->
-              <h3>名称：{{lobby.player1.name}} VS {{lobby.player2.name}}</h3>
-              <p>等级：{{lobby.player1.rank}} VS {{lobby.player2.rank}}</p>
-              <p>策略：{{lobby.player1.policy}} VS {{lobby.player2.policy}}</p>
-              <p>分数：{{lobby.player1.score}} VS {{lobby.player2.score}}</p>
+              <h3>名称：{{lobby.player1.name}} _VS_ {{lobby.player2.name}}</h3>
+              <p>等级：{{lobby.player1.rank}} _VS_ {{lobby.player2.rank}}</p>
+              <p>策略：{{lobby.player1.policy}} _VS_ {{lobby.player2.policy}}</p>
+              <p>分数：{{lobby.player1.score}} _VS_ {{lobby.player2.score}}</p>
               <p>时间: {{lobby.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
               <button class="icon ion-ios-game-controller-a button button-icon"></button>
               <button class="icon-right ion-play" ng-show="lobby.status==1" ng-click="playOne(lobby.id)">比赛</button>

@@ -42,7 +42,7 @@ public class GamerServiceImpl implements GamerService {
 
         @Autowired UserRepository userRepository;
         @Autowired DockerService dockerService;
-
+        @Autowired UserService userService;
 
         private static final String ENCODING = "UTF-8";
         private static final String VERSION = "0.0.1";
@@ -98,6 +98,20 @@ public class GamerServiceImpl implements GamerService {
                 List<Gamer> pairedGames = gamerRepository.findByStatus(GameStatus.PAIRED.getIndex());
 //                List<Gamer> playingGames = gamerRepository.findByStatus(GameStatus.PLAYING.getIndex());//TODO:resume-able game.
 //                List<Gamer> playableGames = (pairedGames.size()>0)?pairedGames:playingGames;
+                List<Gamer> playableGames = pairedGames;
+                LOG.info("playableGames("+playableGames.size()+"):"+playableGames.toString());
+                //find each player, send play notification
+                for(int i=0;i<playableGames.size();i++) {
+                        Gamer curGamer =  playableGames.get(i);
+                        this.play(curGamer,i);
+                }
+                List<Gamer> updatedPairedGames = gamerRepository.findByStatus(GameStatus.PLAYING.getIndex());
+                return updatedPairedGames;
+        }
+
+        private List<Gamer> playSome(List<Gamer> pairedGames) throws MqttException, DockerException, InterruptedException, IOException {
+                //                List<Gamer> playingGames = gamerRepository.findByStatus(GameStatus.PLAYING.getIndex());//TODO:resume-able game.
+                //                List<Gamer> playableGames = (pairedGames.size()>0)?pairedGames:playingGames;
                 List<Gamer> playableGames = pairedGames;
                 LOG.info("playableGames("+playableGames.size()+"):"+playableGames.toString());
                 //find each player, send play notification
@@ -224,8 +238,22 @@ public class GamerServiceImpl implements GamerService {
                 FileUtils.deleteDirectory(new File(SgfUtil.getSgfLocal(name)));
         }
 
-        @Override public void rPlayNum(int gamerNum) {
+        @Override public void rPlayNum(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException {
                 LOG.info("//TODO:rPlayNum implements:"+gamerNum);
+                List<User> rUsers = userService.createRandomUsers(gamerNum*2);
+                //multi-tenancy.
+                //User tenant
+                for (User rUser : rUsers) {
+                        //update status
+                        rUser.setStatus(UserStatus.TENANTED.getIndex());
+                        User updater = userRepository.save(rUser);
+                        //
+                        userService.tenant(updater);
+                }
+                //pair all
+                List<Gamer> gamers = this.pairAll(rUsers);
+                //play some
+                this.playSome(gamers);
         }
 
         private String getSgfHeader(String application, String version,Gamer gamer,String resultStr)

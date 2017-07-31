@@ -97,10 +97,10 @@ angular.module('app.controllers', [])
 
   }])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location','$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location) {
+function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location, $ionicPopup) {
   //
   //Dynamic host modification
   // envInfo.mqtt.host = $location.host();
@@ -134,6 +134,28 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       console.log("GameService.playAll:",  data);
       //then refresh
       $scope.getAll();
+    });
+  }
+  $scope.rPlayAll = function(){
+    var promptPopup = $ionicPopup.prompt({
+      title: '提示',
+      template: '请输入对局数',
+      inputType: 'number',
+      inputPlaceholder: '0',
+      okText:"确定",
+      cancelText:"取消"
+    });
+    promptPopup.then(function(res) {
+      console.log(res);
+      if(res!=undefined && res>0){
+        GameService.rGamerNum = res;
+        GameService.rPlayAll(function(data){
+          console.log("GameService.rPlayAll:",  data);
+          //then refresh
+          $scope.getAll();
+        });
+      }
+      //
     });
   }
   $scope.dismissAll = function(){
