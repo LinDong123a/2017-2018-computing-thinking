@@ -9,11 +9,16 @@ Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.
 
 #### Docker Hubs
 
+https://hub.docker.com/r/smartkit/
+
 ### FlowChartDiagram
 ![Screenshot of v1FlowChart](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/FlowDiagram_ToyhouseGo_export.png)
 
+### Deployment
 
-#### Docker compose
+![Screenshot of DockerDeploymentDiagram](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/DockerDeploymentDiagram.png)
+
+#### Docker compose up
 
 ```
 sudo wget https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/docker-compose.yml 
@@ -182,7 +187,3 @@ docker run -p 27017:27017 -d --name mongodb our/container entrypoint/command
 ```
 docker stop $(docker ps -q --filter ancestor=<image-name> )
 ```
-
-### Deployment
-
-![Screenshot of DockerDeploymentDiagram](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/DockerDeploymentDiagram.png)
