@@ -139,7 +139,7 @@ public class GameController {
 
         @RequestMapping(method = RequestMethod.GET,value="/play/r/{gamerNum}")
         public void playOne(@PathVariable int gamerNum) throws MqttException, DockerException, InterruptedException, IOException {
-                service.rPlayNum(gamerNum);
+                service.randomPlaySome(gamerNum);
         }
 
 }

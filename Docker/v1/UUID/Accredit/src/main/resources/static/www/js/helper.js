@@ -5,6 +5,7 @@ var DynamicEnvironment = DynamicEnvironment || {};
  * just make sure the host matches up to your hostname including port
  */
 var _environment;
+var ofc_environment;
 var _environments = {
     local: {
         host: 'localhost',
@@ -12,23 +13,23 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: 'localhost'
+            api_ip: '192.168.0.6'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip:'127.0.0.1'
+            ,mqtt_ip:'192.168.0.6'
             ,mqtt_port:'1883'
         }
     },
     dev: {
-        host: '192.168.0.11',
+        host: '192.168.0.6',
         config: {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '192.168.0.11'
+            api_ip: '192.168.0.6'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip:'192.168.0.11'
+            ,mqtt_ip:'192.168.0.6'
             ,mqtt_port:'1883'
         }
     },
@@ -73,15 +74,32 @@ _getEnvironment = function () {
 
     for (var environment in _environments) {
         if (typeof _environments[environment].host && _environments[environment].host == hostname) {
-            _environment = environment;
-            return _environment;
+          _environment = environment;
+          return _environment;
         }
     }
-
-    return "local";//default
+  //out of configure:
+  ofc_environment = {
+    host: hostname,
+    config: {
+      api_ip: hostname
+      , api_port: host.split(":")[1]
+      , api_context: '/accredit'
+      , mqtt_ip: hostname
+      , mqtt_port: '1883'
+    }
+  }
+  console.log("out of config _environment:",ofc_environment);
+  return _environment;
+  // return "local";//default
 };
 DynamicEnvironment.get = function (property) {
+  //out of config:
+  if(_environments[_getEnvironment()]) {
     var result = _environments[_getEnvironment()].config[property];
+  }else{
+    var result = ofc_environment.config[property];
+  }
     //var result = _environments["test"].config[property];
     console.log("DynamicEnvironment.get():",result);
     return result;

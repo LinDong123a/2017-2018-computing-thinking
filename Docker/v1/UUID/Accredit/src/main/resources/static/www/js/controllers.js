@@ -183,7 +183,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   $scope.deleteOne = function($gamer){
     GameService.curGamerId = $gamer.id;
     GameService.deleteOne(function(data){
-      console.log("GameService.playOne:",  data);
+      console.log("GameService.deleteOne:",  data);
       $scope.getAll();//refresh.
     });
   }

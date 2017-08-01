@@ -16,7 +16,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
   .constant('envInfo', {api:{host:DynamicEnvironment.get('api_ip')
     ,port:DynamicEnvironment.get('api_port')
     ,contextPath:DynamicEnvironment.get('api_context')
-    ,url:"http://"+DynamicEnvironment.get('api_ip')+":"+DynamicEnvironment.get('api_port')+DynamicEnvironment.get('api_context')+"/"},
+    ,url:"http://"+DynamicEnvironment.get('api_ip')+":"+DynamicEnvironment.get('api_port')+DynamicEnvironment.get('api_context')},
     mqtt:{host:DynamicEnvironment.get('mqtt_ip'),port:DynamicEnvironment.get('mqtt_port')}})
   .config(function($httpProvider) {
     $httpProvider.interceptors.push('TrendicityInterceptor');

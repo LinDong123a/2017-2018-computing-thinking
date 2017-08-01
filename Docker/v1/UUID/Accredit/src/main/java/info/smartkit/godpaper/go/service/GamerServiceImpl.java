@@ -238,8 +238,8 @@ public class GamerServiceImpl implements GamerService {
                 FileUtils.deleteDirectory(new File(SgfUtil.getSgfLocal(name)));
         }
 
-        @Override public void rPlayNum(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException {
-                LOG.info("//TODO:rPlayNum implements:"+gamerNum);
+        @Override public void randomPlaySome(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException {
+//                LOG.info("randomPlaySome implements:"+gamerNum);
                 List<User> rUsers = userService.createRandomUsers(gamerNum*2);
                 //multi-tenancy.
                 //User tenant
@@ -249,6 +249,8 @@ public class GamerServiceImpl implements GamerService {
                         User updater = userRepository.save(rUser);
                         //
                         userService.tenant(updater);
+                        //wait for docker execution.
+                        Thread.sleep(10000);
                 }
                 //pair all
                 List<Gamer> gamers = this.pairAll(rUsers);
