@@ -1,6 +1,8 @@
 
 ## V1.Requirments
 
+__What?__
+
 Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.3+BlockChain+gradle@2.14+Python3.5+Tensorflow1.1)+Kubernetes
 
 ### Architecture
@@ -17,6 +19,8 @@ https://hub.docker.com/r/smartkit/
 ### Deployment
 
 ![Screenshot of DockerDeploymentDiagram](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/DockerDeploymentDiagram.png)
+
+__How?__
 
 #### Docker compose up
 
@@ -139,6 +143,7 @@ __8.AI Agents__
 docker run --name mugo -v /Users/smartkit/git/2017-2018-computing-thinking/Docker/v1/UUID/Accredit/target/classes/sgf:/sgf smartkit/godpaper-go-ai-agent-mugo:latest
 ```
 1.DarkGo
+
 
 ### TODO:
 
