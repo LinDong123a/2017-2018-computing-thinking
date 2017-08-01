@@ -18,7 +18,7 @@ Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.
 ```
 sudo wget https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/docker-compose.yml 
 ```
-&
+& vim docker-compose.yml  image: smartkit/godpaper-go-uuid-accredit to  image: smartkit/godpaper-go-uuid-accredit:yourtag
 
 ```
 sudo docker-compose up -d
