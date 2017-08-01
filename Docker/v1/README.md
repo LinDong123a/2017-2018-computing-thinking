@@ -16,7 +16,7 @@ Docker1.1+Docker-compose+Microservices(ActiveMQ5.14.2+Mongodb2.17+SpringBoot1.5.
 #### Docker compose
 
 ```
-cd ~/git/2017-2018-computing-thinking/Docker/v1 & docker-compose up -d
+sudo wwget https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v1/docker-compose.yml & sudo docker-compose up -d
 ```
 
 #### 1.smartkit/godpaper-go-message-broker-activemq
