@@ -9,10 +9,10 @@ server:
   contextPath: /accredit
   port: 8095
 api:
-  ip: 192.168.0.11
+  ip: 192.168.0.6
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
-  ip: 192.168.0.11
+  ip: 192.168.0.6
   brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_
@@ -45,6 +45,38 @@ api:
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
   ip: 118.190.152.88
+  brokerUrl: tcp://${mqtt.ip}:1883
+  qos: 2
+  clientId: TH_
+  tag_vs: _vs_
+  tag_play: _play_
+chain:
+  enabled: false
+  baseUrl: http://${mqtt.ip}:7050
+#  host: 118.190.96.120
+#  port: 7050
+  enrollId: jim
+  enrollSecret: 6avZQLwcUe9b
+  chainName: toyhouse_java_test
+ai:
+  ranks: 3
+  policys: random,best_move,random_move,mcts
+  player: smartkit/godpaper-go-ai-player
+  agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
+  agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
+  scorer: smartkit/godpaper-go-score-estimator-gnugo
+---
+spring:
+  profiles: stage
+  data.mongodb.uri: mongodb://${mqtt.ip}:27017/toyhouse
+server:
+  contextPath: /accredit
+  port: 8095
+api:
+  ip: 47.92.119.102
+  url: http://${api.ip}:${server.port}${server.contextPath}/
+mqtt:
+  ip: 47.92.119.102
   brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_

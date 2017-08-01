@@ -3,8 +3,8 @@ package info.smartkit.godpaper.go;
 import info.smartkit.godpaper.go.settings.ChainCodeVariables;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.hyperledger.java.shim.ChaincodeBase;
-import org.hyperledger.java.shim.ChaincodeStub;
+import org.hyperledger.fabric.sdk.shim.ChaincodeBase;
+import org.hyperledger.fabric.sdk.shim.ChaincodeStub;
 
 import java.util.Map;
 
