@@ -161,7 +161,6 @@
             <version>0.6</version>
         </dependency>
 
-
         <dependency>
             <groupId>me.grapebaba</groupId>
             <artifactId>hyperledger-java-client</artifactId>
