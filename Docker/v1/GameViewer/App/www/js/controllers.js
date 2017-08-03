@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -56,10 +56,26 @@ angular.module('app.controllers', [])
       $rootScope.renderGameTable = function ($tableInfo) {
         var gameTableDiv = document.getElementById("gameTableDiv");
         console.log("$scope.gameTableDiv:",gameTableDiv);
+        var moveIndex = 1;
         if(gameTableDiv) {
           var player = new WGo.BasicPlayer(gameTableDiv, {
             sgf: $tableInfo.sgf
+            ,move:moveIndex
           });
+          //$interval refresh
+          $interval(function () {
+            //
+            moveIndex++;
+            player = new WGo.BasicPlayer(gameTableDiv, {
+              sgf: $tableInfo.sgf
+              ,move:moveIndex
+            });
+            // GameService.getSgfStr(function(data){
+            //   console.log("GameService.getSgfStr:",  data);
+            //   //
+            //   player.move +=1;
+            // });
+          }, 500);
         }
       };
       $rootScope.getOneTable = function() {
@@ -245,7 +261,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         });
       }
       ,function(response) {
-        console.log('WpWikiService.getAuth Error:'+response);
+        console.log('WpWikiService.getAuth Error:',response);
     });
     //
     $rootScope.modal_sgf_post.hide();

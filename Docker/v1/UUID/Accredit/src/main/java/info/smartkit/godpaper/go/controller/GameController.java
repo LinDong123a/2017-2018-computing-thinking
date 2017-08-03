@@ -16,13 +16,17 @@ import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.settings.AierStatus;
 import info.smartkit.godpaper.go.settings.GameStatus;
 import info.smartkit.godpaper.go.settings.UserStatus;
+import org.apache.catalina.connector.ClientAbortException;
+import org.apache.http.protocol.HTTP;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.support.HandlerMethodInvocationException;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,6 +45,7 @@ public class GameController {
         @Autowired MqttService mqttService;
         @Autowired DockerService dockerService;
         @Autowired AierRepository aierRepository;
+        @Autowired GamerRepository gamerRepository;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException {
@@ -140,6 +145,39 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET,value="/play/r/{gamerNum}")
         public void playOne(@PathVariable int gamerNum) throws MqttException, DockerException, InterruptedException, IOException {
                 service.randomPlaySome(gamerNum);
+        }
+
+        @RequestMapping(method = RequestMethod.GET, value="/sse/sgf/{gamerId}")
+        public SseEmitter getAccountAlertsNoPathVariable(@PathVariable String gamerId,HttpSession session) {
+
+                SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+
+                Thread t1 = new Thread(() ->{
+                        try {
+                                int i = 0;
+                                while(++i<=10000){
+                                        Thread.sleep(1000);
+                                        System.out.println("SSE sgf Sending....");
+                                        try{
+                                                Gamer gamer = gamerRepository.findOne(gamerId);
+                                                if(gamer!=null) {
+                                                        emitter.send(gamer.getSgf());
+                                                }else{
+                                                        LOG.warn("Not found with this gamerId.");
+                                                }
+                                        }catch(ClientAbortException cae){
+                                                cae.printStackTrace();
+                                                i = 10000;
+                                        }
+                                }
+                                emitter.complete();
+                        } catch (IOException | InterruptedException e) {
+                                e.printStackTrace();
+                        }
+                });
+                t1.start();
+
+                return emitter;
         }
 
 }

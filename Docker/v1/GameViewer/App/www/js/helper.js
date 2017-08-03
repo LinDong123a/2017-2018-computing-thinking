@@ -21,12 +21,12 @@ var _environments = {
         }
     },
     dev: {
-        host: '192.168.0.6',
+        host: '172.17.0.1',
         config: {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '192.168.0.6'
+            api_ip: '172.17.0.1'
             ,api_port:'8095'
             ,api_context:'/accredit'
             ,mqtt_ip:'192.168.0.6'
