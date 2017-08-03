@@ -89,6 +89,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/target/classes/AI_FILEs:/target/classes/AI_FILEs"
       - "/target/classes/sgf:/target/classes/sgf"
+      - "sgf_data:/target/classes/sgf"
 volumes:
   mariadb_data:
     driver: local
@@ -97,4 +98,6 @@ volumes:
   apache_data:
     driver: local
   php_data:
+    driver: local
+  sgf_data:
     driver: local
