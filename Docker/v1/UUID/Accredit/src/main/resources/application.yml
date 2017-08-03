@@ -1,6 +1,6 @@
 #@see http://hoserdude.com/2014/06/19/spring-boot-configurationproperties-and-profile-management-using-yaml/
 spring:
-  profiles.active: local
+  profiles.active: stage
 ---
 spring:
   profiles: local

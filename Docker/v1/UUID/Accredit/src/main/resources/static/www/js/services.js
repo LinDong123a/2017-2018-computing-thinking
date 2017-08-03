@@ -139,6 +139,13 @@ angular.module('app.services', [])
           callback(data);
         });
       }
+      ,
+      getSgfStr: function(callback){
+        $http.get(envInfo.api.url+"/game/sse/sgf/"+this.curGamerId).success(function(data) {
+          console.log("sse gamer sgf:",data);
+          callback(data);
+        });
+      }
     };
   }])
   .service('UserService', ['$http','envInfo',function($http,envInfo){

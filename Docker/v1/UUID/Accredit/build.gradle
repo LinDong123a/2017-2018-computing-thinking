@@ -63,6 +63,7 @@ dependencies {
 	compile 'com.spotify:docker-client:8.8.0'
 	compile 'com.toomasr:sgf4j-parser:0.0.1-SNAPSHOT'
 	compile 'com.shekhargulati.reactivex:rx-docker-client:0.2.2'
+	compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.8.RELEASE'
 }
 
 task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {
