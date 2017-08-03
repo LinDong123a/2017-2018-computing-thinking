@@ -87,8 +87,8 @@ services:
     container_name: accredit
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "target/classes/AI_FILEs:target/classes/AI_FILEs"
-      - "target/classes/sgf:target/classes/sgf"
+      - "/target/classes/AI_FILEs:/target/classes/AI_FILEs"
+      - "/target/classes/sgf:/target/classes/sgf"
 volumes:
   mariadb_data:
     driver: local
