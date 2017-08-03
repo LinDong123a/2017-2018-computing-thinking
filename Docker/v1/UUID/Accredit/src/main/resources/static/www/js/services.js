@@ -222,6 +222,7 @@ angular.module('app.services', [])
   .factory('WpWikiService',['$http','envInfo',function($http,envInfo) {
     return {
       anewWpPost:null,
+      postUrl:null,
       get: function(url) {
         return $http.jsonp( url );
       },
@@ -238,7 +239,7 @@ angular.module('app.services', [])
         // $http.defaults.headers.common['Content-Type'] = 'application/json';
         // $http.defaults.headers.common['X-WP-Nonce'] = 'nonce';
         //
-        $http.post(envInfo.api.host+"/wp-json/wp/v2/posts",this.anewWpPost).success(function(data) {
+        $http.post(postUrl,this.anewWpPost).success(function(data) {
           console.log("anew post created:",data);
           //reset $http header
           $http.defaults.headers.common = {};

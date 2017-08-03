@@ -250,7 +250,9 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.
         WpWikiService.anewWpPost = $scope.anewWpPost;
+        WpWikiService.postsURL = postsURL;//!to avoid constant changed.
         console.log("before post,WpWikiService.anewWpPost:",WpWikiService.anewWpPost);
+        console.log("before post,WpWikiService.postsURL:",WpWikiService.postsURL);
         WpWikiService.createPost(function(response) {
           console.log('WpWikiService.createPost response:',response);
           // alert message
