@@ -52,41 +52,55 @@ angular.module('app.controllers', [])
       //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
       $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
+      // store the interval promise
+      var moveIndex = 0;
+      var player = null;
+      var gameTableDiv = null;
+      $rootScope.tableInfo = null;
+      $rootScope.intervalRefresh = false;
+      // store the interval promise.
+      $rootScope.refreshTablePromise = null;
+      // stops any running interval to avoid two intervals running at the same time
+      $interval.cancel($rootScope.refreshTablePromise);
+      //
+      function intervalRefreshTable() {
+          moveIndex++;
+          player = new WGo.BasicPlayer(gameTableDiv, {
+            sgf: $rootScope.tableInfo.sgf
+            ,move:moveIndex
+            ,enableWheel:false
+          });
+      }
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo) {
-        var gameTableDiv = document.getElementById("gameTableDiv");
+        $rootScope.tableInfo  = $tableInfo;
+        gameTableDiv = document.getElementById("gameTableDiv");
         console.log("$scope.gameTableDiv:",gameTableDiv);
-        var moveIndex = 1;
+        //
         if(gameTableDiv) {
-          var player = new WGo.BasicPlayer(gameTableDiv, {
-            sgf: $tableInfo.sgf
+          player = new WGo.BasicPlayer(gameTableDiv, {
+            sgf: $rootScope.tableInfo.sgf
             ,move:moveIndex
           });
-          //$interval refresh
-          $interval(function () {
-            //
-            moveIndex++;
-            player = new WGo.BasicPlayer(gameTableDiv, {
-              sgf: $tableInfo.sgf
-              ,move:moveIndex
-            });
-            // GameService.getSgfStr(function(data){
-            //   console.log("GameService.getSgfStr:",  data);
-            //   //
-            //   player.move +=1;
-            // });
-          }, 500);
         }
       };
       $rootScope.getOneTable = function() {
         console.log("$scope.getOne called.");
         //
-        GameService.getOne(function(data){
-          console.log("GameService.getOne:",  data);
+        GameService.getOne(function (data) {
+          console.log("GameService.getOne:", data);
           $rootScope.tableInfo = data;
           $rootScope.renderGameTable(data);
           //
         });
+      };
+      $rootScope.iRefreshOneTable = function() {
+        $rootScope.intervalRefresh = !$rootScope.intervalRefresh;
+        if($rootScope.intervalRefresh) {
+          $rootScope.refreshTablePromise = $interval(intervalRefreshTable, 1000);
+        }else{
+          $interval.cancel($rootScope.refreshTablePromise);
+        }
       };
 
       $rootScope.updateEnvInfo = function(){

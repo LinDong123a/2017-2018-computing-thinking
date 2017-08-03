@@ -148,7 +148,7 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/sse/sgf/{gamerId}")
-        public SseEmitter getAccountAlertsNoPathVariable(@PathVariable String gamerId,HttpSession session) {
+        public SseEmitter sseGetSgfById(@PathVariable String gamerId,HttpSession session) {
 
                 SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
 

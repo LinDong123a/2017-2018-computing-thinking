@@ -2,6 +2,7 @@ package info.smartkit.godpaper.go.pojo;
 
 import info.smartkit.godpaper.go.settings.MqttVariables;
 import info.smartkit.godpaper.go.settings.UserStatus;
+import info.smartkit.godpaper.go.settings.UserTypes;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -79,10 +80,6 @@ public class User {
         return MqttVariables.clientId+id;
     }
 
-    @Override public String toString() {
-        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", name='" + name + '\'' + ", policy='" + policy + '\'' + ", score=" + score + ", rank=" + rank + ", status=" + status + ", created=" + created + '}';
-    }
-
     public User() {
     }
 
@@ -101,6 +98,20 @@ public class User {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date created = new Date();
+
+    @Override public String toString() {
+        return "User{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", name='" + name + '\'' + ", policy='" + policy + '\'' + ", score=" + score + ", rank='" + rank + '\'' + ", status=" + status + ", created=" + created + ", type=" + type + '}';
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    private int type = UserTypes.AI.getIndex();
 
 }
 

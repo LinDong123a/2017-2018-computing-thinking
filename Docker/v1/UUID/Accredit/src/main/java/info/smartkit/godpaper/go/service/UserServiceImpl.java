@@ -6,6 +6,7 @@ import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.settings.AIProperties;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.settings.UserStatus;
+import info.smartkit.godpaper.go.settings.UserTypes;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -59,6 +60,11 @@ public class UserServiceImpl implements UserService {
             int rPolicy = getRandomNumberInRange(0,size_policy-1);
             String policy = aiProperties.getPolicys().get(rPolicy);
             user.setPolicy(policy);
+            //Random types
+            int size_types = UserTypes.values().length;
+            int rType = getRandomNumberInRange(0,size_types-1);
+            user.setType(rType);
+            //
             User saved = repository.save(user);
             users.add(saved);
         }

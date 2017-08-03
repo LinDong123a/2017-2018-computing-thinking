@@ -73,24 +73,24 @@ services:
       - "61616:61616"
     container_name: activemq
   #uuid-accredit
-  uuid-accredit:
-    image: smartkit/godpaper-go-uuid-accredit
-    depends_on:
-      - vp0
-      - mongodb
-    links:
-      - vp0
-      - mongodb
-      - activemq
-    ports:
-      - "8095:8095"
-    container_name: accredit
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/target/classes/AI_FILEs:/target/classes/AI_FILEs"
-      - "/target/classes/sgf:/target/classes/sgf"
-      - "sgf_data:/target/classes/sgf"
-volumes:
+#   uuid-accredit:
+#     image: smartkit/godpaper-go-uuid-accredit
+#     depends_on:
+#       - vp0
+#       - mongodb
+#     links:
+#       - vp0
+#       - mongodb
+#       - activemq
+#     ports:
+#       - "8095:8095"
+#     container_name: accredit
+#     volumes:
+#       - "/var/run/docker.sock:/var/run/docker.sock"
+#       - "/target/classes/AI_FILEs:/target/classes/AI_FILEs"
+#       - "/target/classes/sgf:/target/classes/sgf"
+#       - "sgf_data:/target/classes/sgf"
+ volumes:
   mariadb_data:
     driver: local
   wordpress_data:

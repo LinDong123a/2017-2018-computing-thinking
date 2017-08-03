@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.pojo;
 
+import info.smartkit.godpaper.go.settings.UserTypes;
 import info.smartkit.godpaper.go.settings.MqttVariables;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.springframework.data.annotation.Id;
@@ -100,7 +101,17 @@ public class Gamer {
 
         private int status= UserStatus.STANDBY.getIndex();//1:playing,0:standby
 
+        private String type = "";
+
+        public String getType() {
+                return UserTypes.values()[player1.getType()].getName()+"_VS_"+UserTypes.values()[player2.getType()].getName();
+        }
+
+        public void setType(String type) {
+                this.type = type;
+        }
+
         @Override public String toString() {
-                return "Gamer{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", topic='" + topic + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + '}';
+                return "Gamer{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", topic='" + topic + '\'' + ", player1=" + player1 + ", player2=" + player2 + ", sgf='" + sgf + '\'' + ", created=" + created + ", status=" + status + ", type=" + type + '}';
         }
 }
