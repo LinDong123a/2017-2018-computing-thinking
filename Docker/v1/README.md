@@ -22,6 +22,12 @@ https://hub.docker.com/r/smartkit/
 
 __How?__
 
+#### Docker volumes
+
+```
+docker volume create --name=sgf_data
+```
+
 #### Docker compose up
 
 ```
