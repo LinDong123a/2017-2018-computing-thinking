@@ -11,6 +11,7 @@ import info.smartkit.godpaper.go.pojo.Aier;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.settings.AIProperties;
 import info.smartkit.godpaper.go.settings.AierStatus;
+import info.smartkit.godpaper.go.settings.ApiProperties;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import info.smartkit.godpaper.go.utils.StringUtil;
@@ -38,6 +39,7 @@ public class DockerServiceImpl implements DockerService{
         @Autowired MqttProperties mqttProperties;
         @Autowired ServerProperties serverProperties;
         @Autowired AierRepository aierRepository;
+        @Autowired ApiProperties apiProperties;
 
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
@@ -63,10 +65,10 @@ public class DockerServiceImpl implements DockerService{
                 dockerClient.pull(aiProperties.getPlayer());
                 // Create container
                 List<String> envStrings = new ArrayList<>();
-                String UriString = mqttProperties.getIp()+":"+serverProperties.getPort()+serverProperties.getContextPath();
+//                String UriString = mqttProperties.getIp()+":"+serverProperties.getPort()+serverProperties.getContextPath();
 //                                envStrings.add("URI_API=http://192.168.0.11:8095/accredit/");
 //                                envStrings.add("IP_MQTT=192.168.0.11");
-                envStrings.add("URI_API=http://"+ UriString+"/");//http://192.168.0.11:8095/accredit/
+                envStrings.add("URI_API="+apiProperties.getUrl());//http://192.168.0.11:8095/accredit/
                 envStrings.add("IP_MQTT="+mqttProperties.getIp());//192.168.0.11,ServerUtil.getInetAddress().getHostAddress()
                 //
                 final HostConfig hostConfig =

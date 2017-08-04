@@ -1,5 +1,6 @@
 FROM java:8
 VOLUME /tmp
+WORKDIR /accredit
 ADD build/libs/Accredit-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8095
 RUN bash -c "touch /app.jar"

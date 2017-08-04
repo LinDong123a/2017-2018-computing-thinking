@@ -172,11 +172,15 @@ public class GamerServiceImpl implements GamerService {
 
         //remove last move of o.IllegalMove
         private void removeSgfIllegalMove(Gamer gamer) throws InterruptedException, DockerException, IOException {
-                int lenOfSgf = gamer.getSgf().length();
-                String validSgf = gamer.getSgf().substring(0, lenOfSgf - 6);//;B[sd]
+                String sgfStr = gamer.getSgf();
+                int lenOfSgf = sgfStr.length();
+                //
+//                String validSgf = gamer.getSgf().substring(0, lenOfSgf - 6);//;B[sd]
+//                String validSgf =gamer.getSgf().split("\\"+SGF_TAIL_FIXTURE)
+                String validSgf = sgfStr.substring(0,sgfStr.lastIndexOf(";"));
                 gamer.setSgf(validSgf+SGF_TAIL_FIXTURE);
                 //
-                LOG.info("removeSgfIllegalMove:"+gamer.getSgf());
+                LOG.info("removeSgfIllegalMove result:"+gamer.getSgf());
         }
 
         private String saveSgfFileLocal(Gamer gamer) throws IOException, DockerException, InterruptedException {
@@ -186,7 +190,7 @@ public class GamerServiceImpl implements GamerService {
                 //copy sgf file to sgf/gamerId folder.
                 File destFile = new File(destFileStr);
                 FileUtils.copyFile(sgfFile,destFile);//for url.
-                LOG.info("copy sgf file to sgf/{gamerId} folder success:"+sgfFileName);
+                LOG.info("copy sgf file to "+destFileStr+" success:"+sgfFileName);
                 return destFileStr;
         }
 

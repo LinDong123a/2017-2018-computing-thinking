@@ -290,17 +290,20 @@ angular.module('app.services', [])
   //@see http://stackoverflow.com/questions/16627860/angular-js-and-ng-swith-when-emulating-enum
   .factory('Enum', [function () {
     var service = {
-      //
-      genderType: [
-        //AIPlayer:
+
+      // AIvsAI("AIvsAI", 0), AIvsHUMAN("AIvsHUMAN", 1), HUMANvsHUMAN("HUMANvsHUMAN", 2);
+      gamerTypes: [
         {
-          name: "AI",
-          data: "1"
+          name: "AIvsAI",
+          index: 0
         },
-        //HumanPlayer:
         {
-          name: "Human",
-          data: "0"
+          name: "AIvsHUMAN",
+          index: 1
+        },
+        {
+          name: "HUMANvsHUMAN",
+          index: 2
         }
       ]
       , getUUID: function (len) {

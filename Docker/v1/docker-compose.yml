@@ -61,6 +61,7 @@ services:
     ports:
       - "27017:27017"
     container_name: mongodb
+    # command: -smallfiles -nojournal
   #activemq
   activemq:
     image: smartkit/godpaper-go-message-broker-activemq
@@ -73,24 +74,27 @@ services:
       - "61616:61616"
     container_name: activemq
   #uuid-accredit
-#   uuid-accredit:
-#     image: smartkit/godpaper-go-uuid-accredit
-#     depends_on:
-#       - vp0
-#       - mongodb
-#     links:
-#       - vp0
-#       - mongodb
-#       - activemq
-#     ports:
-#       - "8095:8095"
-#     container_name: accredit
-#     volumes:
-#       - "/var/run/docker.sock:/var/run/docker.sock"
-#       - "/target/classes/AI_FILEs:/target/classes/AI_FILEs"
-#       - "/target/classes/sgf:/target/classes/sgf"
-#       - "sgf_data:/target/classes/sgf"
- volumes:
+  uuid-accredit:
+    image: smartkit/godpaper-go-uuid-accredit:latest
+    depends_on:
+      - vp0
+      - mongodb
+    links:
+      - vp0
+      - mongodb
+      - activemq
+    ports:
+      - "8095:8095"
+    container_name: accredit
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/target/classes/AI_FILEs:/target/classes/AI_FILEs"
+      - "/tmp:/tmp"
+      - "/target/classes/sgf:/target/classes/sgf"
+      - "sgf_data:/target/classes/sgf"
+    environment:
+      - "JAVA_OPTS=-Dapi.ip=192.168.0.6"
+volumes:
   mariadb_data:
     driver: local
   wordpress_data:
@@ -100,4 +104,5 @@ services:
   php_data:
     driver: local
   sgf_data:
-    driver: local
+    # driver: local
+    external: true
