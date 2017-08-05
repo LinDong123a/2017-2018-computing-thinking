@@ -241,7 +241,7 @@ public class GamerServiceImpl implements GamerService {
         @Override public void deleteFolder(String name) throws IOException {
                 FileUtils.deleteDirectory(new File(SgfUtil.getSgfLocal(name)));
         }
-
+//TODO:RxJava refactory
         @Override public void randomPlaySome(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException {
 //                LOG.info("randomPlaySome implements:"+gamerNum);
                 List<User> rUsers = userService.createRandomUsers(gamerNum*2);
