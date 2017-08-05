@@ -8,11 +8,11 @@ import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.pojo.Aier;
+import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.repository.AierRepository;
-import info.smartkit.godpaper.go.settings.AIProperties;
-import info.smartkit.godpaper.go.settings.AierStatus;
-import info.smartkit.godpaper.go.settings.ApiProperties;
-import info.smartkit.godpaper.go.settings.MqttProperties;
+import info.smartkit.godpaper.go.repository.GamerRepository;
+import info.smartkit.godpaper.go.service.GamerService;
+import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import info.smartkit.godpaper.go.utils.StringUtil;
 import org.apache.commons.io.FileUtils;
@@ -40,6 +40,8 @@ public class DockerServiceImpl implements DockerService{
         @Autowired ServerProperties serverProperties;
         @Autowired AierRepository aierRepository;
         @Autowired ApiProperties apiProperties;
+        @Autowired GamerRepository gamerRepository;
+        @Autowired GamerService gamerService;
 
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
@@ -207,6 +209,8 @@ public class DockerServiceImpl implements DockerService{
                         //only one string for result.
                         resultStr = logs.toString();
                         LOG.info("Docker(Scorer) logs:"+resultStr);
+                        //update game result.
+                        gamerService.updateSgf(gamerId,resultStr);
                 }
                 return resultStr;
         }

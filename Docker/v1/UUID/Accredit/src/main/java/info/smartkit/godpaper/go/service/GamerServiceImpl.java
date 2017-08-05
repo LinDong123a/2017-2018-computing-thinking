@@ -307,7 +307,6 @@ public class GamerServiceImpl implements GamerService {
                 return header.toString();
         }
 
-
         private String getEscaped(String text)
         {
                 return getEscaped(text, false);
@@ -335,5 +334,13 @@ public class GamerServiceImpl implements GamerService {
                                 result.append(c);
                 }
                 return result.toString();
+        }
+
+        private SgfDto updateSgfResult(String gamerId,String resultStr) throws IOException, InterruptedException {
+                Gamer gamer = gamerRepository.findOne(gamerId);
+                gamer.setSgf(this.getSgfHeader(chainCodeProperties.getChainName(),VERSION,gamer,resultStr));
+                gamer.setStatus(GameStatus.ENDED.getIndex());
+                //
+                return this.saveSgf(gamer);
         }
 }

@@ -21,4 +21,5 @@ public interface GamerService {
         void createFolder(String name) throws IOException;
         void deleteFolder(String name) throws IOException;
         void randomPlaySome(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException;
+        SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException;
 }
