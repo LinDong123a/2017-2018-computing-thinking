@@ -37,13 +37,13 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
-                "GODPAPER.SMARTKIT.INFO REST API",
-                "GODPAPER.SMARTKIT.INFO description of API.",
+                "ToyhouseGo REST API",
+                "ToyhouseGo description of API.",
                 "0.0.1",
                 "Terms of service",
                 "z@smartkit.info",
-                "License of API",
-                "API license URL");
+                "ToyhouseGo License of API",
+                "ToyhouseGo API license URL");
         return apiInfo;
     }
 

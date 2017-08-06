@@ -52,6 +52,7 @@ angular.module('app.controllers', [])
       //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
       $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
+      $rootScope.userTypes = {"机器玩家":0, "人类玩家":1};
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -167,7 +168,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     });
   }
   $scope.rPlayAll = function(){
-    var promptPopup = $ionicPopup.prompt({
+    var promptPopup_rGame = $ionicPopup.prompt({
       title: '提示',
       template: '请输入对局数',
       inputType: 'number',
@@ -175,7 +176,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       okText:"确定",
       cancelText:"取消"
     });
-    promptPopup.then(function(res) {
+    promptPopup_rGame.then(function(res) {
       console.log(res);
       if(res!=undefined && res>0){
         GameService.rGamerNum = res;
@@ -183,6 +184,28 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
           console.log("GameService.rPlayAll:",  data);
           //then refresh
           $scope.getAll();
+        });
+      }
+      //
+    });
+  }
+  $scope.hPlayOne = function(){
+    var promptPopup_hPlayerName = $ionicPopup.prompt({
+      title: '提示',
+      template: '请输入用户名',
+      inputType: 'text',
+      inputPlaceholder: 'nobody',
+      okText:"确定",
+      cancelText:"取消"
+    });
+    promptPopup_hPlayerName.then(function(res) {
+      console.log(res);
+      if(res!=undefined && res>0){
+        GameService.hPlayerName = res;
+        GameService.hPlayOne(function(data){
+          console.log("GameService.hPlayOne:",  data);
+          //then,players get ready?
+
         });
       }
       //
@@ -325,6 +348,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         UserService.anewUser = $scope.anewUser;
         //get actual value by key.
         UserService.anewUser.policy = $rootScope.policysObj[$scope.anewUser.policy];
+        UserService.anewUser.type = $rootScope.userTypes[$scope.anewUser.type];
         console.info("UserService.anewUser:", UserService.anewUser);
         //
         UserService.createUser(function(data){

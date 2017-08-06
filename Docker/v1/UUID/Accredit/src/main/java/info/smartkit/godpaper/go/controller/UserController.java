@@ -10,6 +10,7 @@ import info.smartkit.godpaper.go.service.UserService;
 import info.smartkit.godpaper.go.settings.ChainCodeProperties;
 import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.settings.UserStatus;
+import info.smartkit.godpaper.go.settings.UserTypes;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -97,7 +98,11 @@ public class UserController {
             untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
             User updater = repository.save(untenantedOne);
             //
-            service.tenant(updater);
+            if(updater.getType()== UserTypes.AI.getIndex()) {
+                service.tenant(updater);
+            }else{
+                //Human.
+            }
             //
             return updater;
     }

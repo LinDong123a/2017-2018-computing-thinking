@@ -253,8 +253,13 @@ public class GamerServiceImpl implements GamerService {
                         //update status
                         rUser.setStatus(UserStatus.TENANTED.getIndex());
                         User updater = userRepository.save(rUser);
-                        //
-                        userService.tenant(updater);
+                        //AI get ready at first.
+                        if(updater.getType()==UserTypes.AI.getIndex()) {
+                                userService.tenant(updater);
+                        }else{
+                                //Human.
+
+                        }
                         //wait for docker execution.
                         Thread.sleep(10000);
                 }
