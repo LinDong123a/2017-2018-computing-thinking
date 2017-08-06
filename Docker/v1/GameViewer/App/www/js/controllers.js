@@ -41,6 +41,15 @@ angular.module('app.controllers', [])
         }).then(function(modal) {
         $rootScope.modal_sgf_post = modal;
       });
+      //Load the modal from the given template URL
+      $rootScope.modal_board_tenuki  = null;
+      $ionicModal.fromTemplateUrl("templates/modal_board_tenuki.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $rootScope.modal_board_tenuki = modal;
+      });
       //
       $rootScope.curGamerId = null;
       $rootScope.gamerIds = [];
@@ -190,26 +199,12 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     });
   }
   $scope.hPlayOne = function(){
-    var promptPopup_hPlayerName = $ionicPopup.prompt({
-      title: '提示',
-      template: '请输入用户名',
-      inputType: 'text',
-      inputPlaceholder: 'nobody',
-      okText:"确定",
-      cancelText:"取消"
-    });
-    promptPopup_hPlayerName.then(function(res) {
-      console.log(res);
-      if(res!=undefined && res>0){
-        GameService.hPlayerName = res;
-        GameService.hPlayOne(function(data){
-          console.log("GameService.hPlayOne:",  data);
-          //then,players get ready?
-
-        });
-      }
+    //
+    $rootScope.modal_board_tenuki.show();
+    var boardElement = document.getElementById("tenuki-board");
+    window.board = new tenuki.Game({ element: boardElement });
       //
-    });
+
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
@@ -282,7 +277,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
     var base64 = Base64.encode( username + ':' + password );
     // Some endpoint that needs auth
     // var usersURL = 'http://localhost/wp-json/wp/v2/users';
-    var postsURL = envInfo.api.host+'/wp-json/wp/v2/posts';
+    var postsURL = envInfo.wp.host+'/wp-json/wp/v2/posts';
     WpWikiService.getAuth( base64, postsURL ).then(function(response) {
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.

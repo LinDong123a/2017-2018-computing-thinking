@@ -4,15 +4,15 @@ spring:
 ---
 spring:
   profiles: local
-  data.mongodb.uri: mongodb://10.254.3.148:27017/toyhouse
+  data.mongodb.uri: mongodb://192.168.0.6:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
 api:
-  ip: 10.254.3.148
+  ip: 192.168.0.6
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
-  ip: 10.254.3.148
+  ip: 192.168.0.6
   brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_

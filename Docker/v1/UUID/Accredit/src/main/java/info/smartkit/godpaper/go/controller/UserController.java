@@ -98,11 +98,7 @@ public class UserController {
             untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
             User updater = repository.save(untenantedOne);
             //
-            if(updater.getType()== UserTypes.AI.getIndex()) {
-                service.tenant(updater);
-            }else{
-                //Human.
-            }
+            service.tenant(updater);
             //
             return updater;
     }

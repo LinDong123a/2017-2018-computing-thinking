@@ -51,19 +51,21 @@ public class UserServiceImpl implements UserService {
             User user = new User();
             user.setEmail(RandomStringUtils.randomAlphanumeric(7).toLowerCase().concat("@toyhouse.cc"));
             user.setName(RandomStringUtils.randomAlphanumeric(4).toUpperCase().concat(".").concat(RandomStringUtils.randomAlphanumeric(5).toUpperCase()));
-            //Random rank
-            int size_ranks = aiProperties.getPolicys().size();
-            int rRank = getRandomNumberInRange(0,size_ranks-1);
-            user.setRank(String.valueOf(rRank));
-            //Random policy
-            int size_policy = aiProperties.getPolicys().size();
-            int rPolicy = getRandomNumberInRange(0,size_policy-1);
-            String policy = aiProperties.getPolicys().get(rPolicy);
-            user.setPolicy(policy);
             //Random types
             int size_types = UserTypes.values().length;
             int rType = getRandomNumberInRange(0,size_types-1);
             user.setType(rType);
+            if(rType==UserTypes.AI.getIndex()) {
+                //Random rank
+                int size_ranks = aiProperties.getPolicys().size();
+                int rRank = getRandomNumberInRange(0, size_ranks - 1);
+                user.setRank(String.valueOf(rRank));
+                //Random policy
+                int size_policy = aiProperties.getPolicys().size();
+                int rPolicy = getRandomNumberInRange(0, size_policy - 1);
+                String policy = aiProperties.getPolicys().get(rPolicy);
+                user.setPolicy(policy);
+            }
             //
             User saved = repository.save(user);
             users.add(saved);
@@ -95,7 +97,7 @@ public class UserServiceImpl implements UserService {
         //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");
 
         //Container related.
-        dockerService.stopContainer(updater.getId(),1);
+        dockerService.stopContainer(updater.getId(),10);
         dockerService.removeContainer(updater.getId());
     }
 }
