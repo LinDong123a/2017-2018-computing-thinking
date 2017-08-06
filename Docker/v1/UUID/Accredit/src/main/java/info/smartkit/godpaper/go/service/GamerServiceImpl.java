@@ -210,11 +210,13 @@ public class GamerServiceImpl implements GamerService {
         }
 
         //@see: https://github.com/jromang/gogui/blob/master/src/net/sf/gogui/sgf/SgfWriter.java
-        @Override public SgfDto saveSgf(Gamer gamer) throws IOException, DockerException, InterruptedException {
+        @Override public SgfDto saveSgf(Gamer gamer,boolean fixInvalidMove) throws IOException, DockerException, InterruptedException {
                 //
                 SgfDto sgfDto = new SgfDto();
                 //
-                this.removeSgfIllegalMove(gamer);
+                if(fixInvalidMove) {
+                        this.removeSgfIllegalMove(gamer);
+                }
                 //for agent training.
                 sgfDto.setName(gamer.getId());
                 sgfDto.setLocal(this.saveSgfFileLocal(gamer));
@@ -336,11 +338,12 @@ public class GamerServiceImpl implements GamerService {
                 return result.toString();
         }
 
-        private SgfDto updateSgfResult(String gamerId,String resultStr) throws IOException, InterruptedException {
+        @Override public SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException, DockerException {
                 Gamer gamer = gamerRepository.findOne(gamerId);
                 gamer.setSgf(this.getSgfHeader(chainCodeProperties.getChainName(),VERSION,gamer,resultStr));
                 gamer.setStatus(GameStatus.ENDED.getIndex());
-                //
-                return this.saveSgf(gamer);
+                //update sgf file.
+
+                return this.saveSgf(gamer,false);
         }
 }

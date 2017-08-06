@@ -40,6 +40,7 @@ info/smartkit/godpaper/go/service/MqttServiceImpl.class
 info/smartkit/godpaper/go/service/AierService.class
 info/smartkit/godpaper/go/service/GamerService.class
 info/smartkit/godpaper/go/service/MqttService.class
+info/smartkit/godpaper/go/settings/UserTypes.class
 info/smartkit/godpaper/go/repository/AierRepository.class
 info/smartkit/godpaper/go/settings/UserStatus.class
 info/smartkit/godpaper/go/service/ChainCodeServiceImpl$11.class

@@ -211,6 +211,9 @@ public class DockerServiceImpl implements DockerService{
                         LOG.info("Docker(Scorer) logs:"+resultStr);
                         //update game result.
                         gamerService.updateSgf(gamerId,resultStr);
+                } catch (IOException e) {
+                        e.printStackTrace();
+                        LOG.warn(e.toString());
                 }
                 return resultStr;
         }

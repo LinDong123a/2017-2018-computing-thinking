@@ -4,7 +4,7 @@ spring:
 ---
 spring:
   profiles: local
-  data.mongodb.uri: mongodb://192.168.0.6:27017/toyhouse
+  data.mongodb.uri: mongodb://${mongodb}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
@@ -93,7 +93,7 @@ ai:
     scorer: smartkit/godpaper-go-score-estimator-gnugo
 ---
 spring:
-  profiles: prod
+  profiles: prod1
   data.mongodb.uri: mongodb://${mongodb}:27017/toyhouse
 server:
   contextPath: /accredit
@@ -103,6 +103,36 @@ api:
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
   ip: 47.92.119.102
+  brokerUrl: tcp://${mqtt.ip}:1883
+  qos: 2
+  clientId: TH_
+  tag_vs: _vs_
+  tag_play: _play_
+chain:
+  enabled: false
+  baseUrl: http://${mqtt.ip}:7050
+  enrollId: jim
+  enrollSecret: 6avZQLwcUe9b
+  chainName: toyhouse_java_test
+ai:
+  ranks: 8
+  policys: random,best_move,random_move,mcts
+  player: smartkit/godpaper-go-ai-player
+  agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
+  agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
+  scorer: smartkit/godpaper-go-score-estimator-gnugo
+---
+spring:
+  profiles: prod2
+  data.mongodb.uri: mongodb://${mongodb}:27017/toyhouse
+server:
+  contextPath: /accredit
+  port: 8095
+api:
+  ip: 116.62.71.102
+  url: http://${api.ip}:${server.port}${server.contextPath}/
+mqtt:
+  ip: 116.62.71.102
   brokerUrl: tcp://${mqtt.ip}:1883
   qos: 2
   clientId: TH_

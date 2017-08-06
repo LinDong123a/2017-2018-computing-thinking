@@ -89,11 +89,12 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "ai_data:/target/classes/AI_FILEs"
+      # - "target/classes/AI_FILEs:/classes/AI_FILEs"
       - "/tmp:/tmp"
       # - "/target/classes/sgf:/target/classes/sgf"
       - "sgf_data:/target/classes/sgf"
     environment:
-      - "JAVA_OPTS=-Dapi.ip=192.168.137.147"
+      - "JAVA_OPTS=-Dapi.ip=192.168.0.6"
 volumes:
   mariadb_data:
     driver: local
@@ -104,5 +105,6 @@ volumes:
   php_data:
     driver: local
   sgf_data:
-    # driver: local
-    external: true
+    driver: local
+  ai_data:
+    driver: local

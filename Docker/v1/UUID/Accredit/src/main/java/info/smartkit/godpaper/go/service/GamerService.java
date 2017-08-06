@@ -16,10 +16,10 @@ public interface GamerService {
         List<Gamer> pairAll(List<User> tenantedUsers) throws MqttException;
         List<Gamer> playAll() throws MqttException, DockerException, InterruptedException, IOException;
         Gamer playOne(String gamerId) throws MqttException, DockerException, InterruptedException, IOException;
-        SgfDto saveSgf(Gamer gamer) throws IOException, DockerException, InterruptedException;
+        SgfDto saveSgf(Gamer gamer,boolean fixInvalidMove) throws IOException, DockerException, InterruptedException;
         String getSgfResult(Gamer gamer) throws IOException, DockerException, InterruptedException;
         void createFolder(String name) throws IOException;
         void deleteFolder(String name) throws IOException;
         void randomPlaySome(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException;
-        SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException;
+        SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException, DockerException;
 }

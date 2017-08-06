@@ -128,7 +128,7 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET, value="/sgf/{gamerId}")
         public SgfDto saveSgfById(@PathVariable String gamerId) throws IOException, DockerException, InterruptedException {
                 Gamer gamer = repository.findOne(gamerId);
-                return service.saveSgf(gamer);
+                return service.saveSgf(gamer,true);
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/score/{gamerId}")
