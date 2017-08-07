@@ -218,22 +218,38 @@ angular.module('app.controllers', [])
         // }
         //
         //Websocket/Stomp handler:
+        var stompClient = null;
         $rootScope.connectStomp = function ($gamerTopic, $userId) {
           //
-          var client = Stomp.client("ws://localhost:61614/stomp", "v11.stomp");
-          client.connect("", "",
+          stompClient = Stomp.client("ws://localhost:61614/stomp", "v11.stomp");
+          stompClient.connect("", "",
             function () {
-              client.subscribe($gamerTopic,
+              stompClient.subscribe($gamerTopic,
                 function (message) {
                   // (JSON.parse(message.body));
                   console.log(message.body);
+                  //1.receive game play message then place chess player.
+
+                  //2.frozen UI elements,while human player played piece.
+
+                  //3.receive game status message.
+
                 },
                 {priority: 9}
               );
-              client.send($gamerTopic, {priority: 9}, "Pub/Sub over STOMP from"+$userId);//For testing...
+              // client.send($gamerTopic, {priority: 9}, "Pub/Sub over STOMP from"+$userId);//For testing...
+              //TODO:game message handle here: gamerId_topic_player1_VS_player2,gamerId_topic_play_B[dp],
+
             }
           );
         };
+        $rootScope.sendToStomp = function ($gamerTopic,$message) {
+          stompClient.send($gamerTopic, {priority: 9}, $message);
+        }
+        $rootScope.disconnectStomp = function () {
+          stompClient.unsubscribe();
+          stompClient.disconnect();
+        }
 
   }])
 
