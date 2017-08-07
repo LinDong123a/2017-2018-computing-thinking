@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -62,6 +62,7 @@ angular.module('app.controllers', [])
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
       $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
       $rootScope.userTypes = {"机器玩家":0, "人类玩家":1};
+      $rootScope.boardTypes = ["wgo","tenuki"];
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -82,25 +83,35 @@ angular.module('app.controllers', [])
           });
       }
       //common functions.
-      $rootScope.renderGameTable = function ($tableInfo) {
+      $rootScope.renderGameTable = function ($tableInfo,bType) {
         $rootScope.tableInfo  = $tableInfo;
-        gameTableDiv = document.getElementById("gameTableDiv");
-        console.log("$scope.gameTableDiv:",gameTableDiv);
-        //
-        if(gameTableDiv) {
-          player = new WGo.BasicPlayer(gameTableDiv, {
-            sgf: $rootScope.tableInfo.sgf
-            ,move:moveIndex
-          });
+        if(bType==$rootScope.boardTypes[0]) {
+          gameTableDiv = document.getElementById("gameTableDiv");
+          console.log("$scope.gameTableDiv:", gameTableDiv);
+          //
+          if (gameTableDiv) {
+            player = new WGo.BasicPlayer(gameTableDiv, {
+              sgf: $rootScope.tableInfo.sgf
+              , move: moveIndex
+            });
+          }
+        }else if(bType==$rootScope.boardTypes[1]){
+          var boardElement = document.getElementById("tenuki-board");
+          window.board = new tenuki.Game({ element: boardElement });
+          //MQTT
+          // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
+          //Stomp
+          $rootScope.connectStomp($tableInfo.topic,$tableInfo.player1.name);
         }
+
       };
-      $rootScope.getOneTable = function() {
+      $rootScope.getOneTable = function(bType) {
         console.log("$scope.getOne called.");
         //
         GameService.getOne(function (data) {
           console.log("GameService.getOne:", data);
           $rootScope.tableInfo = data;
-          $rootScope.renderGameTable(data);
+          $rootScope.renderGameTable(data,bType);
           //
         });
       };
@@ -134,6 +145,95 @@ angular.module('app.controllers', [])
           $rootScope.aierList = data;
         });
       }
+      //MQTT related
+      //connect
+      $rootScope.conMqtt = function ($gamerTopic,$userId) {
+        var ip = envInfo.mqtt.host;
+        var port = envInfo.mqtt.port;
+        var id = $userId;
+        console.log("conMqtt:", $gamerTopic, $userId, ip, port, id);
+
+        MqttClient.init(ip, port, id);
+        MqttClient.connect({onSuccess: successCallback});
+        MqttClient.onConnectionLost = onConnectionLost;
+        MqttClient.onMessageArrived = onMessageArrived;
+
+        function successCallback() {
+          MqttClient.subscribe($gamerTopic);
+          message = new Paho.MQTT.Message("Hello");
+          message.destinationName = $gamerTopic;
+          MqttClient.send(message);
+        }
+
+        function onConnectionLost(responseObject) {
+          if (responseObject.errorCode !== 0)
+            console.log("onConnectionLost:" + responseObject.errorMessage);
+        };
+        function onMessageArrived(message) {
+          console.log("onMessageArrived:" + message.payloadString);
+          // MqttClient.disconnect();
+        }
+      };
+        //disconnect
+        $rootScope.disconMqtt = function ($gamerTopic) {
+          MqttClient.unsubscribe($gamerTopic);
+          MqttClient.disconnect();
+        }
+        //Stomp
+        $stomp.setDebug(function (args) {
+          $log.debug(args)
+        })
+        //Stomp
+        // $rootScope.stompSubscription = null;
+        // $rootScope.conStomp = function ($gamerTopic,$userId) {
+        //   //
+        //   $stomp
+        //     .connect($gamerTopic, connectHeaders)
+        //
+        //     // frame = CONNECTED headers
+        //     .then(function (frame) {
+        //       $rootScope.stompSubscription = $stomp.subscribe($gamerTopic, function (payload, headers, res) {
+        //         $scope.payload = payload
+        //       }, {
+        //         'headers': 'are awesome'
+        //       })
+        //
+        //       // Send message
+        //       $stomp.send($gamerTopic, {
+        //         message: 'body'
+        //       }, {
+        //         priority: 9,
+        //         custom: 42 // Custom Headers
+        //       })
+        //     })
+        // }
+        // //
+        // $rootScope.disconStomp =  function ($gamerTopic) {
+        //   // Unsubscribe
+        //   $rootScope.stompSubscription.unsubscribe($gamerTopic);
+        //   // Disconnect
+        //   $stomp.disconnect().then(function () {
+        //     $log.info('Stomp disconnected.')
+        //   })
+        // }
+        //
+        //Websocket/Stomp handler:
+        $rootScope.connectStomp = function ($gamerTopic, $userId) {
+          //
+          var client = Stomp.client("ws://localhost:61614/stomp", "v11.stomp");
+          client.connect("", "",
+            function () {
+              client.subscribe($gamerTopic,
+                function (message) {
+                  // (JSON.parse(message.body));
+                  console.log(message.body);
+                },
+                {priority: 9}
+              );
+              client.send($gamerTopic, {priority: 9}, "Pub/Sub over STOMP from"+$userId);//For testing...
+            }
+          );
+        };
 
   }])
 
@@ -202,9 +302,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     //
     $rootScope.modal_board_tenuki.show();
     var boardElement = document.getElementById("tenuki-board");
-    window.board = new tenuki.Game({ element: boardElement });
-      //
-
+     window.board = new tenuki.Game({ element: boardElement });
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
@@ -218,15 +316,16 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       console.log("GameService.getAll:",  data);
       $scope.lobbyList  = data;
       console.log("$scope.lobbyList:",  $scope.lobbyList);
+      //
     });
   }
-  $scope.toGameTableView  = function($gid){
+  $scope.toGameTableView  = function($gid,bType){
     console.log("$scope.toGameTableView called.");
     $rootScope.curGamerId = $gid;
     GameService.curGamerId = $gid;
     console.log(" $rootScope.curGamerId:",$rootScope.curGamerId);
     $location.url('/page1/page3');
-    $rootScope.getOneTable();
+    $rootScope.getOneTable(bType);
   }
   $scope.deleteOne = function($gamer){
     GameService.curGamerId = $gamer.id;

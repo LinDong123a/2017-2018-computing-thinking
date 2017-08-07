@@ -17,7 +17,7 @@ var _environments = {
             ,api_port:'8095'
             ,api_context:'/accredit'
             ,mqtt_ip: '192.168.0.6'
-            ,mqtt_port:'1883'
+            ,mqtt_port:'9001'
             ,wp_ip:'192.168.0.6'
         }
     },

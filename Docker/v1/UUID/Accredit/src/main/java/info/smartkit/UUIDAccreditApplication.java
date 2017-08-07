@@ -28,6 +28,7 @@ public class UUIDAccreditApplication{
 	public static void main(String[] args) {
 		System.setProperty("https.protocols", "TLSv1.1");
 		SpringApplication.run(UUIDAccreditApplication.class, args);
+//		ApplicationContext context = new AnnotationConfigApplicationContext( StompConfig.class );
 		//ChainCode stub initialization with default chain name.
 		LOG.info("ChainCodeVariables.enabled:"+ChainCodeVariables.enabled);
 		LOG.info("ChainCodeVariables.chainName:"+ChainCodeVariables.chainName);

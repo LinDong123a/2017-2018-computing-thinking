@@ -64,6 +64,10 @@ dependencies {
 	compile 'com.toomasr:sgf4j-parser:0.0.1-SNAPSHOT'
 	compile 'com.shekhargulati.reactivex:rx-docker-client:0.2.2'
 	compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.8.RELEASE'
+	compile 'org.apache.activemq:activemq-broker:5.8.0'
+	compile 'org.apache.activemq:activemq-spring:5.8.0'
+	compile 'org.apache.activemq:activemq-http:5.8.0'
+	compile 'org.apache.activemq:activemq-stomp:5.8.0'
 }
 
 task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {
