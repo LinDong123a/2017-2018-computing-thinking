@@ -99,8 +99,6 @@ angular.module('app.controllers', [])
             });
           }
         }else if(bType==$rootScope.boardTypes[1]){
-          var boardElement = document.getElementById("tenuki-board");
-          window.board = new tenuki.Game({ element: boardElement });
           //MQTT
           // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
           //Stomp
@@ -232,6 +230,8 @@ angular.module('app.controllers', [])
                   alert( message );
                   // (JSON.parse(message.body));
                   console.log(message.body);
+                  //0.game set up.
+                  $rootScope.tenukiGameSetup();
                   //1.receive game play message then place chess player.
 
                   //2.frozen UI elements,while human player played piece.
@@ -254,6 +254,38 @@ angular.module('app.controllers', [])
           stompClient.unsubscribe();
           stompClient.disconnect();
         }
+        //tenuki game setup
+      //@see: https://www.npmjs.com/package/tenuki
+      $rootScope.tenukiGameSetup = function() {
+        var boardElement = document.querySelector(".tenuki-board");
+        // console.log("boardElement:",boardElement);
+        var game = new tenuki.Game(boardElement);
+        // console.log("boardElement game:",game);
+        game.setup({
+          scoring: "area" // default is "territory"
+        });
+        game.callbacks.postRender = function (game) {
+          //game.currentState() -- 游戏当前状态
+          // alert(game.currentState());
+//           console.log(game.intersectionAt(0, 0).value);
+// // 'empty'
+//           console.log(game.currentPlayer());
+// // 'black'
+//           console.log(game.isOver());
+// // false
+//           console.log(game.playAt(0, 0));
+// // true
+//           console.log(game.intersectionAt(0, 0).value);
+// 'black'
+          if (game.currentState().pass) {
+            console.log(game.currentState().color + " passed");
+          }
+          if (game.currentState().playedPoint) {
+            console.log(game.currentState().color + " played " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x);
+          }
+
+        }
+      }
 
   }])
 
@@ -318,11 +350,12 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       //
     });
   }
-  $scope.hPlayOne = function(){
+  $scope.hPlayOne = function($gamerTopic, $userId){
     //
     $rootScope.modal_board_tenuki.show();
-    var boardElement = document.getElementById("tenuki-board");
-     window.board = new tenuki.Game({ element: boardElement });
+    // var boardElement = document.getElementById("tenuki-board");
+    // window.board = new tenuki.Game({ element: boardElement });
+    $rootScope.connectStomp($gamerTopic, $userId);
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
