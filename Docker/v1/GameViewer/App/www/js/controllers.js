@@ -63,6 +63,9 @@ angular.module('app.controllers', [])
       $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
       $rootScope.userTypes = {"机器玩家":0, "人类玩家":1};
       $rootScope.boardTypes = ["wgo","tenuki"];
+      $rootScope.tag_vs="_vs_";
+      $rootScope.tag_play="_play_";
+      $rootScope.tag_end="_end_";
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -221,11 +224,12 @@ angular.module('app.controllers', [])
         var stompClient = null;
         $rootScope.connectStomp = function ($gamerTopic, $userId) {
           //
-          stompClient = Stomp.client("ws://localhost:61614/stomp", "v11.stomp");
+          stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
           stompClient.connect("", "",
             function () {
               stompClient.subscribe($gamerTopic,
                 function (message) {
+                  alert( message );
                   // (JSON.parse(message.body));
                   console.log(message.body);
                   //1.receive game play message then place chess player.
@@ -237,7 +241,7 @@ angular.module('app.controllers', [])
                 },
                 {priority: 9}
               );
-              // client.send($gamerTopic, {priority: 9}, "Pub/Sub over STOMP from"+$userId);//For testing...
+              stompClient.send($gamerTopic, {priority: 9}, "Pub/Sub over STOMP from:"+$userId);//For testing...
               //TODO:game message handle here: gamerId_topic_player1_VS_player2,gamerId_topic_play_B[dp],
 
             }

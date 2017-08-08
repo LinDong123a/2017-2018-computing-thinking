@@ -4,12 +4,12 @@ spring:
 ---
 spring:
   profiles: local
-  data.mongodb.uri: mongodb://192.168.254.67:27017/toyhouse
+  data.mongodb.uri: mongodb://192.168.0.6:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
 api:
-  ip: 192.168.254.67
+  ip: 192.168.0.6
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
   ip: 192.168.254.67
@@ -20,7 +20,7 @@ mqtt:
   tag_play: _play_
 chain:
   enabled: false
-  baseUrl: http://192.168.254.67:7050
+  baseUrl: http://192.168.0.6:7050
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_dev
