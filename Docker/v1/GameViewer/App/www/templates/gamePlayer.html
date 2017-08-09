@@ -20,7 +20,7 @@
           <p ng-show="user.type==0">策略: {{user.policy}}</p>
           <p>分数: {{user.score}}</p>
           <p>创建时间: {{user.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
-          <button class="icon-righ ion-android-hand" ng-show="user.status==0" ng-click="runPlayer(user.id)">申请参赛</button>
+          <button class="icon-righ ion-android-hand" ng-show="user.status==0 " ng-click="runPlayer(user)">申请参赛</button>
           <button class="icon-righ ion-code-working" ng-show="user.status==2" disabled="disabled">等待比赛</button>
           <button class="icon-righ ion-flag" ng-show="user.status==3" disabled="disabled">比赛中</button>
           <button class="icon-righ ion-android-hand" ng-show="user.status==1" disabled="disabled">参赛中</button>

@@ -102,7 +102,7 @@ angular.module('app.controllers', [])
           //MQTT
           // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
           //Stomp
-          $rootScope.connectStomp($tableInfo.topic,$tableInfo.player1.name);
+          $rootScope.connectStomp($tableInfo,$tableInfo.player1.name);
         }
 
       };
@@ -184,56 +184,28 @@ angular.module('app.controllers', [])
         $stomp.setDebug(function (args) {
           $log.debug(args)
         })
-        //Stomp
-        // $rootScope.stompSubscription = null;
-        // $rootScope.conStomp = function ($gamerTopic,$userId) {
-        //   //
-        //   $stomp
-        //     .connect($gamerTopic, connectHeaders)
-        //
-        //     // frame = CONNECTED headers
-        //     .then(function (frame) {
-        //       $rootScope.stompSubscription = $stomp.subscribe($gamerTopic, function (payload, headers, res) {
-        //         $scope.payload = payload
-        //       }, {
-        //         'headers': 'are awesome'
-        //       })
-        //
-        //       // Send message
-        //       $stomp.send($gamerTopic, {
-        //         message: 'body'
-        //       }, {
-        //         priority: 9,
-        //         custom: 42 // Custom Headers
-        //       })
-        //     })
-        // }
-        // //
-        // $rootScope.disconStomp =  function ($gamerTopic) {
-        //   // Unsubscribe
-        //   $rootScope.stompSubscription.unsubscribe($gamerTopic);
-        //   // Disconnect
-        //   $stomp.disconnect().then(function () {
-        //     $log.info('Stomp disconnected.')
-        //   })
-        // }
-        //
         //Websocket/Stomp handler:
         var stompClient = null;
-        $rootScope.connectStomp = function ($gamerTopic, $userId) {
+        $rootScope.connectStomp = function ($gamerInfo, $userId) {
           //
           stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
           stompClient.connect("", "",
             function () {
-              stompClient.subscribe($gamerTopic,
+              stompClient.subscribe($gamerInfo.id,
                 function (message) {
-                  alert( message );
+                  // alert( message );
                   // (JSON.parse(message.body));
                   console.log(message.body);
                   //0.game set up.
-                  $rootScope.tenukiGameSetup();
+                  $rootScope.tenukiGameSetup($gamerInfo);
                   //1.receive game play message then place chess player.
-
+                  console.log("game played!:",$gamerInfo);
+                  GameService.curGamerId = $gamerInfo.id;
+                  GameService.playOne(function(data){
+                    console.log("GameService.playOne:",  data);
+                    //then refresh
+                    $scope.getAll();
+                  });
                   //2.frozen UI elements,while human player played piece.
 
                   //3.receive game status message.
@@ -241,7 +213,7 @@ angular.module('app.controllers', [])
                 },
                 {priority: 9}
               );
-              stompClient.send($gamerTopic, {priority: 9}, "Pub/Sub over STOMP from:"+$userId);//For testing...
+              stompClient.send($gamerInfo.id, {priority: 9}, "Pub/Sub over STOMP from:"+$userId);//For testing...
               //TODO:game message handle here: gamerId_topic_player1_VS_player2,gamerId_topic_play_B[dp],
 
             }
@@ -256,7 +228,7 @@ angular.module('app.controllers', [])
         }
         //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
-      $rootScope.tenukiGameSetup = function() {
+      $rootScope.tenukiGameSetup = function($gamerInfo) {
         var boardElement = document.querySelector(".tenuki-board");
         // console.log("boardElement:",boardElement);
         var game = new tenuki.Game(boardElement);
@@ -281,7 +253,10 @@ angular.module('app.controllers', [])
             console.log(game.currentState().color + " passed");
           }
           if (game.currentState().playedPoint) {
-            console.log(game.currentState().color + " played " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x);
+            var moveInfo = game.currentState().color + " played " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x;
+            console.log("monveInfo:",moveInfo);
+            //
+            stompClient.send($gamerInfo.id, {priority: 9}, moveInfo);
           }
 
         }
@@ -350,12 +325,13 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       //
     });
   }
-  $scope.hPlayOne = function($gamerTopic, $userId){
+  $scope.hPlayOne = function($gameInfo, $userId){
     //
     $rootScope.modal_board_tenuki.show();
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
-    $rootScope.connectStomp($gamerTopic, $userId);
+    $rootScope.connectStomp($gameInfo, $userId);
+
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
@@ -527,15 +503,28 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         });
       }
 
-      $scope.runPlayer = function ($id) {
+      $scope.runPlayer = function ($user) {
 //
-        GameService.rPlayerId = $id;
-        GameService.runPlayer(function(data){
-          console.log("GameService.runPlayer:", data);
-          //refresh
-          $scope.getUsers();
-        });
-      }
+        if($user.type==0)//AI
+        {
+          GameService.rPlayerId = $user.id;
+          //
+          GameService.runPlayer(function (data) {
+            console.log("GameService.runPlayer:", data);
+            //refresh
+            $scope.getUsers();
+          });
+          //Human
+        }else{
+          GameService.tenUserId = $user.id;
+          //
+          GameService.tenantUser(function (data) {
+            console.log("GameService.tenantUser:", data);
+            //refresh
+            $scope.getUsers();
+          });
+        }
+      };
       //default calls
       $scope.getUsers();
     }])

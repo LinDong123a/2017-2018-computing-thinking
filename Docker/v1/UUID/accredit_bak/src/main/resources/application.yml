@@ -9,7 +9,7 @@ server:
   contextPath: /accredit
   port: 8095
 api:
-  ip: 192.168.1.186
+  ip: 192.168.64.1
   url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
   ip: ${api.ip}
