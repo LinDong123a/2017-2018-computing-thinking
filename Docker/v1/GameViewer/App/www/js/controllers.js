@@ -101,6 +101,7 @@ angular.module('app.controllers', [])
         }else if(bType==$rootScope.boardTypes[1]){
           //MQTT
           // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
+
           //Stomp
           $rootScope.connectStomp($tableInfo,$tableInfo.player1.name);
         }
@@ -186,6 +187,7 @@ angular.module('app.controllers', [])
         })
         //Websocket/Stomp handler:
         var stompClient = null;
+
         $rootScope.connectStomp = function ($gamerInfo, $userId) {
           //
           stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
@@ -196,16 +198,8 @@ angular.module('app.controllers', [])
                   // alert( message );
                   // (JSON.parse(message.body));
                   console.log(message.body);
-                  //0.game set up.
-                  $rootScope.tenukiGameSetup($gamerInfo);
                   //1.receive game play message then place chess player.
-                  console.log("game played!:",$gamerInfo);
-                  GameService.curGamerId = $gamerInfo.id;
-                  GameService.playOne(function(data){
-                    console.log("GameService.playOne:",  data);
-                    //then refresh
-                    $scope.getAll();
-                  });
+                  console.log("recevied game play info!:",$gamerInfo);
                   //2.frozen UI elements,while human player played piece.
 
                   //3.receive game status message.
@@ -253,9 +247,10 @@ angular.module('app.controllers', [])
             console.log(game.currentState().color + " passed");
           }
           if (game.currentState().playedPoint) {
+            //$userId#play#B[cm]
             var moveInfo = game.currentState().color + " played " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x;
-            console.log("monveInfo:",moveInfo);
-            //
+            console.log("moveInfo:",moveInfo);
+            //$userId#play#B[cm]
             stompClient.send($gamerInfo.id, {priority: 9}, moveInfo);
           }
 
@@ -330,7 +325,17 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     $rootScope.modal_board_tenuki.show();
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
+    //0.game set up.
+    $rootScope.tenukiGameSetup($gameInfo);
+    //1.stomp connect
     $rootScope.connectStomp($gameInfo, $userId);
+    //2.
+    // GameService.curGamerId = $gamerInfo.id;
+    // GameService.playOne(function(data){
+    //   console.log("GameService.playOne:",  data);
+    //   //then refresh
+    //   $scope.getAll();
+    // });
 
   }
   $scope.dismissAll = function(){

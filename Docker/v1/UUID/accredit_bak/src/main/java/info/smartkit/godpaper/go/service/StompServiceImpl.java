@@ -1,8 +1,7 @@
 package info.smartkit.godpaper.go.service;
 
 
-import info.smartkit.godpaper.go.activemq.StompMessageReceiver;
-import org.apache.activemq.ActiveMQConnectionFactory;
+import info.smartkit.godpaper.go.activemq.StompMessageHandler;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.projectodd.stilts.stomp.StompException;
@@ -18,6 +17,8 @@ import javax.net.ssl.SSLException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeoutException;
 
+
+//@see:http://stilts.projectodd.org/stilts-stomp-client/
 @Service
 public class StompServiceImpl implements StompService{
 
@@ -39,7 +40,7 @@ public class StompServiceImpl implements StompService{
     public void subscribe(String topic) throws JMSException, StompException {
         subscription =
                 stompClient.subscribe( topic )
-                        .withMessageHandler( new StompMessageReceiver() )
+                        .withMessageHandler( new StompMessageHandler(this,topic) )
                         .withAckMode( Subscription.AckMode.CLIENT_INDIVIDUAL )
                         .start();
         LOG.info("stompClient subscription is active:"+subscription.isActive());
@@ -53,8 +54,14 @@ public class StompServiceImpl implements StompService{
     }
 
     @Override
-    public void disconnect(String brokerUrl, String clientId) throws StompException, TimeoutException, InterruptedException {
+    public void unsubscribe() throws StompException {
         subscription.unsubscribe();
+        LOG.info("stompClient unsubscribed.");
+    }
+
+    @Override
+    public void disconnect(String brokerUrl, String clientId) throws StompException, TimeoutException, InterruptedException {
+
         stompClient.disconnect();
         LOG.info("stompClient disconnected:"+ stompClient.isDisconnected());
     }

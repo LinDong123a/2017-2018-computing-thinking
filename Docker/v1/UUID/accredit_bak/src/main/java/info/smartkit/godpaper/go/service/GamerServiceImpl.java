@@ -14,14 +14,19 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.projectodd.stilts.stomp.StompException;
 import org.springframework.beans.factory.annotation.Autowired;
 import info.smartkit.godpaper.go.settings.ApiProperties;
 import org.springframework.stereotype.Service;
 
+import javax.jms.JMSException;
+import javax.net.ssl.SSLException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -43,6 +48,8 @@ public class GamerServiceImpl implements GamerService {
         @Autowired UserRepository userRepository;
         @Autowired DockerService dockerService;
         @Autowired UserService userService;
+        @Autowired StompService stompService;
+        @Autowired MqttProperties mqttProperties;
 
         private static final String ENCODING = "UTF-8";
         private static final String VERSION = "0.0.1";
@@ -350,5 +357,25 @@ public class GamerServiceImpl implements GamerService {
                 //update sgf file.
 
                 return this.saveSgf(gamer,false);
+        }
+
+        @Override
+        public void connectHumanPlayer(Gamer gamer) throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException {
+                LOG.info("connectHumanPlayer called.");
+                String uri = "stomp://" + mqttProperties.getIp() + ":61613";
+                stompService.connect(uri);
+                stompService.subscribe(gamer.getId());
+                //any human player
+                User player1 = gamer.getPlayer1();
+                User player2 = gamer.getPlayer2();
+                String vsTitle =  player1.getTopicName()+ MqttVariables.tag_vs+player2.getTopicName();
+                //
+                if(player1.getType()==UserTypes.HUMAN.getIndex()){
+                        stompService.publish(player1.getTopicName(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
+                }
+                //
+                if(player2.getType()==UserTypes.HUMAN.getIndex()){
+                        stompService.publish(player1.getTopicName(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
+                }
         }
 }
