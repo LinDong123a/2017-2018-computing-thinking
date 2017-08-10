@@ -22,6 +22,7 @@ info/smartkit/godpaper/go/service/ChainCodeServiceImpl$1.class
 info/smartkit/godpaper/go/UUIDAccreditChainCode.class
 info/smartkit/godpaper/go/configs/DisableSSLConfiguration.class
 info/smartkit/godpaper/go/activemq/ActivemqVariables.class
+info/smartkit/godpaper/go/activemq/StompMessageListener.class
 info/smartkit/godpaper/go/service/ChainCodeServiceImpl.class
 info/smartkit/godpaper/go/activemq/ActivemqSender.class
 info/smartkit/godpaper/go/service/UserService.class

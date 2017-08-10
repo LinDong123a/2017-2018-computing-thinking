@@ -2,32 +2,32 @@
 spring:
   profiles.active: local
 ---
+api:
+  ip: 10.254.3.148
+  url: http://${api.ip}:${server.port}${server.contextPath}/
 spring:
   profiles: local
-  data.mongodb.uri: mongodb://192.168.0.6:27017/toyhouse
+  data.mongodb.uri: mongodb://${api.ip}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
-api:
-  ip: 192.168.0.6
-  url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
-  ip: 192.168.254.67
-  brokerUrl: tcp://${mqtt.ip}:1883
+  ip: ${api.ip}
+  brokerUrl: tcp://${api.ip}:1883
   qos: 2
   clientId: TH_
   tag_vs: _vs_
   tag_play: _play_
 chain:
   enabled: false
-  baseUrl: http://192.168.0.6:7050
+  baseUrl: http://${api.ip}:7050
   enrollId: jim
   enrollSecret: 6avZQLwcUe9b
   chainName: toyhouse_java_dev
 ai:
   ranks: 8
   policys: random,best_move,random_move,mcts
-  player: smartkit/godpaper-go-ai-player:latest
+  player: smartkit/godpaper-go-ai-player
   agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep:latest
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train:latest
   scorer: smartkit/godpaper-go-score-estimator-gnugo:latest

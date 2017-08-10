@@ -13,8 +13,10 @@ import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.DockerService;
 import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.service.MqttService;
+import info.smartkit.godpaper.go.service.StompService;
 import info.smartkit.godpaper.go.settings.AierStatus;
 import info.smartkit.godpaper.go.settings.GameStatus;
+import info.smartkit.godpaper.go.settings.MqttProperties;
 import info.smartkit.godpaper.go.settings.UserStatus;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.http.protocol.HTTP;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.support.HandlerMethodInvocationException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -46,6 +49,9 @@ public class GameController {
         @Autowired DockerService dockerService;
         @Autowired AierRepository aierRepository;
         @Autowired GamerRepository gamerRepository;
+        @Autowired StompService stompService;
+        @Autowired
+        MqttProperties mqttProperties;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException {
@@ -70,7 +76,12 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play/{gamerId}")
-        public Gamer playOne(@PathVariable String gamerId) throws MqttException, DockerException, InterruptedException, IOException {
+        public Gamer playOne(@PathVariable String gamerId) throws MqttException, DockerException, InterruptedException, IOException, JMSException {
+                //Stomp testing block
+                String uri = "tcp://"+mqttProperties.getIp()+":61616";
+                stompService.connect(uri);
+                stompService.subscribe(gamerId);
+                //
                 return service.playOne(gamerId);
         }
 

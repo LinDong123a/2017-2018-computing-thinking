@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 public class GamerServiceImpl implements GamerService {
 
-        private static Logger LOG = LogManager.getLogger(GamerServiceImpl.class);;
+        private static Logger LOG = LogManager.getLogger(GamerServiceImpl.class);
 
         @Autowired GamerRepository gamerRepository;
         @Autowired MqttService mqttService;

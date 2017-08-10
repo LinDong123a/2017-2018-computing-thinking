@@ -2,15 +2,15 @@
 spring:
   profiles.active: local
 ---
+api:
+  ip: 10.254.67.93
+  url: http://${api.ip}:${server.port}${server.contextPath}/
 spring:
   profiles: local
   data.mongodb.uri: mongodb://${api.ip}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
-api:
-  ip: 192.168.64.1
-  url: http://${api.ip}:${server.port}${server.contextPath}/
 mqtt:
   ip: ${api.ip}
   brokerUrl: tcp://${api.ip}:1883
@@ -27,7 +27,7 @@ chain:
 ai:
   ranks: 8
   policys: random,best_move,random_move,mcts
-  player: smartkit/godpaper-go-ai-player:latest
+  player: smartkit/godpaper-go-ai-player
   agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep:latest
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train:latest
   scorer: smartkit/godpaper-go-score-estimator-gnugo:latest

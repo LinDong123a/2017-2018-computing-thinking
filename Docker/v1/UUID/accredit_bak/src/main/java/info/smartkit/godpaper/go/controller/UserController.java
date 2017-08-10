@@ -102,8 +102,21 @@ public class UserController {
             //
             return updater;
     }
+    @RequestMapping(method = RequestMethod.GET, value="/tenant/{userId}")
+    public User tenantByUserId(@PathVariable String userId) throws InterruptedException, DockerException, MqttException {
+        //
+        //User
+        User untenantedOne = repository.findOne(userId);
+        //update status
+        untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
+        User updater = repository.save(untenantedOne);
+        //
+        service.tenant(updater);
+        //
+        return updater;
+    }
     @RequestMapping(method = RequestMethod.DELETE, value="/tenant/{userId}")
-    public User untenant(@PathVariable String userId) throws MqttException, DockerException, InterruptedException {
+    public User untenantByUserId(@PathVariable String userId) throws MqttException, DockerException, InterruptedException {
             //
             //User tenant
             User tenantUeser = repository.findOne(userId);
