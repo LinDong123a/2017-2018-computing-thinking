@@ -60,7 +60,8 @@ angular.module('app.controllers', [])
       $rootScope.placeholder_aier = null;
       //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
-      $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
+      // $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
+      $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move"};
       $rootScope.userTypes = {"机器玩家":0, "人类玩家":1};
       $rootScope.boardTypes = ["wgo","tenuki"];
       $rootScope.tag_vs="_vs_";
@@ -193,7 +194,8 @@ angular.module('app.controllers', [])
           stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
           stompClient.connect("", "",
             function () {
-              stompClient.subscribe($gamerInfo.id,
+              console.log("stompClient.connected.");
+              stompClient.subscribe($gamerInfo.topic,
                 function (message) {
                   // alert( message );
                   // (JSON.parse(message.body));
@@ -207,7 +209,7 @@ angular.module('app.controllers', [])
                 },
                 {priority: 9}
               );
-              stompClient.send($gamerInfo.id, {priority: 9}, "Pub/Sub over STOMP from:"+$userId);//For testing...
+              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For testing...
               //TODO:game message handle here: gamerId_topic_player1_VS_player2,gamerId_topic_play_B[dp],
 
             }
@@ -248,10 +250,10 @@ angular.module('app.controllers', [])
           }
           if (game.currentState().playedPoint) {
             //$userId#play#B[cm]
-            var moveInfo = game.currentState().color + " played " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x;
+            var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
             console.log("moveInfo:",moveInfo);
             //$userId#play#B[cm]
-            stompClient.send($gamerInfo.id, {priority: 9}, moveInfo);
+            stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
           }
 
         }
@@ -468,7 +470,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         $rootScope.getAiersByStatus(3);
         //
         $scope.modal_user_add.show();
-        $scope.anewUser = {name:Enum.getUUID(6),rank:0,policy:"random"};
+        $scope.anewUser = {name:Enum.getUUID(6),rank:0,policy:"random",type:0};
       };
       $scope.userList = [];
       $scope.createUser = function () {

@@ -364,18 +364,18 @@ public class GamerServiceImpl implements GamerService {
                 LOG.info("connectHumanPlayer called.");
                 String uri = "stomp://" + mqttProperties.getIp() + ":61613";
                 stompService.connect(uri);
-                stompService.subscribe(gamer.getId());
+                stompService.subscribe(gamer.getTopic());
                 //any human player
                 User player1 = gamer.getPlayer1();
                 User player2 = gamer.getPlayer2();
                 String vsTitle =  player1.getTopicName()+ MqttVariables.tag_vs+player2.getTopicName();
                 //
                 if(player1.getType()==UserTypes.HUMAN.getIndex()){
-                        stompService.publish(player1.getTopicName(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
+                        stompService.publish(gamer.getTopic(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
                 }
                 //
                 if(player2.getType()==UserTypes.HUMAN.getIndex()){
-                        stompService.publish(player1.getTopicName(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
+                        stompService.publish(gamer.getTopic(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
                 }
         }
 }

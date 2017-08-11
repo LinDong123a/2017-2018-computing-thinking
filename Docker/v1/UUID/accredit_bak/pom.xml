@@ -91,6 +91,7 @@
         </dependency>
 
         <!-- Apache commons -->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
@@ -204,12 +205,6 @@
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.8.0.GA</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
         </dependency>
         <!--Docker-client-->
         <dependency>

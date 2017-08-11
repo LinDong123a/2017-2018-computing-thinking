@@ -10,6 +10,7 @@ import org.projectodd.stilts.stomp.Subscription;
 import org.projectodd.stilts.stomp.client.ClientSubscription;
 import org.projectodd.stilts.stomp.client.ClientTransaction;
 import org.projectodd.stilts.stomp.client.StompClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.jms.*;
@@ -21,6 +22,8 @@ import java.util.concurrent.TimeoutException;
 //@see:http://stilts.projectodd.org/stilts-stomp-client/
 @Service
 public class StompServiceImpl implements StompService{
+
+    @Autowired MqttService mqttService;
 
 //    private String uri = "ws://192.168.14.1:61614";
     private static Logger LOG = LogManager.getLogger(StompServiceImpl.class);
@@ -40,7 +43,7 @@ public class StompServiceImpl implements StompService{
     public void subscribe(String topic) throws JMSException, StompException {
         subscription =
                 stompClient.subscribe( topic )
-                        .withMessageHandler( new StompMessageHandler(this,topic) )
+                        .withMessageHandler( new StompMessageHandler(this,mqttService,topic) )
                         .withAckMode( Subscription.AckMode.CLIENT_INDIVIDUAL )
                         .start();
         LOG.info("stompClient subscription is active:"+subscription.isActive());
@@ -50,7 +53,7 @@ public class StompServiceImpl implements StompService{
     public void publish(String topic, String content, int qos) throws StompException {
         ClientTransaction tx = stompClient.begin();
         tx.send(StompMessages.createStompMessage( topic, content ));
-        LOG.info("stompClient published:"+content+",to topic: "+topic);
+        System.out.println("stompClient published:"+content+",to topic: "+topic);
     }
 
     @Override

@@ -13,12 +13,12 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '10.254.67.93'
+            api_ip: '192.168.1.186'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip: '10.254.67.93'
-            ,mqtt_port:'9001'
-            ,wp_ip:'10.254.67.93'
+            ,mqtt_ip: '192.168.1.186'
+            ,mqtt_port:'1883'
+            ,wp_ip:'192.168.1.186'
         }
     },
     dev: {
