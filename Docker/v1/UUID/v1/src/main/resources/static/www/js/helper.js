@@ -46,7 +46,7 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'118.190.152.88'
             ,mqtt_port:'1883'
-            ,wp_ip:'118.190.152.88'
+            ,wp_ip:'http://118.190.152.88'
         }
     },
     stage: {
