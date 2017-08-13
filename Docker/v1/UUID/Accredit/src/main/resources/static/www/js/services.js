@@ -74,6 +74,7 @@ angular.module('app.services', [])
       curGamerId : null,//current running gamer.
       curAgentId : "mugo",//current training agent.
       rGamerNum: 5,
+      tenUserId:null,//tenant by user id
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -143,6 +144,13 @@ angular.module('app.services', [])
       getSgfStr: function(callback){
         $http.get(envInfo.api.url+"/game/sse/sgf/"+this.curGamerId).success(function(data) {
           console.log("sse gamer sgf:",data);
+          callback(data);
+        });
+      }
+      ,
+      tenantUser:function(callback){
+        $http.get(envInfo.api.url+"/user/tenant/"+this.tenUserId).success(function(data) {
+          console.log("one user tenanted.:",data);
           callback(data);
         });
       }
@@ -222,7 +230,7 @@ angular.module('app.services', [])
   .factory('WpWikiService',['$http','envInfo',function($http,envInfo) {
     return {
       anewWpPost:null,
-      postUrl:null,
+      postsUrl:null,
       get: function(url) {
         return $http.jsonp( url );
       },
@@ -239,7 +247,7 @@ angular.module('app.services', [])
         // $http.defaults.headers.common['Content-Type'] = 'application/json';
         // $http.defaults.headers.common['X-WP-Nonce'] = 'nonce';
         //
-        $http.post(postUrl,this.anewWpPost).success(function(data) {
+        $http.post(this.postsUrl,this.anewWpPost).success(function(data) {
           console.log("anew post created:",data);
           //reset $http header
           $http.defaults.headers.common = {};

@@ -26,11 +26,11 @@ chain:
   chainName: toyhouse_java_dev
 ai:
   ranks: 8
-  policys: random,best_move,random_move,mcts
+  policys: random,best_move,random_move
   player: smartkit/godpaper-go-ai-player
-  agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep:latest
-  agentTrain: smartkit/godpaper-go-ai-agent-mugo-train:latest
-  scorer: smartkit/godpaper-go-score-estimator-gnugo:latest
+  agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
+  agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
+  scorer: smartkit/godpaper-go-score-estimator-gnugo
 ---
 spring:
   profiles: test
@@ -86,7 +86,7 @@ ai:
     chainName: toyhouse_java_test
   ai:
     ranks: 8
-    policys: random,best_move,random_move,mcts
+    policys: random,best_move,random_move
     player: smartkit/godpaper-go-ai-player
     agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
     agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
@@ -116,7 +116,7 @@ chain:
   chainName: toyhouse_java_test
 ai:
   ranks: 8
-  policys: random,best_move,random_move,mcts
+  policys: random,best_move,random_move
   player: smartkit/godpaper-go-ai-player
   agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
@@ -146,7 +146,7 @@ chain:
   chainName: toyhouse_java_test
 ai:
   ranks: 8
-  policys: random,best_move,random_move,mcts
+  policys: random,best_move,random_move
   player: smartkit/godpaper-go-ai-player
   agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train

@@ -1,10 +1,8 @@
 package info.smartkit.godpaper.go.controller;
 
 
-import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.SgfDto;
-import info.smartkit.godpaper.go.pojo.Aier;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
@@ -14,24 +12,23 @@ import info.smartkit.godpaper.go.service.DockerService;
 import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.StompService;
-import info.smartkit.godpaper.go.settings.AierStatus;
-import info.smartkit.godpaper.go.settings.GameStatus;
-import info.smartkit.godpaper.go.settings.MqttProperties;
-import info.smartkit.godpaper.go.settings.UserStatus;
+import info.smartkit.godpaper.go.settings.*;
 import org.apache.catalina.connector.ClientAbortException;
-import org.apache.http.protocol.HTTP;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.projectodd.stilts.stomp.StompException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.support.HandlerMethodInvocationException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.jms.JMSException;
+import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -54,7 +51,7 @@ public class GameController {
         MqttProperties mqttProperties;
 
         @RequestMapping(method = RequestMethod.POST)
-        public Gamer createOne(@RequestBody Gamer gamer) throws IOException {
+        public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
                 Gamer result = repository.save(gamer);
                 //gamer folder creating.
                 service.createFolder(result.getId());
@@ -76,11 +73,7 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET,value="/play/{gamerId}")
-        public Gamer playOne(@PathVariable String gamerId) throws MqttException, DockerException, InterruptedException, IOException, JMSException {
-                //Stomp testing block
-                String uri = "tcp://"+mqttProperties.getIp()+":61616";
-                stompService.connect(uri);
-                stompService.subscribe(gamerId);
+        public Gamer playOne(@PathVariable String gamerId) throws Exception {
                 //
                 return service.playOne(gamerId);
         }
@@ -91,8 +84,15 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET)
-        public List<Gamer> listAll(){
-                return repository.findAllByOrderByCreatedDesc();
+        public List<Gamer> listAll() throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException {
+                List<Gamer> all = repository.findAllByOrderByCreatedDesc();
+                for(Gamer gamer:all) {
+                        //stomp get ready if has any human player.
+                        if (hasHumanPlayer(gamer)) {
+                                service.connectHumanPlayer(gamer);
+                        }
+                }
+                return all;
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/saved")
@@ -102,10 +102,10 @@ public class GameController {
 
 
         @RequestMapping(method = RequestMethod.DELETE, value="/{gamerId}")
-        public void deleteOne(@PathVariable String gamerId) throws MqttException, IOException {
+        public void deleteOne(@PathVariable String gamerId) throws MqttException, IOException, StompException {
                 //Dismiss gamer's user
                 Gamer gamer = repository.findOne(gamerId);
-                //unsubscribe
+                //mqtt unsubscribe
                 mqttService.unsubscribe(gamer.getTopic());
                 User player1 = gamer.getPlayer1();
                 player1.setStatus(UserStatus.unTENANTED.getIndex());
@@ -117,13 +117,21 @@ public class GameController {
                 repository.delete(gamerId);
                 //gamer folder deleting.
                 service.deleteFolder(gamerId);
+                //stomp unsubscribe
+                if(hasHumanPlayer(gamer)){
+                        stompService.unsubscribe();
+                }
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
-        public void deleteAll() throws MqttException {
+        public void deleteAll() throws MqttException, StompException {
                 List<Gamer> allGamers = repository.findAll();
                 for(Gamer gamer : allGamers){
                         //unsubscribe
                         mqttService.unsubscribe(gamer.getTopic());
+                        //stomp unsubscribe
+                        if(hasHumanPlayer(gamer)){
+                                stompService.unsubscribe();
+                        }
                         //
                         User player1 = gamer.getPlayer1();
                         player1.setStatus(UserStatus.unTENANTED.getIndex());
@@ -190,5 +198,11 @@ public class GameController {
 
                 return emitter;
         }
+
+        private boolean hasHumanPlayer(Gamer gamer) {
+                return
+                (gamer.getPlayer1().getType() == UserTypes.HUMAN.getIndex() || gamer.getPlayer2().getType() == UserTypes.HUMAN.getIndex());
+        }
+
 
 }

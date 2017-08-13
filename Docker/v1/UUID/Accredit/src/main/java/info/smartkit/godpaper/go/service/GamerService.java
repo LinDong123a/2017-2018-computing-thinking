@@ -5,9 +5,14 @@ import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.projectodd.stilts.stomp.StompException;
 
+import javax.jms.JMSException;
+import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -22,4 +27,5 @@ public interface GamerService {
         void deleteFolder(String name) throws IOException;
         void randomPlaySome(int gamerNum) throws InterruptedException, DockerException, MqttException, IOException;
         SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException, DockerException;
+        void connectHumanPlayer(Gamer gamer) throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException;
 }

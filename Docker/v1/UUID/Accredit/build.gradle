@@ -41,16 +41,12 @@ dependencies {
 	compile("io.springfox:springfox-swagger-ui:2.0.2")
 	testCompile("junit:junit")
 	compile("commons-codec:commons-codec:1.10")
-	compile( "org.springframework.boot:spring-boot-starter-actuator"){
-		exclude module: "logback-classic"
-	}
+	compile( "org.springframework.boot:spring-boot-starter-actuator")
 	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.boot:spring-boot-starter-web'){
-		exclude module: "spring-boot-starter-tomcat"
-		exclude module: "spring-boot-starter-logging"
-		exclude module: "logback-classic"
-	}
+	compile 'org.slf4j:slf4j-api:1.7.25'
+	compile 'ch.qos.logback:logback-classic:1.2.3'
+	compile('org.springframework.boot:spring-boot-starter-web')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.apache.commons:commons-io:1.3.2')
 	compile('commons-lang:commons-lang:2.6')
@@ -70,9 +66,8 @@ dependencies {
 	compile 'com.toomasr:sgf4j-parser:0.0.1-SNAPSHOT'
 	compile 'com.shekhargulati.reactivex:rx-docker-client:0.2.2'
 	compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.8.RELEASE'
-	compile ('org.apache.activemq:activemq-all:5.10.0'){
-		exclude module: "org.slf4j.impl.Log4jLoggerFactory"
-	}
+	compile ('org.apache.activemq:activemq-all:5.10.0')
+	compile 'org.projectodd.stilts:stilts-stomp-client:0.1.41-SNAPSHOT'
 }
 
 task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {

@@ -13,11 +13,12 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '192.168.0.6'
+            api_ip: '10.254.3.148'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip:'192.168.0.6'
+            ,mqtt_ip: '10.254.3.148'
             ,mqtt_port:'1883'
+            ,wp_ip:'10.254.3.148'
         }
     },
     dev: {
@@ -31,6 +32,7 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'192.168.0.6'
             ,mqtt_port:'1883'
+            ,wp_ip:'192.168.0.6'
         }
     },
     test: {
@@ -44,6 +46,7 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'118.190.152.88'
             ,mqtt_port:'1883'
+            ,wp_ip:'192.168.0.6'
         }
     },
     stage: {
@@ -57,6 +60,7 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'47.92.119.102'
             ,mqtt_port:'1883'
+            ,wp_ip:'192.168.0.6'
         }
     }
 };

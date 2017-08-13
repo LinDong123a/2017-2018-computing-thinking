@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives','app.services','angularMoment',])
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives','app.services','angularMoment','angularPaho','ngStomp',])
 
 .config(function($ionicConfigProvider, $sceDelegateProvider){
 
@@ -17,7 +17,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
     ,port:DynamicEnvironment.get('api_port')
     ,contextPath:DynamicEnvironment.get('api_context')
     ,url:"http://"+DynamicEnvironment.get('api_ip')+":"+DynamicEnvironment.get('api_port')+DynamicEnvironment.get('api_context')},
-    mqtt:{host:DynamicEnvironment.get('mqtt_ip'),port:DynamicEnvironment.get('mqtt_port')}})
+    mqtt:{host:DynamicEnvironment.get('mqtt_ip'),port:DynamicEnvironment.get('mqtt_port')},
+    wp:{host:DynamicEnvironment.get('wp_ip')}})
   .config(function($httpProvider) {
     $httpProvider.interceptors.push('TrendicityInterceptor');
   })

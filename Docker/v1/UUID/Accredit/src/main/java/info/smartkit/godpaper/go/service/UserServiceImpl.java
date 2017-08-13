@@ -3,10 +3,7 @@ package info.smartkit.godpaper.go.service;
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
-import info.smartkit.godpaper.go.settings.AIProperties;
-import info.smartkit.godpaper.go.settings.MqttProperties;
-import info.smartkit.godpaper.go.settings.UserStatus;
-import info.smartkit.godpaper.go.settings.UserTypes;
+import info.smartkit.godpaper.go.settings.*;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -31,6 +28,7 @@ public class UserServiceImpl implements UserService {
     @Autowired MqttService mqttService;
     @Autowired DockerService dockerService;
     @Autowired MqttProperties mqttProperties;
+    @Autowired GamerService gamerService;
 
     private static Logger LOG = LogManager.getLogger(UserServiceImpl.class);
 
@@ -76,11 +74,15 @@ public class UserServiceImpl implements UserService {
     @Override public void tenant(User updater) throws MqttException, DockerException, InterruptedException {
 
         LOG.info("tenantedUser:"+updater.toString());
-        //MqttClient tenant
-        //produce message topic by uuid
-        mqttService.connect(mqttProperties.getBrokerUrl(), updater.getTopicName());
-        //and subscribe
-        mqttService.subscribe(updater.getTopicName());
+        //MqttClient tenant if AI player
+        if(updater.getType()==UserTypes.AI.getIndex()) {
+            //produce message topic by uuid
+            mqttService.connect(mqttProperties.getBrokerUrl(), updater.getTopicName());
+            //and subscribe
+            mqttService.subscribe(updater.getTopicName());
+        }else if (updater.getType()==UserTypes.HUMAN.getIndex()){
+//            gamerService.notifyHumanPlayer();
+        }
         //
         //TODO:ChainCode register
         //        chainCodeService.createRegistrar("jim", "6avZQLwcUe9b");

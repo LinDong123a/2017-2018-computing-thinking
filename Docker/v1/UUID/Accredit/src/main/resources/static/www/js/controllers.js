@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -41,6 +41,15 @@ angular.module('app.controllers', [])
         }).then(function(modal) {
         $rootScope.modal_sgf_post = modal;
       });
+      //Load the modal from the given template URL
+      $rootScope.modal_board_tenuki  = null;
+      $ionicModal.fromTemplateUrl("templates/modal_board_tenuki.html",
+        {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then(function(modal) {
+        $rootScope.modal_board_tenuki = modal;
+      });
       //
       $rootScope.curGamerId = null;
       $rootScope.gamerIds = [];
@@ -51,7 +60,13 @@ angular.module('app.controllers', [])
       $rootScope.placeholder_aier = null;
       //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
-      $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
+      // $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
+      $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move"};
+      $rootScope.userTypes = {"机器玩家":0, "人类玩家":1};
+      $rootScope.boardTypes = ["wgo","tenuki"];
+      $rootScope.tag_vs="_vs_";
+      $rootScope.tag_play="_play_";
+      $rootScope.tag_end="_end_";
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -72,25 +87,34 @@ angular.module('app.controllers', [])
           });
       }
       //common functions.
-      $rootScope.renderGameTable = function ($tableInfo) {
+      $rootScope.renderGameTable = function ($tableInfo,bType) {
         $rootScope.tableInfo  = $tableInfo;
-        gameTableDiv = document.getElementById("gameTableDiv");
-        console.log("$scope.gameTableDiv:",gameTableDiv);
-        //
-        if(gameTableDiv) {
-          player = new WGo.BasicPlayer(gameTableDiv, {
-            sgf: $rootScope.tableInfo.sgf
-            ,move:moveIndex
-          });
+        if(bType==$rootScope.boardTypes[0]) {
+          gameTableDiv = document.getElementById("gameTableDiv");
+          console.log("$scope.gameTableDiv:", gameTableDiv);
+          //
+          if (gameTableDiv) {
+            player = new WGo.BasicPlayer(gameTableDiv, {
+              sgf: $rootScope.tableInfo.sgf
+              , move: moveIndex
+            });
+          }
+        }else if(bType==$rootScope.boardTypes[1]){
+          //MQTT
+          // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
+
+          //Stomp
+          $rootScope.connectStomp($tableInfo,$tableInfo.player1.name);
         }
+
       };
-      $rootScope.getOneTable = function() {
+      $rootScope.getOneTable = function(bType) {
         console.log("$scope.getOne called.");
         //
         GameService.getOne(function (data) {
           console.log("GameService.getOne:", data);
           $rootScope.tableInfo = data;
-          $rootScope.renderGameTable(data);
+          $rootScope.renderGameTable(data,bType);
           //
         });
       };
@@ -123,6 +147,116 @@ angular.module('app.controllers', [])
           console.log("AierService.getAllByStatus:", data);
           $rootScope.aierList = data;
         });
+      }
+      //MQTT related
+      //connect
+      $rootScope.conMqtt = function ($gamerTopic,$userId) {
+        var ip = envInfo.mqtt.host;
+        var port = envInfo.mqtt.port;
+        var id = $userId;
+        console.log("conMqtt:", $gamerTopic, $userId, ip, port, id);
+
+        MqttClient.init(ip, port, id);
+        MqttClient.connect({onSuccess: successCallback});
+        MqttClient.onConnectionLost = onConnectionLost;
+        MqttClient.onMessageArrived = onMessageArrived;
+
+        function successCallback() {
+          MqttClient.subscribe($gamerTopic);
+          message = new Paho.MQTT.Message("Hello");
+          message.destinationName = $gamerTopic;
+          MqttClient.send(message);
+        }
+
+        function onConnectionLost(responseObject) {
+          if (responseObject.errorCode !== 0)
+            console.log("onConnectionLost:" + responseObject.errorMessage);
+        };
+        function onMessageArrived(message) {
+          console.log("onMessageArrived:" + message.payloadString);
+          // MqttClient.disconnect();
+        }
+      };
+        //disconnect
+        $rootScope.disconMqtt = function ($gamerTopic) {
+          MqttClient.unsubscribe($gamerTopic);
+          MqttClient.disconnect();
+        }
+        //Stomp
+        $stomp.setDebug(function (args) {
+          $log.debug(args)
+        })
+        //Websocket/Stomp handler:
+        var stompClient = null;
+
+        $rootScope.connectStomp = function ($gamerInfo, $userId) {
+          //
+          stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
+          stompClient.connect("", "",
+            function () {
+              console.log("stompClient.connected.");
+              stompClient.subscribe($gamerInfo.topic,
+                function (message) {
+                  // alert( message );
+                  // (JSON.parse(message.body));
+                  console.log(message.body);
+                  //1.receive game play message then place chess player.
+                  console.log("recevied game play info!:",$gamerInfo);
+                  //2.frozen UI elements,while human player played piece.
+
+                  //3.receive game status message.
+
+                },
+                {priority: 9}
+              );
+              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For testing...
+              //TODO:game message handle here: gamerId_topic_player1_VS_player2,gamerId_topic_play_B[dp],
+
+            }
+          );
+        };
+        $rootScope.sendToStomp = function ($gamerTopic,$message) {
+          stompClient.send($gamerTopic, {priority: 9}, $message);
+        }
+        $rootScope.disconnectStomp = function () {
+          stompClient.unsubscribe();
+          stompClient.disconnect();
+        }
+        //tenuki game setup
+      //@see: https://www.npmjs.com/package/tenuki
+      $rootScope.tenukiGameSetup = function($gamerInfo) {
+        var boardElement = document.querySelector(".tenuki-board");
+        // console.log("boardElement:",boardElement);
+        var game = new tenuki.Game(boardElement);
+        // console.log("boardElement game:",game);
+        game.setup({
+          scoring: "area" // default is "territory"
+        });
+        game.callbacks.postRender = function (game) {
+          //game.currentState() -- 游戏当前状态
+          // alert(game.currentState());
+//           console.log(game.intersectionAt(0, 0).value);
+// // 'empty'
+//           console.log(game.currentPlayer());
+// // 'black'
+//           console.log(game.isOver());
+// // false
+//           console.log(game.playAt(0, 0));
+// // true
+//           console.log(game.intersectionAt(0, 0).value);
+// 'black'
+          if (game.currentState().pass) {
+            console.log(game.currentState().color + " passed");
+          }
+          if (game.currentState().playedPoint) {
+            //$userId#play#B[cm]
+            var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
+            console.log("moveInfo:",moveInfo);
+            //$userId#play#B[cm]
+            stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
+          }
+
+        }
       }
 
   }])
@@ -167,7 +301,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     });
   }
   $scope.rPlayAll = function(){
-    var promptPopup = $ionicPopup.prompt({
+    var promptPopup_rGame = $ionicPopup.prompt({
       title: '提示',
       template: '请输入对局数',
       inputType: 'number',
@@ -175,7 +309,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       okText:"确定",
       cancelText:"取消"
     });
-    promptPopup.then(function(res) {
+    promptPopup_rGame.then(function(res) {
       console.log(res);
       if(res!=undefined && res>0){
         GameService.rGamerNum = res;
@@ -187,6 +321,24 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       }
       //
     });
+  }
+  $scope.hPlayOne = function($gameInfo, $userId){
+    //
+    $rootScope.modal_board_tenuki.show();
+    // var boardElement = document.getElementById("tenuki-board");
+    // window.board = new tenuki.Game({ element: boardElement });
+    //0.game set up.
+    $rootScope.tenukiGameSetup($gameInfo);
+    //1.stomp connect
+    $rootScope.connectStomp($gameInfo, $userId);
+    //2.
+    // GameService.curGamerId = $gamerInfo.id;
+    // GameService.playOne(function(data){
+    //   console.log("GameService.playOne:",  data);
+    //   //then refresh
+    //   $scope.getAll();
+    // });
+
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
@@ -200,15 +352,16 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       console.log("GameService.getAll:",  data);
       $scope.lobbyList  = data;
       console.log("$scope.lobbyList:",  $scope.lobbyList);
+      //
     });
   }
-  $scope.toGameTableView  = function($gid){
+  $scope.toGameTableView  = function($gid,bType){
     console.log("$scope.toGameTableView called.");
     $rootScope.curGamerId = $gid;
     GameService.curGamerId = $gid;
     console.log(" $rootScope.curGamerId:",$rootScope.curGamerId);
     $location.url('/page1/page3');
-    $rootScope.getOneTable();
+    $rootScope.getOneTable(bType);
   }
   $scope.deleteOne = function($gamer){
     GameService.curGamerId = $gamer.id;
@@ -259,7 +412,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
     var base64 = Base64.encode( username + ':' + password );
     // Some endpoint that needs auth
     // var usersURL = 'http://localhost/wp-json/wp/v2/users';
-    var postsURL = envInfo.api.host+'/wp-json/wp/v2/posts';
+    var postsURL = envInfo.wp.host+'/wp-json/wp/v2/posts';
     WpWikiService.getAuth( base64, postsURL ).then(function(response) {
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.
@@ -317,7 +470,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         $rootScope.getAiersByStatus(3);
         //
         $scope.modal_user_add.show();
-        $scope.anewUser = {name:Enum.getUUID(6),rank:0,policy:"random"};
+        $scope.anewUser = {name:Enum.getUUID(6),rank:0,policy:"random",type:0};
       };
       $scope.userList = [];
       $scope.createUser = function () {
@@ -325,6 +478,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         UserService.anewUser = $scope.anewUser;
         //get actual value by key.
         UserService.anewUser.policy = $rootScope.policysObj[$scope.anewUser.policy];
+        UserService.anewUser.type = $rootScope.userTypes[$scope.anewUser.type];
         console.info("UserService.anewUser:", UserService.anewUser);
         //
         UserService.createUser(function(data){
@@ -356,15 +510,28 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         });
       }
 
-      $scope.runPlayer = function ($id) {
+      $scope.runPlayer = function ($user) {
 //
-        GameService.rPlayerId = $id;
-        GameService.runPlayer(function(data){
-          console.log("GameService.runPlayer:", data);
-          //refresh
-          $scope.getUsers();
-        });
-      }
+        if($user.type==0)//AI
+        {
+          GameService.rPlayerId = $user.id;
+          //
+          GameService.runPlayer(function (data) {
+            console.log("GameService.runPlayer:", data);
+            //refresh
+            $scope.getUsers();
+          });
+          //Human
+        }else{
+          GameService.tenUserId = $user.id;
+          //
+          GameService.tenantUser(function (data) {
+            console.log("GameService.tenantUser:", data);
+            //refresh
+            $scope.getUsers();
+          });
+        }
+      };
       //default calls
       $scope.getUsers();
     }])

@@ -91,6 +91,7 @@
         </dependency>
 
         <!-- Apache commons -->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
@@ -115,11 +116,6 @@
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>4.0.5.RELEASE</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
@@ -210,12 +206,6 @@
             <artifactId>javassist</artifactId>
             <version>3.8.0.GA</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-io -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
-        </dependency>
         <!--Docker-client-->
         <dependency>
             <groupId>com.spotify</groupId>
@@ -241,6 +231,12 @@
             <artifactId>activemq-all</artifactId>
             <version>5.10.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectodd.stilts</groupId>
+            <artifactId>stilts-stomp-client</artifactId>
+            <version>0.1.41-SNAPSHOT</version>
+        </dependency>
+
 
     </dependencies>
 
