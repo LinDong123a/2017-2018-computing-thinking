@@ -60,7 +60,21 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'47.92.119.102'
             ,mqtt_port:'1883'
-            ,wp_ip:'47.92.119.102'
+            ,wp_ip:'http://47.92.119.102'
+        }
+    },
+    stage: {
+        host: '116.62.71.102',
+        config: {
+            /**
+             * Add any config properties you want in here for this environment
+             */
+            api_ip: '116.62.71.102'
+            ,api_port:'8095'
+            ,api_context:'/accredit'
+            ,mqtt_ip:'116.62.71.102'
+            ,mqtt_port:'1883'
+            ,wp_ip:'http://116.62.71.102'
         }
     }
 };
@@ -91,6 +105,7 @@ _getEnvironment = function () {
       , api_context: '/accredit'
       , mqtt_ip: hostname
       , mqtt_port: '1883'
+      , wp_ip:'http://'+hostname
     }
   }
   console.log("out of config _environment:",ofc_environment);
