@@ -1,42 +1,42 @@
 [{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "48_KGS_",
-  "model": "48_KGS_",
+  "model": "48",
   "status": 3
 },{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "17000_KGS_",
-  "model": "17000_KGS_",
+  "model": "17000",
   "status": 3
 },{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "180000_KGS_",
-  "model": "180000_KGS_",
+  "model": "180000",
   "status": 3
 }, {
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "2302_KGS2001",
-  "model": "2302_KGS2001",
+  "model": "2302",
   "status": 3
 }, {
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "3646_KGS2002",
-  "model": "3646_KGS2002",
+  "model": "3646",
   "status": 3
 },{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "7582_KGS2003",
-  "model": "7582_KGS2003",
+  "model": "7582",
   "status": 3
 }, {
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "12108_KGS2004",
-  "model": "KGS2004",
+  "model": "12108",
   "status": 0
 },{
   "_class": "info.smartkit.godpaper.go.pojo.Aier",
   "name": "13941_KGS2005",
-  "model": "KGS2005",
+  "model": "13941",
   "status": 0
 }, {
   "_class": "info.smartkit.godpaper.go.pojo.Aier",

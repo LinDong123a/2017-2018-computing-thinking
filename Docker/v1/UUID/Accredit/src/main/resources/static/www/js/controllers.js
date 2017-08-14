@@ -555,6 +555,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         var formatted_suffix = suffix.toJSON().slice(0,13); //e.g. "2016-11-11T08:00:00.000Z"
         $rootScope.anewAier.name = $rootScope.anewAier.name +"_"+formatted_suffix;
         $rootScope.anewAier.gid = $rootScope.tableInfo.id;
+        $rootScope.anewAier.model = "1";
         console.log("$rootScope.anewAier:",$rootScope.anewAier);
         AierService.anewAier = $rootScope.anewAier;
         AierService.createOne(function(data){
