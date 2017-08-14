@@ -119,7 +119,9 @@ public class GameController {
                 service.deleteFolder(gamerId);
                 //stomp unsubscribe
                 if(hasHumanPlayer(gamer)){
-                        stompService.unsubscribe();
+                        if(stompService.isConnected()) {
+                                stompService.unsubscribe();
+                        }
                 }
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")

@@ -68,4 +68,8 @@ public class StompServiceImpl implements StompService{
         stompClient.disconnect();
         LOG.info("stompClient disconnected:"+ stompClient.isDisconnected());
     }
+
+    @Override public boolean isConnected() {
+        return stompClient==null?false:stompClient.isConnected();
+    }
 }

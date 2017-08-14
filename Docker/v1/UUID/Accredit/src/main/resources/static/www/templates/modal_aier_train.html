@@ -17,7 +17,7 @@
         <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="aier in $root.aierList" >
           <i class="icon ion-ios-cloud-outline"></i>
           <h3>名称：{{aier.name}}</h3>
-          <p>历史棋局数: 1局</p>
+          <p>历史棋局数: {{aier.model}}局</p>
           <p>创建时间：{{aier.created | date:'yyyy-MM-dd HH:mm:ss'}}</p>
           <p style="font-style: italic" ng-show="aier.status==3" >训练完成.</p>
           <p style="font-style: italic" ng-show="aier.status==2">训练中...</p>

@@ -17,4 +17,5 @@ public interface StompService {
     void publish(String topic, String content,int qos) throws StompException;
     void unsubscribe() throws StompException;
     void disconnect(String brokerUrl, String clientId) throws StompException, TimeoutException, InterruptedException;
+    boolean isConnected();
 }
