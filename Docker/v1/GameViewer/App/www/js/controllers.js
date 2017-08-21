@@ -209,9 +209,7 @@ angular.module('app.controllers', [])
                 },
                 {priority: 9}
               );
-              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For testing...
-              //TODO:game message handle here: gamerId_topic_player1_VS_player2,gamerId_topic_play_B[dp],
-
+              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe...
             }
           );
         };
@@ -224,7 +222,7 @@ angular.module('app.controllers', [])
         }
         //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
-      $rootScope.tenukiGameSetup = function($gamerInfo) {
+      $rootScope.tenukiGameSetup = function($gamerInfo,$playerId) {
         var boardElement = document.querySelector(".tenuki-board");
         // console.log("boardElement:",boardElement);
         var game = new tenuki.Game(boardElement);
@@ -249,10 +247,20 @@ angular.module('app.controllers', [])
             console.log(game.currentState().color + " passed");
           }
           if (game.currentState().playedPoint) {
-            //$userId#play#B[cm]
-            var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
+            //$userId#play#B[cm],594a4c8b6516899e6a30e17f#play#B[cm]
+            var string = 'abcdefghijklmnopqrstuvwxyz';
+            var x = game.currentState().playedPoint.x;
+            var y = game.currentState().playedPoint.y;
+            var moveInfo = $playerId+"_play_";
+            if(game.currentState().color=='black'){
+              moveInfo += 'B';
+            }else {
+              moveInfo += 'W';
+            }
+            moveInfo += '[' +string[y] + string[x] + ']';
+            // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
             console.log("moveInfo:",moveInfo);
-            //$userId#play#B[cm]
+            //$userId_play_B[cm]
             stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
           }
 
@@ -328,7 +336,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
     //0.game set up.
-    $rootScope.tenukiGameSetup($gameInfo);
+    $rootScope.tenukiGameSetup($gameInfo,$userId);
     //1.stomp connect
     $rootScope.connectStomp($gameInfo, $userId);
     //2.
