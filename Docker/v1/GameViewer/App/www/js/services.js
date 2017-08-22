@@ -75,6 +75,7 @@ angular.module('app.services', [])
       curAgentId : "mugo",//current training agent.
       rGamerNum: 5,
       tenUserId:null,//tenant by user id
+      curSgfObj:null,//current sgf object.
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -151,6 +152,13 @@ angular.module('app.services', [])
       tenantUser:function(callback){
         $http.get(envInfo.api.url+"/user/tenant/"+this.tenUserId).success(function(data) {
           console.log("one user tenanted.:",data);
+          callback(data);
+        });
+      }
+      ,
+      updateSgfObj: function(callback){
+        $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId,this.curSgfObj).success(function(data) {
+          console.log("sse gamer sgf:",data);
           callback(data);
         });
       }

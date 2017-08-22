@@ -3,6 +3,7 @@ package info.smartkit.godpaper.go.controller;
 
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.SgfDto;
+import info.smartkit.godpaper.go.dto.SgfObj;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
@@ -49,6 +50,7 @@ public class GameController {
         @Autowired StompService stompService;
         @Autowired
         MqttProperties mqttProperties;
+        @Autowired ChainCodeProperties chainCodeProperties;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
@@ -177,7 +179,7 @@ public class GameController {
                         try {
                                 int i = 0;
                                 while(++i<=10000){
-                                        Thread.sleep(1000);
+                                        Thread.sleep(10000);
                                         System.out.println("SSE sgf Sending....");
                                         try{
                                                 Gamer gamer = gamerRepository.findOne(gamerId);
@@ -200,6 +202,23 @@ public class GameController {
 
                 return emitter;
         }
+
+        @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")
+        public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId) {
+                Gamer gamer  = repository.findOne(gamerId);
+                String sgfStrUpdate = gamer.getSgf();
+                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
+                String sgfBody  = sgfObj.getBody();
+                sgfStrUpdate = sgfHeader.concat(sgfBody);
+                //
+                gamer.setSgf(sgfStrUpdate);
+                Gamer updater = repository.save(gamer);
+                //
+                SgfObj sgfObjUpdate = new SgfObj(sgfHeader,sgfBody);
+                return sgfObjUpdate;
+        }
+
+
 
         private boolean hasHumanPlayer(Gamer gamer) {
                 return

@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp','envInfo',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp,envInfo) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -104,7 +104,9 @@ angular.module('app.controllers', [])
           // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
 
           //Stomp
-          $rootScope.connectStomp($tableInfo,$tableInfo.player1.name);
+          // $rootScope.connectStomp($tableInfo,$tableInfo.player1.name);
+          //SSE
+          // $rootScope.connectSSE($tableInfo,$tableInfo.player1.name);
         }
 
       };
@@ -191,27 +193,51 @@ angular.module('app.controllers', [])
 
         $rootScope.connectStomp = function ($gamerInfo, $userId) {
           //
-          stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
-          stompClient.connect("", "",
-            function () {
-              console.log("stompClient.connected.");
-              stompClient.subscribe($gamerInfo.topic,
-                function (message) {
-                  // alert( message );
-                  // (JSON.parse(message.body));
-                  console.log(message.body);
-                  //1.receive game play message then place chess player.
-                  console.log("recevied game play info!:",$gamerInfo);
-                  //2.frozen UI elements,while human player played piece.
-
-                  //3.receive game status message.
-
-                },
-                {priority: 9}
+          var client = Stomp.client( "ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp" );
+          client.connect( "", "",
+            function() {
+            //FIXME:max of topiv name string length.
+              client.subscribe($gamerInfo.topic,
+                function( message ) {
+                  alert( message );
+                }
+                ,{ priority: 9 }
               );
-              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe...
+              client.send($gamerInfo.topic, { priority: 9 },$gamerInfo.topic);
             }
           );
+          //
+          //
+          // stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
+          // stompClient.connect("", "",
+          // //   stompClient.connect({},
+          //   function () {
+          //     console.log("stompClient.connected.");
+          //     stompClient.subscribe($gamerInfo.topic,
+          //       function (message) {
+          //         // called when the client receives a STOMP message from the server
+          //         if (message.body) {
+          //           alert("got message with body " + message.body)
+          //         } else {
+          //           alert("got empty message");
+          //         }
+          //         // alert( message );
+          //         // (JSON.parse(message.body));
+          //         // console.log(message.body);
+          //         //1.receive game play message then place chess player.
+          //         console.log("received game play info:",$gamerInfo);
+          //         //2.frozen UI elements,while human player played piece.
+          //
+          //         //3.receive game status message.
+          //
+          //       }
+          //       ,{priority: 9}
+          //     // {id: $userId}
+          //     );
+          //     stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe testing...
+              // stompClient.send($gamerInfo.topic, {}, $gamerInfo.topic);
+            // }
+          // );
         };
         $rootScope.sendToStomp = function ($gamerTopic,$message) {
           stompClient.send($gamerTopic, {priority: 9}, $message);
@@ -220,6 +246,16 @@ angular.module('app.controllers', [])
           stompClient.unsubscribe();
           stompClient.disconnect();
         }
+        //SSE
+      var eventSource = null;
+      $rootScope.connectSSE = function ($gamerInfo, $userId) {
+        eventSource = new EventSource(envInfo.api.url+"/game/sse/sgf/"+$gamerInfo.id);
+        eventSource.onmessage = function(event) {
+          if(event.data) {
+            alert(event.data);
+          }
+        };
+      }
         //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
       $rootScope.tenukiGameSetup = function($gamerInfo,$playerId) {
@@ -252,18 +288,22 @@ angular.module('app.controllers', [])
             var x = game.currentState().playedPoint.x;
             var y = game.currentState().playedPoint.y;
             var moveInfo = $playerId+"_play_";
+            var sMoveInfo = ";W";
             if(game.currentState().color=='black'){
-              moveInfo += 'B';
-            }else {
-              moveInfo += 'W';
+              sMoveInfo = ';B';
             }
-            moveInfo += '[' +string[y] + string[x] + ']';
+            sMoveInfo += '[' +string[y] + string[x] + ']';
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
-            console.log("moveInfo:",moveInfo);
+            console.log("sMoveInfo:",sMoveInfo);
             //$userId_play_B[cm]
-            stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
+            // stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
+            //update sgf object.
+            GameService.curGamerId =$gamerInfo.id
+            GameService.curSgfObj = {header:null,body:sMoveInfo};
+            GameService.updateSgfObj(function(data) {
+                console.log("GameService.updateSgfObj:", data);
+              })
           }
-
         }
       }
 
@@ -338,7 +378,9 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     //0.game set up.
     $rootScope.tenukiGameSetup($gameInfo,$userId);
     //1.stomp connect
-    $rootScope.connectStomp($gameInfo, $userId);
+    // $rootScope.connectStomp($gameInfo, $userId);
+    //1.stomp connect
+    $rootScope.connectSSE($gameInfo, $userId);
     //2.
     // GameService.curGamerId = $gamerInfo.id;
     // GameService.playOne(function(data){
