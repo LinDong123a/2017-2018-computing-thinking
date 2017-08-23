@@ -76,6 +76,7 @@ angular.module('app.services', [])
       rGamerNum: 5,
       tenUserId:null,//tenant by user id
       curSgfObj:null,//current sgf object.
+      curSimpleAIObj:{gamer_id:"",user_id:"",msg:""},//current simpleAI object.
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -159,6 +160,13 @@ angular.module('app.services', [])
       updateSgfObj: function(callback){
         $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId,this.curSgfObj).success(function(data) {
           console.log("sse gamer sgf:",data);
+          callback(data);
+        });
+      }
+      ,
+      postToSimpleAI: function(callback){
+        $http.post(envInfo.sas.host+":6000/"+this.curSimpleAIObj).success(function(data) {
+          console.log("postToSimpleAI success:",data);
           callback(data);
         });
       }

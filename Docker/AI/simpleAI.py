@@ -38,10 +38,11 @@ def AI(msg):
     #instance = PolicyNetworkRandomMovePlayer(n, read_file)
     print("PolicyNetwork instanced.",instance)
     try:
+        global gtp_engine
         gtp_engine = gtp_lib.Engine(instance)
+        print("GTP Engine get ready.",gtp_engine)
     except Exception:
         print(traceback.format_exc())
-    print("GTP Engine get ready.",gtp_engine)
     #sys.stderr.write("GTP Enginene ready\n")
     AI_cmd = parse_AI_instruction(color)
     print("AI_cmd parsed.")

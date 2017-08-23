@@ -20,7 +20,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.projectodd.stilts.stomp.StompException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.jms.JMSException;
@@ -28,7 +30,9 @@ import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -213,12 +217,23 @@ public class GameController {
                 //
                 gamer.setSgf(sgfStrUpdate);
                 Gamer updater = repository.save(gamer);
+                //post to simple AI server.
+                RestTemplate restTemplate = new RestTemplate();
+                Map<String, String> vars = new HashMap<String, String>();
+                vars.put("gamer_id", gamerId);
+                vars.put("user_id", gamer.getPlayer2().getId());
+                vars.put("msg", sgfObj.getBody());
+                HttpHeaders headers =new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<Object> request = new HttpEntity<>(vars,headers);
+                ResponseEntity<Object> response = restTemplate
+                        .exchange("http://"+mqttProperties.getIp()+":6000/", HttpMethod.POST, request, Object.class);
+                LOG.debug("response:"+response.toString());
+                //
                 //
                 SgfObj sgfObjUpdate = new SgfObj(sgfHeader,sgfBody);
                 return sgfObjUpdate;
         }
-
-
 
         private boolean hasHumanPlayer(Gamer gamer) {
                 return

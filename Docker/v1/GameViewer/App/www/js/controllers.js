@@ -193,51 +193,53 @@ angular.module('app.controllers', [])
 
         $rootScope.connectStomp = function ($gamerInfo, $userId) {
           //
-          var client = Stomp.client( "ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp" );
-          client.connect( "", "",
-            function() {
-            //FIXME:max of topiv name string length.
-              client.subscribe($gamerInfo.topic,
-                function( message ) {
-                  alert( message );
+          // var client = Stomp.client( "ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp" );
+          // client.connect( "", "",
+          //   function() {
+          //   //FIXME:max of topiv name string length.
+          //     client.subscribe($gamerInfo.topic,
+          //       function( message ) {
+          //         alert( message );
+          //       }
+          //       ,{ priority: 9 }
+          //     );
+          //     client.send($gamerInfo.topic, { priority: 9 },$gamerInfo.topic);
+          //   }
+          // );
+          //
+          //
+          stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
+          stompClient.connect("", "",
+          //   stompClient.connect({},
+            function () {
+              console.log("stompClient.connected.");
+              stompClient.subscribe($gamerInfo.topic,
+                function (message) {
+                  // called when the client receives a STOMP message from the server
+                  if (message.body) {
+                    alert("got message with body " + message.body)
+                  } else {
+                    alert("got empty message");
+                  }
+                  // alert( message );
+                  // (JSON.parse(message.body));
+                  // console.log(message.body);
+                  //1.receive game play message then place chess player.
+                  console.log("received game play info:",$gamerInfo);
+                  //2.frozen UI elements,while human player played piece.
+
+                  //3.receive game status message.
+
                 }
-                ,{ priority: 9 }
+                ,{priority: 9}
+              // {id: $userId}
               );
-              client.send($gamerInfo.topic, { priority: 9 },$gamerInfo.topic);
+              stompClient.begin( "tx-1" );
+              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe testing...
+              // stompClient.send($gamerInfo.topic, {}, $gamerInfo.topic);
+              stompClient.commit( "tx-1" );
             }
           );
-          //
-          //
-          // stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
-          // stompClient.connect("", "",
-          // //   stompClient.connect({},
-          //   function () {
-          //     console.log("stompClient.connected.");
-          //     stompClient.subscribe($gamerInfo.topic,
-          //       function (message) {
-          //         // called when the client receives a STOMP message from the server
-          //         if (message.body) {
-          //           alert("got message with body " + message.body)
-          //         } else {
-          //           alert("got empty message");
-          //         }
-          //         // alert( message );
-          //         // (JSON.parse(message.body));
-          //         // console.log(message.body);
-          //         //1.receive game play message then place chess player.
-          //         console.log("received game play info:",$gamerInfo);
-          //         //2.frozen UI elements,while human player played piece.
-          //
-          //         //3.receive game status message.
-          //
-          //       }
-          //       ,{priority: 9}
-          //     // {id: $userId}
-          //     );
-          //     stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe testing...
-              // stompClient.send($gamerInfo.topic, {}, $gamerInfo.topic);
-            // }
-          // );
         };
         $rootScope.sendToStomp = function ($gamerTopic,$message) {
           stompClient.send($gamerTopic, {priority: 9}, $message);
@@ -288,9 +290,9 @@ angular.module('app.controllers', [])
             var x = game.currentState().playedPoint.x;
             var y = game.currentState().playedPoint.y;
             var moveInfo = $playerId+"_play_";
-            var sMoveInfo = ";W";
+            var sMoveInfo = "W";
             if(game.currentState().color=='black'){
-              sMoveInfo = ';B';
+              sMoveInfo = 'B';
             }
             sMoveInfo += '[' +string[y] + string[x] + ']';
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
@@ -298,12 +300,18 @@ angular.module('app.controllers', [])
             //$userId_play_B[cm]
             // stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
             //update sgf object.
-            GameService.curGamerId =$gamerInfo.id
+            GameService.curGamerId =$gamerInfo.id;
             GameService.curSgfObj = {header:null,body:sMoveInfo};
             GameService.updateSgfObj(function(data) {
                 console.log("GameService.updateSgfObj:", data);
-              })
+              });
+            // post to simpleAI server
+            // GameService.curSimpleAIObj = {gamer_id:$gamerInfo.id,user_id:$playerId,msg:sMoveInfo};
+            // GameService.postToSimpleAI(function(data) {
+            //   console.log("GameService.postToSimpleAI:", data);
+            // });
           }
+
         }
       }
 
@@ -380,7 +388,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     //1.stomp connect
     // $rootScope.connectStomp($gameInfo, $userId);
     //1.stomp connect
-    $rootScope.connectSSE($gameInfo, $userId);
+    // $rootScope.connectSSE($gameInfo, $userId);
     //2.
     // GameService.curGamerId = $gamerInfo.id;
     // GameService.playOne(function(data){
