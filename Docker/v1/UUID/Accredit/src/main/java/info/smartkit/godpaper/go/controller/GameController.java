@@ -1,7 +1,9 @@
 package info.smartkit.godpaper.go.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotify.docker.client.exceptions.DockerException;
+import info.smartkit.godpaper.go.dto.PlayMessage;
 import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.dto.SgfObj;
 import info.smartkit.godpaper.go.pojo.Gamer;
@@ -14,13 +16,20 @@ import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.StompService;
 import info.smartkit.godpaper.go.settings.*;
+import info.smartkit.godpaper.go.utils.SkGpGsonHttpMessageConverter;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.projectodd.stilts.stomp.StompException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -30,6 +39,7 @@ import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,12 +102,12 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET)
         public List<Gamer> listAll() throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException {
                 List<Gamer> all = repository.findAllByOrderByCreatedDesc();
-                for(Gamer gamer:all) {
-                        //stomp get ready if has any human player.
-                        if (hasHumanPlayer(gamer)) {
-                                service.connectHumanPlayer(gamer);
-                        }
-                }
+//                for(Gamer gamer:all) {
+//                        //stomp get ready if has any human player.
+//                        if (hasHumanPlayer(gamer)) {
+//                                service.connectHumanPlayer(gamer);
+//                        }
+//                }
                 return all;
         }
 
@@ -210,31 +220,42 @@ public class GameController {
         @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")
         public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId) {
                 Gamer gamer  = repository.findOne(gamerId);
-                String sgfStrUpdate = gamer.getSgf();
                 String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
                 String sgfBody  = sgfObj.getBody();
-                sgfStrUpdate = sgfHeader.concat(sgfBody);
                 //
-                gamer.setSgf(sgfStrUpdate);
-                Gamer updater = repository.save(gamer);
-                //post to simple AI server.
-                RestTemplate restTemplate = new RestTemplate();
-                Map<String, String> vars = new HashMap<String, String>();
-                vars.put("gamer_id", gamerId);
-                vars.put("user_id", gamer.getPlayer2().getId());
-                vars.put("msg", sgfObj.getBody());
-                HttpHeaders headers =new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                HttpEntity<Object> request = new HttpEntity<>(vars,headers);
-                ResponseEntity<Object> response = restTemplate
-                        .exchange("http://"+mqttProperties.getIp()+":6000/", HttpMethod.POST, request, Object.class);
-                LOG.debug("response:"+response.toString());
-                //
+                gamer.setSgf(sgfHeader.concat(sgfBody));
+                repository.save(gamer);
                 //
                 SgfObj sgfObjUpdate = new SgfObj(sgfHeader,sgfBody);
                 return sgfObjUpdate;
         }
 
+        @RequestMapping(method = RequestMethod.POST,value="/ai/simple/")
+        public PlayMessage vsSimpleAI(@RequestBody PlayMessage playMessage) throws IOException {
+                //post to simple AI server.
+                ClientHttpRequestFactory requestFactory = new
+                        HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+//                RestTemplate restTemplate = new RestTemplate((ClientHttpRequestFactory) new SkGpGsonHttpMessageConverter());
+                RestTemplate restTemplate = new RestTemplate(requestFactory);
+                Map<String, String> vars = new HashMap<String, String>();
+                vars.put("gamer_id", playMessage.getGame_id());
+                vars.put("user_id", playMessage.getUser_id());
+                vars.put("msg", playMessage.getMsg());
+                HttpHeaders headers =new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+//                headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+                HttpEntity<Object> request = new HttpEntity<>(vars,headers);
+//
+                ResponseEntity<String> response = restTemplate
+                        .exchange("http://"+mqttProperties.getIp()+":6000/", HttpMethod.POST, request, String.class);
+                LOG.debug("response:"+response.toString());
+                //
+                ObjectMapper objectMapper = new ObjectMapper();
+                PlayMessage rPlayMessage = new PlayMessage();
+                rPlayMessage = objectMapper.readValue(response.getBody(),PlayMessage.class);
+                LOG.info("SimpleAI response.playMessage:"+rPlayMessage.toString());
+                return rPlayMessage;
+        }
         private boolean hasHumanPlayer(Gamer gamer) {
                 return
                 (gamer.getPlayer1().getType() == UserTypes.HUMAN.getIndex() || gamer.getPlayer2().getType() == UserTypes.HUMAN.getIndex());

@@ -17,10 +17,10 @@
       <file leaf-file-name="services.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/js/services.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="167" column="43" lean-forward="false" selection-start-line="167" selection-start-column="43" selection-end-line="167" selection-end-column="43" />
+            <state relative-caret-position="152">
+              <caret line="168" column="33" lean-forward="false" selection-start-line="168" selection-start-column="33" selection-end-line="168" selection-end-column="33" />
               <folding>
-                <marker date="1503472658000" expanded="true" signature="8317:8535" ph="{...}" />
+                <marker date="1503495659000" expanded="true" signature="8318:8536" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -29,8 +29,8 @@
       <file leaf-file-name="controllers.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="303" column="54" lean-forward="false" selection-start-line="303" selection-start-column="54" selection-end-line="303" selection-end-column="54" />
+            <state relative-caret-position="250">
+              <caret line="297" column="13" lean-forward="true" selection-start-line="297" selection-start-column="13" selection-end-line="297" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -49,7 +49,7 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
+            <state relative-caret-position="1601">
               <caret line="134" column="48" lean-forward="false" selection-start-line="134" selection-start-column="48" selection-end-line="134" selection-end-column="48" />
               <folding>
                 <marker date="1503464088000" expanded="true" signature="2371:2383" ph="..." />
@@ -108,6 +108,18 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="modal_board_tenuki.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/www/templates/modal_board_tenuki.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -137,6 +149,7 @@
       <find>hPL</find>
       <find>publi</find>
       <find>anewUser</find>
+      <find>string</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -162,7 +175,6 @@
         <option value="$PROJECT_DIR$/www/libs/ionic/scss/_modal.scss" />
         <option value="$PROJECT_DIR$/www/libs/angular-paho/mqttws31.js" />
         <option value="$PROJECT_DIR$/www/tenuki/tenuki.css" />
-        <option value="$PROJECT_DIR$/www/templates/modal_board_tenuki.html" />
         <option value="$PROJECT_DIR$/www/templates/gameTable.html" />
         <option value="$PROJECT_DIR$/www/templates/gamePlayer.html" />
         <option value="$PROJECT_DIR$/www/templates/modal_user_add.html" />
@@ -170,8 +182,9 @@
         <option value="$PROJECT_DIR$/www/test.html" />
         <option value="$PROJECT_DIR$/www/index.html" />
         <option value="$PROJECT_DIR$/www/js/app.js" />
-        <option value="$PROJECT_DIR$/www/js/services.js" />
         <option value="$PROJECT_DIR$/www/js/helper.js" />
+        <option value="$PROJECT_DIR$/www/js/services.js" />
+        <option value="$PROJECT_DIR$/www/templates/modal_board_tenuki.html" />
         <option value="$PROJECT_DIR$/www/js/controllers.js" />
       </list>
     </option>
@@ -257,6 +270,12 @@
               <item name="libs" type="462c0819:PsiDirectoryNode" />
               <item name="socketio" type="462c0819:PsiDirectoryNode" />
               <item name="socket.io.min.js" type="620a8d5e:NestingTreeNode" />
+            </path>
+            <path>
+              <item name="App" type="b2602c69:ProjectViewProjectNode" />
+              <item name="App" type="462c0819:PsiDirectoryNode" />
+              <item name="www" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="App" type="b2602c69:ProjectViewProjectNode" />
@@ -428,12 +447,12 @@
       <workItem from="1502271470577" duration="5489000" />
       <workItem from="1502519395102" duration="521000" />
       <workItem from="1502591082650" duration="619000" />
-      <workItem from="1503238499786" duration="17098000" />
+      <workItem from="1503238499786" duration="21373000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="197227000" />
+    <option name="totallyTimeSpent" value="201502000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="30" width="1447" height="827" extended-state="6" />
@@ -644,16 +663,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/templates/modal_board_tenuki.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="19" lean-forward="false" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www/tenuki/tenuki.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7110">
@@ -710,16 +719,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="134" column="48" lean-forward="false" selection-start-line="134" selection-start-column="48" selection-end-line="134" selection-end-column="48" />
-          <folding>
-            <marker date="1503464088000" expanded="true" signature="2371:2383" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/www/libs/socketio/socket.io.min.js.map">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -746,18 +745,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/www/js/services.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="167" column="43" lean-forward="false" selection-start-line="167" selection-start-column="43" selection-end-line="167" selection-end-column="43" />
+        <state relative-caret-position="152">
+          <caret line="168" column="33" lean-forward="false" selection-start-line="168" selection-start-column="33" selection-end-line="168" selection-end-column="33" />
           <folding>
-            <marker date="1503472658000" expanded="true" signature="8317:8535" ph="{...}" />
+            <marker date="1503495659000" expanded="true" signature="8318:8536" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1601">
+          <caret line="134" column="48" lean-forward="false" selection-start-line="134" selection-start-column="48" selection-end-line="134" selection-end-column="48" />
+          <folding>
+            <marker date="1503464088000" expanded="true" signature="2371:2383" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/templates/modal_board_tenuki.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/www/js/controllers.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="303" column="54" lean-forward="false" selection-start-line="303" selection-start-column="54" selection-end-line="303" selection-end-column="54" />
+        <state relative-caret-position="250">
+          <caret line="297" column="13" lean-forward="true" selection-start-line="297" selection-start-column="13" selection-end-line="297" selection-end-column="13" />
           <folding />
         </state>
       </provider>

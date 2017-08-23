@@ -1,34 +1,21 @@
 package info.smartkit.godpaper.go.dto;
 
 public class PlayMessage {
-    private String v_game_id;
-    private String v_player_id;
-    private String msg;
 
-    public PlayMessage() {
+    public String getGame_id() {
+        return game_id;
     }
 
-    public PlayMessage(String v_game_id, String v_player_id, String msg) {
-
-        this.v_game_id = v_game_id;
-        this.v_player_id = v_player_id;
-        this.msg = msg;
+    public void setGame_id(String game_id) {
+        this.game_id = game_id;
     }
 
-    public String getV_game_id() {
-        return v_game_id;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setV_game_id(String v_game_id) {
-        this.v_game_id = v_game_id;
-    }
-
-    public String getV_player_id() {
-        return v_player_id;
-    }
-
-    public void setV_player_id(String v_player_id) {
-        this.v_player_id = v_player_id;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getMsg() {
@@ -39,12 +26,39 @@ public class PlayMessage {
         this.msg = msg;
     }
 
+    private String game_id;
+    private String user_id;
+    private String msg;
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     @Override
     public String toString() {
         return "PlayMessage{" +
-                "v_game_id='" + v_game_id + '\'' +
-                ", v_player_id='" + v_player_id + '\'' +
+                "game_id='" + game_id + '\'' +
+                ", user_id='" + user_id + '\'' +
                 ", msg='" + msg + '\'' +
+                ", method='" + method + '\'' +
                 '}';
     }
+
+    public PlayMessage(String game_id, String user_id, String msg, String method) {
+        this.game_id = game_id;
+        this.user_id = user_id;
+        this.msg = msg;
+        this.method = method;
+    }
+
+    private String method;
+
+    public PlayMessage() {
+    }
+
+
 }

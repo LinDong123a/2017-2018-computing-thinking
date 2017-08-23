@@ -164,9 +164,9 @@ angular.module('app.services', [])
         });
       }
       ,
-      postToSimpleAI: function(callback){
-        $http.post(envInfo.sas.host+":6000/"+this.curSimpleAIObj).success(function(data) {
-          console.log("postToSimpleAI success:",data);
+      vsSimpleAI: function(callback){
+        $http.post(envInfo.api.url+"/game/ai/simple/",this.curSimpleAIObj).success(function(data) {
+          console.log("vsSimpleAI success:",data);
           callback(data);
         });
       }

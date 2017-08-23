@@ -96,17 +96,9 @@ public class StompMessageHandler implements MessageHandler {
 //                    #FIXME:with open database:
                 pre_play_msg = "B[dp]";
 //                    # message assemble
-                ObjectMapper objectMapper = new ObjectMapper();
-                PlayMessage playMessage = new PlayMessage(v_game_topic, v_player_id, pre_play_msg);
 //            message_json = {'game_id': v_game_id,
 //                    'user_id': v_player_id,
 //                    'msg': pre_play_msg}
-                try {
-                    message_json = objectMapper.writeValueAsString(playMessage);
-                    System.out.println("message_json:" + message_json);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
 //                    # append message
 //            message_json_s.append(message_json)
 //                    # print("assembled message_json_s:",message_json_s)
