@@ -76,7 +76,9 @@ angular.module('app.services', [])
       rGamerNum: 5,
       tenUserId:null,//tenant by user id
       curSgfObj:null,//current sgf object.
-      curSimpleAIObj:{gamer_id:"",user_id:"",msg:""},//current simpleAI object.
+      curPlayMessage:{game_id:"",user_id:"",msg:"",vs_user_id:""},//current simpleAI object.
+      vsPlayerId:null,//vs human player id
+      curGamerStatus:0,
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -165,8 +167,22 @@ angular.module('app.services', [])
       }
       ,
       vsSimpleAI: function(callback){
-        $http.post(envInfo.api.url+"/game/ai/simple/",this.curSimpleAIObj).success(function(data) {
+        $http.post(envInfo.api.url+"/game/ai/simple/"+this.curGamerId,this.curPlayMessage).success(function(data) {
           console.log("vsSimpleAI success:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsHumanPlayer: function(callback){
+        $http.post(envInfo.api.url+"/game/human/"+this.vsPlayerId,this.curPlayMessage).success(function(data) {
+          console.log("vsHumanPlayer success:",data);
+          callback(data);
+        });
+      }
+      ,
+      updateStatusById: function(callback){
+        $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curGamerStatus).success(function(data) {
+          console.log("updateStatusById:",data);
           callback(data);
         });
       }

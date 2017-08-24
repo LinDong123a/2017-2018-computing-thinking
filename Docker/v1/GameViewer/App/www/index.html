@@ -83,6 +83,18 @@
           overflow: hidden;
         }
 
+        .popover {
+          /*height: auto !important;*/
+          height: 180px;
+        }
+        .popover ion-header-bar {
+          position: relative;
+        }
+        .popover ion-content {
+          top: 0;
+          position: relative;
+        }
+
       }
 
     </style>
@@ -134,14 +146,32 @@
   </head>
   <body ng-app="app" animation="slide-left-right-ios7">
   <div>
-  <div>
-    <ion-nav-bar class="bar-stable">
-      <ion-nav-back-button></ion-nav-back-button>
-    </ion-nav-bar>
-    <ion-nav-view></ion-nav-view>
+      <div>
+        <ion-nav-bar class="bar-stable">
+          <ion-nav-back-button></ion-nav-back-button>
+        </ion-nav-bar>
+        <ion-nav-view></ion-nav-view>
+      </div>
+    </div>
   </div>
-</div>
-</div>
+
+  <script id="templates/popover.html" type="text/ng-template">
+    <ion-popover-view>
+      <ion-header-bar>
+        <h1 class="title">中局得分</h1>
+      </ion-header-bar>
+      <ion-content>
+        <div class="list">
+          <a class="item">
+            黑方：{{$root.score_tenuki_black}}
+          </a>
+          <a class="item">
+            白方：{{$root.score_tenuki_white}}
+          </a>
+        </div>
+      </ion-content>
+    </ion-popover-view>
+  </script>
 
   </body>
 </html>

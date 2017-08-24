@@ -16,7 +16,6 @@ import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.StompService;
 import info.smartkit.godpaper.go.settings.*;
-import info.smartkit.godpaper.go.utils.SkGpGsonHttpMessageConverter;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.LogManager;
@@ -27,9 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -39,7 +35,6 @@ import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,11 +129,11 @@ public class GameController {
                 //gamer folder deleting.
                 service.deleteFolder(gamerId);
                 //stomp unsubscribe
-                if(hasHumanPlayer(gamer)){
-                        if(stompService.isConnected()) {
-                                stompService.unsubscribe();
-                        }
-                }
+//                if(hasHumanPlayer(gamer)){
+//                        if(stompService.isConnected()) {
+//                                stompService.unsubscribe();
+//                        }
+//                }
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
         public void deleteAll() throws MqttException, StompException {
@@ -193,7 +188,7 @@ public class GameController {
                         try {
                                 int i = 0;
                                 while(++i<=10000){
-                                        Thread.sleep(10000);
+                                        Thread.sleep(5000);
                                         System.out.println("SSE sgf Sending....");
                                         try{
                                                 Gamer gamer = gamerRepository.findOne(gamerId);
@@ -219,28 +214,51 @@ public class GameController {
 
         @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")
         public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId) {
-                Gamer gamer  = repository.findOne(gamerId);
-                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
-                String sgfBody  = sgfObj.getBody();
-                //
-                gamer.setSgf(sgfHeader.concat(sgfBody));
-                repository.save(gamer);
-                //
-                SgfObj sgfObjUpdate = new SgfObj(sgfHeader,sgfBody);
+                SgfObj sgfObjUpdate = updateSgfObj(sgfObj.getBody(), gamerId);
                 return sgfObjUpdate;
         }
 
-        @RequestMapping(method = RequestMethod.POST,value="/ai/simple/")
-        public PlayMessage vsSimpleAI(@RequestBody PlayMessage playMessage) throws IOException {
+        @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}")
+        public Gamer updateStatusById(@PathVariable String gamerId, @PathVariable int status) {
+                Gamer updater = repository.findOne(gamerId);
+                updater.setStatus(status);
+                return repository.save(updater);
+        }
+
+        private SgfObj updateSgfObj(String sgfBody, @PathVariable String gamerId) {
+                Gamer gamer  = repository.findOne(gamerId);
+                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
+                String oriSgf = gamer.getSgf();
+                //ignore duplicated
+                String newSgf = oriSgf;
+                if(!oriSgf.contains(sgfBody)){
+                        newSgf = oriSgf.concat(sgfBody);
+                }
+                //
+                gamer.setSgf(newSgf);
+                repository.save(gamer);
+                //
+                return new SgfObj(sgfHeader,newSgf);
+        }
+
+        @RequestMapping(method = RequestMethod.POST,value="/ai/simple/{gamerId}")
+        public PlayMessage vsSimpleAI(@RequestBody PlayMessage playMessage, @PathVariable String gamerId) throws IOException {
                 //post to simple AI server.
                 ClientHttpRequestFactory requestFactory = new
                         HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
 //                RestTemplate restTemplate = new RestTemplate((ClientHttpRequestFactory) new SkGpGsonHttpMessageConverter());
                 RestTemplate restTemplate = new RestTemplate(requestFactory);
-                Map<String, String> vars = new HashMap<String, String>();
+//                ArrayList varList = new ArrayList();
+                //
+                Gamer gamer  = repository.findOne(gamerId);
+                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
+                String sgfBody = gamer.getSgf().replace(sgfHeader,"");
+//
+                Map<String,String> vars = new HashMap<String,String>();
                 vars.put("gamer_id", playMessage.getGame_id());
                 vars.put("user_id", playMessage.getUser_id());
-                vars.put("msg", playMessage.getMsg());
+                vars.put("msg", sgfBody);
+
                 HttpHeaders headers =new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
 //                headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -254,7 +272,18 @@ public class GameController {
                 PlayMessage rPlayMessage = new PlayMessage();
                 rPlayMessage = objectMapper.readValue(response.getBody(),PlayMessage.class);
                 LOG.info("SimpleAI response.playMessage:"+rPlayMessage.toString());
+                //update gamer
+                updateSgfObj(playMessage.getMsg(), playMessage.getGame_id());
                 return rPlayMessage;
+        }
+
+        @RequestMapping(method = RequestMethod.POST,value="/human/{playerId}")
+        public SgfObj vsHumanPlayer(@RequestBody PlayMessage playMessage, @PathVariable String playerId){
+                User user  = userRepository.findOne(playerId);
+                user.setStatus(UserStatus.PLAYING.getIndex());
+                userRepository.save(user);
+                //update gamer
+                return updateSgfObj(playMessage.getMsg(), playMessage.getGame_id());
         }
         private boolean hasHumanPlayer(Gamer gamer) {
                 return

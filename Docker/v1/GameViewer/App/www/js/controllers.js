@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp','envInfo',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp','envInfo','$ionicLoading','$ionicPopover',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp,envInfo) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp,envInfo,$ionicLoading,$ionicPopover) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -46,9 +46,17 @@ angular.module('app.controllers', [])
       $ionicModal.fromTemplateUrl("templates/modal_board_tenuki.html",
         {
           scope: $scope,
-          animation: 'slide-in-up'
+          animation: 'slide-in-up',
+          backdropClickToClose:false
         }).then(function(modal) {
         $rootScope.modal_board_tenuki = modal;
+      });
+      //popover
+      $rootScope.popover = null;
+      $ionicPopover.fromTemplateUrl('templates/popover.html', {
+        scope: $scope,
+      }).then(function(popover) {
+        $rootScope.popover = popover;
       });
       //
       $rootScope.curGamerId = null;
@@ -67,6 +75,10 @@ angular.module('app.controllers', [])
       $rootScope.tag_vs="_vs_";
       $rootScope.tag_play="_play_";
       $rootScope.tag_end="_end_";
+      $rootScope.curTenukiGame = null;
+      $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
+      $rootScope.score_tenuki_black=0;
+      $rootScope.score_tenuki_white=0;
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -148,6 +160,21 @@ angular.module('app.controllers', [])
         AierService.getAllByStatus(function(data){
           console.log("AierService.getAllByStatus:", data);
           $rootScope.aierList = data;
+        });
+      }
+      $rootScope.score_tenuki = function ($event) {
+        var scoreObj = $rootScope.curTenukiGame.score();
+        console.log("$rootScope.curTenukiGame.score():",scoreObj);
+        $rootScope.score_tenuki_black=scoreObj.black;
+        $rootScope.score_tenuki_white=scoreObj.white;
+        $rootScope.popover.show($event);
+      }
+      $rootScope.close_tenuki = function () {
+        $rootScope.modal_board_tenuki.hide();
+        //update game status
+        GameService.curGamerStatus = 3;
+        GameService.updateStatusById(function(data){
+          console.log("GameService.updateStatusById:", data);
         });
       }
       //MQTT related
@@ -250,19 +277,40 @@ angular.module('app.controllers', [])
         }
         //SSE
       var eventSource = null;
-      $rootScope.connectSSE = function ($gamerInfo, $userId) {
+      $rootScope.connectSSE = function ($gamerInfo,$jigo) {
         eventSource = new EventSource(envInfo.api.url+"/game/sse/sgf/"+$gamerInfo.id);
         eventSource.onmessage = function(event) {
           if(event.data) {
-            alert(event.data);
+            var moves = event.data.split(";");
+            var lastMove = moves[moves.length-1];
+            console.log("after SSE,lastMove:",lastMove);
+            if(lastMove.indexOf($jigo)==-1){//opponent now
+              $ionicLoading.hide();
+              var letter_x = lastMove.charAt(2);
+              var letter_y = lastMove.charAt(3);
+              var n_x = $rootScope.go_string.indexOf(letter_x);
+              var n_y = $rootScope.go_string.indexOf(letter_y);
+              $rootScope.curTenukiGame.playAt(n_x, n_y);
+            }
           }
         };
       }
-        //tenuki game setup
+      $rootScope.getVsUserId = function($gamerInfo,$playerId){
+        var player1 = $gamerInfo.player1;
+        var player2 = $gamerInfo.player2;
+        var vsPlayerId = (player1.id==$playerId)?player2.id:player1.id;
+        console.log("$rootScope.getVsUserId:",vsPlayerId);
+        return vsPlayerId;
+      }
+      //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
-      var string = 'abcdefghijklmnopqrstuvwxyz';
-      var side_now = "black";
-      $rootScope.tenukiGameSetup = function($gamerInfo,$playerId) {
+      var curPlayerId = "unknown";
+      var curVsPlayerId = "unknown";
+      var JIGO_TENUKI="B";
+      $rootScope.tenukiGameSetup = function($gamerInfo,$playerId,$jigo) {
+        if($jigo!=JIGO_TENUKI){
+          $ionicLoading.show();//waiting
+        }
         var boardElement = document.querySelector(".tenuki-board");
         // console.log("boardElement:",boardElement);
         var game = new tenuki.Game(boardElement);
@@ -270,6 +318,14 @@ angular.module('app.controllers', [])
         game.setup({
           scoring: "area" // default is "territory"
         });
+        ////default jigo equal to black!
+        curPlayerId = $playerId;
+        // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
+        curVsPlayerId = $rootScope.getVsUserId($gamerInfo,$playerId);
+        //
+        $rootScope.curTenukiGame = game;
+        $rootScope.connectSSE($gamerInfo, $jigo);
+        //
         game.callbacks.postRender = function (game) {
           //game.currentState() -- 游戏当前状态
           // alert(game.currentState());
@@ -287,46 +343,68 @@ angular.module('app.controllers', [])
             console.log(game.currentState().color + " passed");
           }
           if (game.currentState().playedPoint) {
+            // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
             //$userId#play#B[cm],594a4c8b6516899e6a30e17f#play#B[cm]
             var x = game.currentState().playedPoint.x;
             var y = game.currentState().playedPoint.y;
-            var moveInfo = $playerId+"_play_";
-            var sMoveInfo = "W";
-            if(game.currentState().color=='black'){
-              sMoveInfo = 'B';
-              side_now="black"
+            var sMoveInfo = ";B";
+            if(game.currentState().color!='black') {
+              sMoveInfo = ';W';
             }
-            sMoveInfo += '[' +string[y] + string[x] + ']';
+            //
+            sMoveInfo += '[' +$rootScope.go_string[y] + $rootScope.go_string[x] + ']';
             console.log("sMoveInfo:",sMoveInfo);
             //update sgf object if needed.
-            if(side_now=="black") {
-              $rootScope.vsSimpleAI(game, $gamerInfo, sMoveInfo, $playerId);
-            }
+            GameService.curGamerId = $gamerInfo.id;
+            GameService.curSgfObj = {header: null, body: sMoveInfo};
+            GameService.updateSgfObj(function (data) {
+              //
+              console.log("GameService.updateSgfObj:", data);
+              //then post to simpleAI server
+              GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
+              if($gamerInfo.type=='AI_VS_HUMAN' || $gamerInfo.type=='HUMAN_VS_AI') {
+                console.log("before GameService.vsSimpleAI,curPlayMessage:",  GameService.curPlayMessage);
+                GameService.vsSimpleAI(function (data) {
+                    console.log("GameService.vsSimpleAI:", data);
+                    var place = data.msg;
+                    curPlayerId = curVsPlayerId;
+                    var letter_x = place.charAt(2);
+                    var letter_y = place.charAt(3);
+                    var n_x = $rootScope.go_string.indexOf(letter_x);
+                    var n_y = $rootScope.go_string.indexOf(letter_y);
+                    game.playAt(n_x, n_y);
+                  });
+                }
+                //
+                if($gamerInfo.type=='HUMAN_VS_HUMAN') {
+                    console.log("!!!HUMAN_VS_HUMAN!!!");
+                    //
+                    $ionicLoading.show();
+                    //
+                    // GameService.vsPlayerId = curVsPlayerId;
+                    // console.log("before GameService.vsHumanPlayer,curPlayMessage:",  GameService.curPlayMessage);
+                    // GameService.vsHumanPlayer(function (data) {
+                    //     console.log("GameService.vsHumanPlayer:", data);
+                    //     var moves = data.body.split(";");
+                    //     var place = moves[moves.length-1];
+                    //     console.log("before SSE,last move:",place);
+                    //     curPlayerId = curVsPlayerId;
+                    //     var letter_x = place.charAt(2);
+                    //     var letter_y = place.charAt(3);
+                    //     var n_x = $rootScope.go_string.indexOf(letter_x);
+                    //     var n_y = $rootScope.go_string.indexOf(letter_y);
+                    //     game.playAt(n_x, n_y);
+                    //     //
+                    //     $ionicLoading.show();
+                    //     //
+                    // });
+                }
+                });
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
             //$userId_play_B[cm]
             // stompClient.send($gamerInfo.topic, {priority: 9}, moveInfo);
           }
-
         }
-      }
-      $rootScope.vsSimpleAI = function (game,$gamerInfo,sMoveInfo,$playerId) {
-        GameService.curGamerId = $gamerInfo.id;
-        GameService.curSgfObj = {header: null, body: sMoveInfo};
-        GameService.updateSgfObj(function (data) {
-          console.log("GameService.updateSgfObj:", data);
-          //then post to simpleAI server
-          GameService.curSimpleAIObj = {gamer_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
-          GameService.vsSimpleAI(function (data) {
-            console.log("GameService.vsSimpleAI:", data);
-            var place = data.msg;
-            side_now = "white";
-            var letter_x = place.charAt(2);
-            var letter_y = place.charAt(3);
-            var n_x = string.indexOf(letter_x);
-            var n_y = string.indexOf(letter_y);
-            game.playAt(n_x, n_y);
-          });
-        })
       }
   }])
 
@@ -391,17 +469,16 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       //
     });
   }
-  $scope.hPlayOne = function($gameInfo, $userId){
+  $scope.hPlayOne = function($gamerInfo, $playerId,$jigo){
     //
     $rootScope.modal_board_tenuki.show();
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
     //0.game set up.
-    $rootScope.tenukiGameSetup($gameInfo,$userId);
+    // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
+    $rootScope.tenukiGameSetup($gamerInfo,$playerId,$jigo);
     //1.stomp connect
     // $rootScope.connectStomp($gameInfo, $userId);
-    //1.stomp connect
-    // $rootScope.connectSSE($gameInfo, $userId);
     //2.
     // GameService.curGamerId = $gamerInfo.id;
     // GameService.playOne(function(data){

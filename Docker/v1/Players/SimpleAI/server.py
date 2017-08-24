@@ -24,11 +24,13 @@ def post_info():
     # print(request.form.get('user_id', 'wrong_user_id'))
     # print(request.form.get('msg', 'wrong_msg'))
 
-    message = {'game_id': request.form.get('game_id', 'wrong_game_id'),
-               'user_id': request.form.get('user_id', 'wrong_user_id'), 'msg': request.form.get('msg', 'wrong_msg')}
-    messages = []
-    messages.append(message)
-    print("send to AI message_json:",message)
+    # message = {'game_id': request.form.get('game_id', 'wrong_game_id'),
+    #            'user_id': request.form.get('user_id', 'wrong_user_id'), 'msg': request.form.get('msg', 'wrong_msg')}
+    msg = request.form.get('msg')
+    print("equest.form.get message:",msg)
+    messages = msg.split(";")
+    print("send to AI messages:",messages)
+    # print("send to AI message_json:",message)
     # result = simpleAI.AI(message)
     result = plainAI.AI(messages)
     result['user_id'] = 'MuGo'

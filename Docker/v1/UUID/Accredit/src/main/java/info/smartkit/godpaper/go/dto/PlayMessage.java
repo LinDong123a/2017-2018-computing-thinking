@@ -2,13 +2,6 @@ package info.smartkit.godpaper.go.dto;
 
 public class PlayMessage {
 
-    public String getGame_id() {
-        return game_id;
-    }
-
-    public void setGame_id(String game_id) {
-        this.game_id = game_id;
-    }
 
     public String getUser_id() {
         return user_id;
@@ -24,6 +17,14 @@ public class PlayMessage {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public String getGame_id() {
+        return game_id;
+    }
+
+    public void setGame_id(String game_id) {
+        this.game_id = game_id;
     }
 
     private String game_id;
