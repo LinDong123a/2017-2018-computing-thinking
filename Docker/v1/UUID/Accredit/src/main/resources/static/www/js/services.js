@@ -75,6 +75,10 @@ angular.module('app.services', [])
       curAgentId : "mugo",//current training agent.
       rGamerNum: 5,
       tenUserId:null,//tenant by user id
+      curSgfObj:null,//current sgf object.
+      curPlayMessage:{game_id:"",user_id:"",msg:"",vs_user_id:""},//current simpleAI object.
+      vsPlayerId:null,//vs human player id
+      curGamerStatus:0,
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -127,13 +131,6 @@ angular.module('app.services', [])
         });
       }
       ,
-      getResult: function(callback){
-          $http.get(envInfo.api.url+"/game/result/"+this.curGamerId).success(function(data) {
-              console.log("gamer result:",data);
-              callback(data);
-          });
-      }
-      ,
       getSgf: function(callback){
         $http.get(envInfo.api.url+"/game/sgf/"+this.curGamerId).success(function(data) {
           console.log("gamer sgf:",data);
@@ -158,6 +155,34 @@ angular.module('app.services', [])
       tenantUser:function(callback){
         $http.get(envInfo.api.url+"/user/tenant/"+this.tenUserId).success(function(data) {
           console.log("one user tenanted.:",data);
+          callback(data);
+        });
+      }
+      ,
+      updateSgfObj: function(callback){
+        $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId,this.curSgfObj).success(function(data) {
+          console.log("sse gamer sgf:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsSimpleAI: function(callback){
+        $http.post(envInfo.api.url+"/game/ai/simple/"+this.curGamerId,this.curPlayMessage).success(function(data) {
+          console.log("vsSimpleAI success:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsHumanPlayer: function(callback){
+        $http.post(envInfo.api.url+"/game/human/"+this.vsPlayerId,this.curPlayMessage).success(function(data) {
+          console.log("vsHumanPlayer success:",data);
+          callback(data);
+        });
+      }
+      ,
+      updateStatusById: function(callback){
+        $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curGamerStatus).success(function(data) {
+          console.log("updateStatusById:",data);
           callback(data);
         });
       }
@@ -237,7 +262,7 @@ angular.module('app.services', [])
   .factory('WpWikiService',['$http','envInfo',function($http,envInfo) {
     return {
       anewWpPost:null,
-      postsUrl:envInfo.wp.host+'/wp-json/wp/v2/posts',
+      postsUrl:null,
       get: function(url) {
         return $http.jsonp( url );
       },

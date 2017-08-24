@@ -13,12 +13,13 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '192.168.0.6'
+            api_ip: '172.20.10.12'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip: '192.168.0.6'
+            ,mqtt_ip: '172.20.10.12'
             ,mqtt_port:'1883'
-            ,wp_ip:'http://192.168.0.6'
+            ,wp_ip:'172.20.10.12'
+            ,sas_ip:'172.20.10.12'//simpleAIServer
         }
     },
     dev: {
@@ -30,9 +31,10 @@ var _environments = {
             api_ip: '172.17.0.1'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip:'192.168.0.6'
+            ,mqtt_ip:'172.17.0.1'
             ,mqtt_port:'1883'
-            ,wp_ip:'http://192.168.0.6'
+            ,wp_ip:'172.17.0.1'
+            ,sas_ip:'172.17.0.1'//simpleAIServer
         }
     },
     test: {
@@ -46,7 +48,8 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'118.190.152.88'
             ,mqtt_port:'1883'
-            ,wp_ip:'http://118.190.152.88'
+            ,wp_ip:'118.190.152.88'
+            ,sas_ip:'118.190.152.88'//simpleAIServer
         }
     },
     stage: {
@@ -60,21 +63,8 @@ var _environments = {
             ,api_context:'/accredit'
             ,mqtt_ip:'47.92.119.102'
             ,mqtt_port:'1883'
-            ,wp_ip:'http://47.92.119.102'
-        }
-    },
-    stage: {
-        host: '116.62.71.102',
-        config: {
-            /**
-             * Add any config properties you want in here for this environment
-             */
-            api_ip: '116.62.71.102'
-            ,api_port:'8095'
-            ,api_context:'/accredit'
-            ,mqtt_ip:'116.62.71.102'
-            ,mqtt_port:'1883'
-            ,wp_ip:'http://116.62.71.102'
+            ,wp_ip:'47.92.119.102'
+            ,sas_ip:'47.92.119.102'//simpleAIServer
         }
     }
 };
@@ -105,7 +95,6 @@ _getEnvironment = function () {
       , api_context: '/accredit'
       , mqtt_ip: hostname
       , mqtt_port: '1883'
-      , wp_ip:'http://'+hostname
     }
   }
   console.log("out of config _environment:",ofc_environment);
