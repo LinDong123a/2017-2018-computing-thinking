@@ -283,7 +283,8 @@ public class GamerServiceImpl implements GamerService {
                 this.playSome(gamers);
         }
 
-        private String getSgfHeader(String application, String version,Gamer gamer,String resultStr)
+        @Override
+        public String getSgfHeader(String application, String version,Gamer gamer,String resultStr)
         {
                 StringBuilder header = new StringBuilder(128);
                 header.append("(;FF[4]CA[");
@@ -380,18 +381,18 @@ public class GamerServiceImpl implements GamerService {
                 LOG.info("connectHumanPlayer called.");
                 String uri = "stomp://" + mqttProperties.getIp() + ":61613";
                 stompService.connect(uri);
-                stompService.subscribe(gamer.getTopic());
+                stompService.subscribe(gamer.getId());
                 //any human player
                 User player1 = gamer.getPlayer1();
                 User player2 = gamer.getPlayer2();
                 String vsTitle =  player1.getTopicName()+ MqttVariables.tag_vs+player2.getTopicName();
                 //
                 if(player1.getType()==UserTypes.HUMAN.getIndex()){
-                        stompService.publish(gamer.getTopic(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
+                        stompService.publish(gamer.getId(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
                 }
                 //
                 if(player2.getType()==UserTypes.HUMAN.getIndex()){
-                        stompService.publish(gamer.getTopic(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
+                        stompService.publish(gamer.getId(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
                 }
         }
 }

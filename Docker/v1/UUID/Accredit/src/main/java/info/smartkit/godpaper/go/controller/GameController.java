@@ -1,8 +1,11 @@
 package info.smartkit.godpaper.go.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotify.docker.client.exceptions.DockerException;
+import info.smartkit.godpaper.go.dto.PlayMessage;
 import info.smartkit.godpaper.go.dto.SgfDto;
+import info.smartkit.godpaper.go.dto.SgfObj;
 import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
@@ -14,21 +17,32 @@ import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.StompService;
 import info.smartkit.godpaper.go.settings.*;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.http.NameValuePair;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.projectodd.stilts.stomp.StompException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.jms.JMSException;
 import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
+
+import static org.bouncycastle.cms.RecipientId.password;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -49,6 +63,7 @@ public class GameController {
         @Autowired StompService stompService;
         @Autowired
         MqttProperties mqttProperties;
+        @Autowired ChainCodeProperties chainCodeProperties;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
@@ -86,12 +101,12 @@ public class GameController {
         @RequestMapping(method = RequestMethod.GET)
         public List<Gamer> listAll() throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException {
                 List<Gamer> all = repository.findAllByOrderByCreatedDesc();
-                for(Gamer gamer:all) {
-                        //stomp get ready if has any human player.
-                        if (hasHumanPlayer(gamer)) {
-                                service.connectHumanPlayer(gamer);
-                        }
-                }
+//                for(Gamer gamer:all) {
+//                        //stomp get ready if has any human player.
+//                        if (hasHumanPlayer(gamer)) {
+//                                service.connectHumanPlayer(gamer);
+//                        }
+//                }
                 return all;
         }
 
@@ -118,11 +133,11 @@ public class GameController {
                 //gamer folder deleting.
                 service.deleteFolder(gamerId);
                 //stomp unsubscribe
-                if(hasHumanPlayer(gamer)){
-                        if(stompService.isConnected()) {
-                                stompService.unsubscribe();
-                        }
-                }
+//                if(hasHumanPlayer(gamer)){
+//                        if(stompService.isConnected()) {
+//                                stompService.unsubscribe();
+//                        }
+//                }
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
         public void deleteAll() throws MqttException, StompException {
@@ -177,7 +192,7 @@ public class GameController {
                         try {
                                 int i = 0;
                                 while(++i<=10000){
-                                        Thread.sleep(1000);
+                                        Thread.sleep(5000);
                                         System.out.println("SSE sgf Sending....");
                                         try{
                                                 Gamer gamer = gamerRepository.findOne(gamerId);
@@ -201,6 +216,79 @@ public class GameController {
                 return emitter;
         }
 
+        @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")
+        public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId) {
+                SgfObj sgfObjUpdate = updateSgfObj(sgfObj.getBody(), gamerId);
+                return sgfObjUpdate;
+        }
+
+        @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}")
+        public Gamer updateStatusById(@PathVariable String gamerId, @PathVariable int status) {
+                Gamer updater = repository.findOne(gamerId);
+                updater.setStatus(status);
+                return repository.save(updater);
+        }
+
+        private SgfObj updateSgfObj(String sgfBody, @PathVariable String gamerId) {
+                Gamer gamer  = repository.findOne(gamerId);
+                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
+                String oriSgf = gamer.getSgf();
+                //ignore duplicated
+                String newSgf = oriSgf;
+                if(!oriSgf.contains(sgfBody)){
+                        newSgf = oriSgf.concat(sgfBody);
+                }
+                //
+                gamer.setSgf(newSgf);
+                repository.save(gamer);
+                //
+                return new SgfObj(sgfHeader,newSgf);
+        }
+
+        @RequestMapping(method = RequestMethod.POST,value="/ai/simple/{gamerId}")
+        public PlayMessage vsSimpleAI(@RequestBody PlayMessage playMessage, @PathVariable String gamerId) throws IOException {
+                //post to simple AI server.
+                ClientHttpRequestFactory requestFactory = new
+                        HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+//                RestTemplate restTemplate = new RestTemplate((ClientHttpRequestFactory) new SkGpGsonHttpMessageConverter());
+                RestTemplate restTemplate = new RestTemplate(requestFactory);
+//                ArrayList varList = new ArrayList();
+                //
+                Gamer gamer  = repository.findOne(gamerId);
+                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
+                String sgfBody = gamer.getSgf().replace(sgfHeader,"");
+
+                Map<String, String> vars = new HashMap<String, String>();
+                vars.put("game_id", playMessage.getGame_id());
+                vars.put("user_id", playMessage.getUser_id());
+                vars.put("msg", sgfBody);
+//
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+//                headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+                HttpEntity<Object> request = new HttpEntity<>(vars, headers);
+//
+                ResponseEntity<String> response = restTemplate
+                        .exchange("http://" + mqttProperties.getIp() + ":6001/", HttpMethod.POST, request, String.class);
+                LOG.debug("response:" + response.toString());
+                //
+                ObjectMapper objectMapper = new ObjectMapper();
+                PlayMessage rPlayMessage = objectMapper.readValue(response.getBody(), PlayMessage.class);
+                LOG.info("SimpleAI response.playMessage:" + rPlayMessage.toString());
+        //update gamer
+                updateSgfObj(";"+rPlayMessage.getMsg(), playMessage.getGame_id());
+                //
+                return rPlayMessage;
+        }
+
+        @RequestMapping(method = RequestMethod.POST,value="/human/{playerId}")
+        public SgfObj vsHumanPlayer(@RequestBody PlayMessage playMessage, @PathVariable String playerId){
+                User user  = userRepository.findOne(playerId);
+                user.setStatus(UserStatus.PLAYING.getIndex());
+                userRepository.save(user);
+                //update gamer
+                return updateSgfObj(playMessage.getMsg(), playMessage.getGame_id());
+        }
         private boolean hasHumanPlayer(Gamer gamer) {
                 return
                 (gamer.getPlayer1().getType() == UserTypes.HUMAN.getIndex() || gamer.getPlayer2().getType() == UserTypes.HUMAN.getIndex());

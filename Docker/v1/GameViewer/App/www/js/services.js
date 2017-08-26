@@ -75,6 +75,10 @@ angular.module('app.services', [])
       curAgentId : "mugo",//current training agent.
       rGamerNum: 5,
       tenUserId:null,//tenant by user id
+      curSgfObj:null,//current sgf object.
+      curPlayMessage:{game_id:"",user_id:"",msg:"",method:"play"},//current simpleAI object.
+      vsPlayerId:null,//vs human player id
+      curGamerStatus:0,
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -151,6 +155,42 @@ angular.module('app.services', [])
       tenantUser:function(callback){
         $http.get(envInfo.api.url+"/user/tenant/"+this.tenUserId).success(function(data) {
           console.log("one user tenanted.:",data);
+          callback(data);
+        });
+      }
+      ,
+      updateSgfObj: function(callback){
+        $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId,this.curSgfObj).success(function(data) {
+          // console.log("updateSgfObj:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsSimpleAI: function(callback){
+        $http.post(envInfo.api.url+"/game/ai/simple/"+this.curGamerId,this.curPlayMessage).success(function(data) {
+          // console.log("vsSimpleAI success:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsHumanPlayer: function(callback){
+        $http.post(envInfo.api.url+"/game/human/"+this.vsPlayerId,this.curPlayMessage).success(function(data) {
+          console.log("vsHumanPlayer success:",data);
+          callback(data);
+        });
+      }
+      ,
+      updateStatusById: function(callback){
+        $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curGamerStatus).success(function(data) {
+          console.log("updateStatusById:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsSimpleAIJS: function(callback){
+        $http.post(envInfo.sas.host+":6001/",this.curPlayMessage).success(function(data) {
+        // $http.post(envInfo.sas.host+":6001/",JSON.stringify(this.curPlayMessage)).success(function(data) {
+          // console.log("vsSimpleAI success:",data);
           callback(data);
         });
       }

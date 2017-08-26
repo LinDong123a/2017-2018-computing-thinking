@@ -53,6 +53,7 @@ public class StompServiceImpl implements StompService{
     public void publish(String topic, String content, int qos) throws StompException {
         ClientTransaction tx = stompClient.begin();
         tx.send(StompMessages.createStompMessage( topic, content ));
+        tx.commit();
         System.out.println("stompClient published:"+content+",to topic: "+topic);
     }
 
