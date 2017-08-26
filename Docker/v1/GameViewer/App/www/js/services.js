@@ -76,7 +76,7 @@ angular.module('app.services', [])
       rGamerNum: 5,
       tenUserId:null,//tenant by user id
       curSgfObj:null,//current sgf object.
-      curPlayMessage:{game_id:"",user_id:"",msg:"",vs_user_id:""},//current simpleAI object.
+      curPlayMessage:{game_id:"",user_id:"",msg:"",method:"play"},//current simpleAI object.
       vsPlayerId:null,//vs human player id
       curGamerStatus:0,
       pairAll: function(callback){
@@ -161,14 +161,14 @@ angular.module('app.services', [])
       ,
       updateSgfObj: function(callback){
         $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId,this.curSgfObj).success(function(data) {
-          console.log("sse gamer sgf:",data);
+          // console.log("updateSgfObj:",data);
           callback(data);
         });
       }
       ,
       vsSimpleAI: function(callback){
         $http.post(envInfo.api.url+"/game/ai/simple/"+this.curGamerId,this.curPlayMessage).success(function(data) {
-          console.log("vsSimpleAI success:",data);
+          // console.log("vsSimpleAI success:",data);
           callback(data);
         });
       }
@@ -183,6 +183,14 @@ angular.module('app.services', [])
       updateStatusById: function(callback){
         $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curGamerStatus).success(function(data) {
           console.log("updateStatusById:",data);
+          callback(data);
+        });
+      }
+      ,
+      vsSimpleAIJS: function(callback){
+        $http.post(envInfo.sas.host+":6001/",this.curPlayMessage).success(function(data) {
+        // $http.post(envInfo.sas.host+":6001/",JSON.stringify(this.curPlayMessage)).success(function(data) {
+          // console.log("vsSimpleAI success:",data);
           callback(data);
         });
       }

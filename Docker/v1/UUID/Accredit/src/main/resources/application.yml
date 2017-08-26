@@ -64,7 +64,7 @@ ai:
 ---
   spring:
     profiles: stage
-    data.mongodb.uri: mongodb://${mongodb}:27017/toyhouse
+    data.mongodb.uri: mongodb://${api.ip}:27017/toyhouse
   server:
     contextPath: /accredit
     port: 8095
@@ -94,7 +94,7 @@ ai:
 ---
 spring:
   profiles: prod1
-  data.mongodb.uri: mongodb://${mongodb}:27017/toyhouse
+  data.mongodb.uri: mongodb://${api.ip}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095
@@ -124,7 +124,7 @@ ai:
 ---
 spring:
   profiles: prod2
-  data.mongodb.uri: mongodb://${mongodb}:27017/toyhouse
+  data.mongodb.uri: mongodb://${api.ip}:27017/toyhouse
 server:
   contextPath: /accredit
   port: 8095

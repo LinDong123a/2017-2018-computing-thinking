@@ -20,10 +20,15 @@ strategy = 'best_move'
 def AI(msgs,model=DEFAULT_MODEL_PATH):
     print("AI(msg) called,strategy:",strategy)
     print("AI received(msgs):",msgs)
+    #e.g:{'user_id': '599a9376e27a52237059e379', 'game_id': 'wrong_game_id', 'msg': 'B[dd];W[ed]'}
     # data_file = data_file_path + msg
-    lastMsg = msgs[len(msgs)-1]
-    x, y, color = parse_input_msg(lastMsg)
-    print('AI(lastMsg) parsed:',x, y, color)
+    moves = msgs['msg'].split(";")
+    del moves[0]#remove first null element.
+    lastMove = moves[len(moves)-1]
+    print('AI(lastMove):',lastMove)
+    # lastMsg = {'msg':lastMove}
+    x, y, color = parse_input_msg(lastMove)
+    print('AI(lastMove) parsed(x,y,color):',x, y, color)
 
     # Initialize the policy network
     n = PolicyNetwork(use_cpu=True)
@@ -87,8 +92,8 @@ def AI(msgs,model=DEFAULT_MODEL_PATH):
     #     gtp_engine.send(player_cmd)
     # sys.stdout.write(player_cmd + '\n')
     # sys.stdout.flush()
-    for msg in msgs:
-        x, y, color = parse_input_msg(msg)
+    for move in moves:
+        x, y, color = parse_input_msg(move)
         player_cmd = parse_player_input(color, x, y)
         print("gtp_engine.send(cmd):", player_cmd)
         gtp_engine.send(player_cmd)
@@ -106,7 +111,7 @@ def AI(msgs,model=DEFAULT_MODEL_PATH):
     # sys.stdout.write(response)
     # sys.stdout.flush()
 
-    return {'game_id': msg['game_id'], 'msg': response}
+    return {'game_id': msgs['game_id'], 'msg': response}
 
 
 def parse_AI_instruction(color):
@@ -121,16 +126,16 @@ def parse_player_input(color, x, y):
     return "play " + color.upper() + ' ' + x.upper() + str(y)
 
 
-def parse_input_msg(msg):
+def parse_input_msg(move):
     global string
-
+    # msg['msg'] = move
     # get the letters of position
-    x = msg['msg'][2]
-    y = string.index(msg['msg'][3])
+    x = move[2]
+    y = string.index(move[3])
     color = ''
 
     # decide color
-    if msg['msg'][0] == 'B':
+    if move[0] == 'B':
         color = 'W'
     else:
         color = 'B'

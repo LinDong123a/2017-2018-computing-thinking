@@ -23,5 +23,5 @@ RUN pip3 install -r requirements.txt
 #Preprocess SGFs
 ENTRYPOINT ["python3"]
 #ENTRYPOINT ["/bin/bash"]
-EXPOSE 6000
+EXPOSE 6001
 CMD ["server.py"]

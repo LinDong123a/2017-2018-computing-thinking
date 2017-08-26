@@ -17,6 +17,7 @@ import info.smartkit.godpaper.go.service.MqttService;
 import info.smartkit.godpaper.go.service.StompService;
 import info.smartkit.godpaper.go.settings.*;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -29,6 +30,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.jms.JMSException;
 import javax.net.ssl.SSLException;
@@ -39,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+
+import static org.bouncycastle.cms.RecipientId.password;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -253,27 +257,27 @@ public class GameController {
                 Gamer gamer  = repository.findOne(gamerId);
                 String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
                 String sgfBody = gamer.getSgf().replace(sgfHeader,"");
-//
-                Map<String,String> vars = new HashMap<String,String>();
-                vars.put("gamer_id", playMessage.getGame_id());
+
+                Map<String, String> vars = new HashMap<String, String>();
+                vars.put("game_id", playMessage.getGame_id());
                 vars.put("user_id", playMessage.getUser_id());
                 vars.put("msg", sgfBody);
-
-                HttpHeaders headers =new HttpHeaders();
+//
+                HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
 //                headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-                HttpEntity<Object> request = new HttpEntity<>(vars,headers);
+                HttpEntity<Object> request = new HttpEntity<>(vars, headers);
 //
                 ResponseEntity<String> response = restTemplate
-                        .exchange("http://"+mqttProperties.getIp()+":6000/", HttpMethod.POST, request, String.class);
-                LOG.debug("response:"+response.toString());
+                        .exchange("http://" + mqttProperties.getIp() + ":6001/", HttpMethod.POST, request, String.class);
+                LOG.debug("response:" + response.toString());
                 //
                 ObjectMapper objectMapper = new ObjectMapper();
-                PlayMessage rPlayMessage = new PlayMessage();
-                rPlayMessage = objectMapper.readValue(response.getBody(),PlayMessage.class);
-                LOG.info("SimpleAI response.playMessage:"+rPlayMessage.toString());
-                //update gamer
-                updateSgfObj(playMessage.getMsg(), playMessage.getGame_id());
+                PlayMessage rPlayMessage = objectMapper.readValue(response.getBody(), PlayMessage.class);
+                LOG.info("SimpleAI response.playMessage:" + rPlayMessage.toString());
+        //update gamer
+                updateSgfObj(";"+rPlayMessage.getMsg(), playMessage.getGame_id());
+                //
                 return rPlayMessage;
         }
 

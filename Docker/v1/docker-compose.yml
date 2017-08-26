@@ -98,11 +98,11 @@ services:
 
   # docker run -p 6000:6000 smartkit/godpaper-go-ai-tensorflow --name simpleAI
   # simpleAI
-  simpleAI:
-    image: smartkit/godpaper-go-ai-tensorflow
-    ports:
-      - "6000:6000"
-    container_name: simpleAI
+  # simpleAI:
+  #   image: smartkit/godpaper-go-ai-tensorflow
+  #   ports:
+  #     - "6000:6000"
+  #   container_name: simpleAI
 volumes:
   mariadb_data:
     driver: local

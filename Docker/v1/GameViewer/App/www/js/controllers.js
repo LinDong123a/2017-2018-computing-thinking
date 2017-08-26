@@ -11,51 +11,51 @@ angular.module('app.controllers', [])
         {
           scope: $scope,
           animation: 'slide-in-up'
-        }).then(function(modal) {
+        }).then(function (modal) {
         $rootScope.modal_settings = modal;
       });
       //Load the modal from the given template URL
-      $rootScope.modal_aier_add  = null;
+      $rootScope.modal_aier_add = null;
       $ionicModal.fromTemplateUrl("templates/modal_aier_add.html",
         {
           scope: $scope,
           animation: 'slide-in-up'
-        }).then(function(modal) {
+        }).then(function (modal) {
         $rootScope.modal_aier_add = modal;
       });
       //Load the modal from the given template URL
-      $rootScope.modal_aier_train  = null;
+      $rootScope.modal_aier_train = null;
       $ionicModal.fromTemplateUrl("templates/modal_aier_train.html",
         {
           scope: $scope,
           animation: 'slide-in-up'
-        }).then(function(modal) {
+        }).then(function (modal) {
         $rootScope.modal_aier_train = modal;
       });
       //Load the modal from the given template URL
-      $rootScope.modal_sgf_post  = null;
+      $rootScope.modal_sgf_post = null;
       $ionicModal.fromTemplateUrl("templates/modal_sgf_post.html",
         {
           scope: $scope,
           animation: 'slide-in-up'
-        }).then(function(modal) {
+        }).then(function (modal) {
         $rootScope.modal_sgf_post = modal;
       });
       //Load the modal from the given template URL
-      $rootScope.modal_board_tenuki  = null;
+      $rootScope.modal_board_tenuki = null;
       $ionicModal.fromTemplateUrl("templates/modal_board_tenuki.html",
         {
           scope: $scope,
           animation: 'slide-in-up',
-          backdropClickToClose:false
-        }).then(function(modal) {
+          backdropClickToClose: false
+        }).then(function (modal) {
         $rootScope.modal_board_tenuki = modal;
       });
       //popover
       $rootScope.popover = null;
       $ionicPopover.fromTemplateUrl('templates/popover.html', {
         scope: $scope,
-      }).then(function(popover) {
+      }).then(function (popover) {
         $rootScope.popover = popover;
       });
       //
@@ -64,21 +64,21 @@ angular.module('app.controllers', [])
       $rootScope.tableInfo = null;
       $rootScope.aierList = [];
       $rootScope.sgfDto = null;
-      $rootScope.anewAier = {name:null,model:null,gid:null};
+      $rootScope.anewAier = {name: null, model: null, gid: null};
       $rootScope.placeholder_aier = null;
       //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
       //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
       // $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
-      $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move"};
-      $rootScope.userTypes = {"机器玩家":0, "人类玩家":1};
-      $rootScope.boardTypes = ["wgo","tenuki"];
-      $rootScope.tag_vs="_vs_";
-      $rootScope.tag_play="_play_";
-      $rootScope.tag_end="_end_";
+      $rootScope.policysObj = {"完全随机": "random", "最佳着法": "best_move", "随机应变": "random_move"};
+      $rootScope.userTypes = {"机器玩家": 0, "人类玩家": 1};
+      $rootScope.boardTypes = ["wgo", "tenuki"];
+      $rootScope.tag_vs = "_vs_";
+      $rootScope.tag_play = "_play_";
+      $rootScope.tag_end = "_end_";
       $rootScope.curTenukiGame = null;
       $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
-      $rootScope.score_tenuki_black=0;
-      $rootScope.score_tenuki_white=0;
+      $rootScope.score_tenuki_black = 0;
+      $rootScope.score_tenuki_white = 0;
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -89,19 +89,21 @@ angular.module('app.controllers', [])
       $rootScope.refreshTablePromise = null;
       // stops any running interval to avoid two intervals running at the same time
       $interval.cancel($rootScope.refreshTablePromise);
+
       //
       function intervalRefreshTable() {
-          moveIndex++;
-          player = new WGo.BasicPlayer(gameTableDiv, {
-            sgf: $rootScope.tableInfo.sgf
-            ,move:moveIndex
-            ,enableWheel:false
-          });
+        moveIndex++;
+        player = new WGo.BasicPlayer(gameTableDiv, {
+          sgf: $rootScope.tableInfo.sgf
+          , move: moveIndex
+          , enableWheel: false
+        });
       }
+
       //common functions.
-      $rootScope.renderGameTable = function ($tableInfo,bType) {
-        $rootScope.tableInfo  = $tableInfo;
-        if(bType==$rootScope.boardTypes[0]) {
+      $rootScope.renderGameTable = function ($tableInfo, bType) {
+        $rootScope.tableInfo = $tableInfo;
+        if (bType == $rootScope.boardTypes[0]) {
           gameTableDiv = document.getElementById("gameTableDiv");
           console.log("$scope.gameTableDiv:", gameTableDiv);
           //
@@ -111,7 +113,7 @@ angular.module('app.controllers', [])
               , move: moveIndex
             });
           }
-        }else if(bType==$rootScope.boardTypes[1]){
+        } else if (bType == $rootScope.boardTypes[1]) {
           //MQTT
           // $rootScope.conMqtt($tableInfo.topic,$tableInfo.player1.name);
 
@@ -122,33 +124,33 @@ angular.module('app.controllers', [])
         }
 
       };
-      $rootScope.getOneTable = function(bType) {
+      $rootScope.getOneTable = function (bType) {
         console.log("$scope.getOne called.");
         //
         GameService.getOne(function (data) {
           console.log("GameService.getOne:", data);
           $rootScope.tableInfo = data;
-          $rootScope.renderGameTable(data,bType);
+          $rootScope.renderGameTable(data, bType);
           //
         });
       };
-      $rootScope.iRefreshOneTable = function() {
+      $rootScope.iRefreshOneTable = function () {
         $rootScope.intervalRefresh = !$rootScope.intervalRefresh;
-        if($rootScope.intervalRefresh) {
+        if ($rootScope.intervalRefresh) {
           $rootScope.refreshTablePromise = $interval(intervalRefreshTable, 1000);
-        }else{
+        } else {
           $interval.cancel($rootScope.refreshTablePromise);
         }
       };
 
-      $rootScope.updateEnvInfo = function(){
+      $rootScope.updateEnvInfo = function () {
         //
-        console.log("updated envInfo:",envInfo);
+        console.log("updated envInfo:", envInfo);
         $scope.modal_settings.hide();
       }
 
       $rootScope.getAiers = function () {
-        AierService.getAll(function(data){
+        AierService.getAll(function (data) {
           console.log("AierService.getAll:", data);
           $rootScope.aierList = data;
           console.log("$rootScope.aierList:", $rootScope.aierList);
@@ -157,29 +159,29 @@ angular.module('app.controllers', [])
       //
       $rootScope.getAiersByStatus = function ($index) {
         AierService.curStatusIndex = $index;
-        AierService.getAllByStatus(function(data){
+        AierService.getAllByStatus(function (data) {
           console.log("AierService.getAllByStatus:", data);
           $rootScope.aierList = data;
         });
       }
       $rootScope.score_tenuki = function ($event) {
         var scoreObj = $rootScope.curTenukiGame.score();
-        console.log("$rootScope.curTenukiGame.score():",scoreObj);
-        $rootScope.score_tenuki_black=scoreObj.black;
-        $rootScope.score_tenuki_white=scoreObj.white;
+        console.log("$rootScope.curTenukiGame.score():", scoreObj);
+        $rootScope.score_tenuki_black = scoreObj.black;
+        $rootScope.score_tenuki_white = scoreObj.white;
         $rootScope.popover.show($event);
       }
       $rootScope.close_tenuki = function () {
         $rootScope.modal_board_tenuki.hide();
         //update game status
         GameService.curGamerStatus = 3;
-        GameService.updateStatusById(function(data){
+        GameService.updateStatusById(function (data) {
           console.log("GameService.updateStatusById:", data);
         });
       }
       //MQTT related
       //connect
-      $rootScope.conMqtt = function ($gamerTopic,$userId) {
+      $rootScope.conMqtt = function ($gamerTopic, $userId) {
         var ip = envInfo.mqtt.host;
         var port = envInfo.mqtt.port;
         var id = $userId;
@@ -201,80 +203,88 @@ angular.module('app.controllers', [])
           if (responseObject.errorCode !== 0)
             console.log("onConnectionLost:" + responseObject.errorMessage);
         };
+
         function onMessageArrived(message) {
           console.log("onMessageArrived:" + message.payloadString);
           // MqttClient.disconnect();
         }
       };
-        //disconnect
-        $rootScope.disconMqtt = function ($gamerTopic) {
-          MqttClient.unsubscribe($gamerTopic);
-          MqttClient.disconnect();
-        }
-        //Stomp
-        $stomp.setDebug(function (args) {
-          $log.debug(args)
-        })
-        //Websocket/Stomp handler:
-        var stompClient = null;
+      //disconnect
+      $rootScope.disconMqtt = function ($gamerTopic) {
+        MqttClient.unsubscribe($gamerTopic);
+        MqttClient.disconnect();
+      }
+      //Stomp
+      $stomp.setDebug(function (args) {
+        $log.debug(args)
+      })
+      //Websocket/Stomp handler:
+      var stompClient = null;
 
-        $rootScope.connectStomp = function ($gamerInfo, $userId) {
-          //
-          // var client = Stomp.client( "ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp" );
-          // client.connect( "", "",
-          //   function() {
-          //   //FIXME:max of topiv name string length.
-          //     client.subscribe($gamerInfo.topic,
-          //       function( message ) {
-          //         alert( message );
-          //       }
-          //       ,{ priority: 9 }
-          //     );
-          //     client.send($gamerInfo.topic, { priority: 9 },$gamerInfo.topic);
-          //   }
-          // );
-          //
-          //
-          stompClient = Stomp.client("ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp");
-          stompClient.connect("", "",
+      $rootScope.connectStomp = function ($gamerInfo, $userId) {
+        //
+        // var client = Stomp.client( "ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp" );
+        // client.connect( "", "",
+        //   function() {
+        //   //FIXME:max of topiv name string length.
+        //     client.subscribe($gamerInfo.topic,
+        //       function( message ) {
+        //         alert( message );
+        //       }
+        //       ,{ priority: 9 }
+        //     );
+        //     client.send($gamerInfo.topic, { priority: 9 },$gamerInfo.topic);
+        //   }
+        // );
+        //
+        //
+        stompClient = Stomp.client("ws://" + envInfo.mqtt.host + ":61614/stomp", "v11.stomp");
+        stompClient.connect("", "",
           //   stompClient.connect({},
-            function () {
-              console.log("stompClient.connected.");
-              stompClient.subscribe($gamerInfo.topic,
-                function (message) {
-                  // called when the client receives a STOMP message from the server
-                  if (message.body) {
-                    alert("got message with body " + message.body)
-                  } else {
-                    alert("got empty message");
-                  }
-                  // alert( message );
-                  // (JSON.parse(message.body));
-                  // console.log(message.body);
-                  //1.receive game play message then place chess player.
-                  console.log("received game play info:",$gamerInfo);
-                  //2.frozen UI elements,while human player played piece.
-
-                  //3.receive game status message.
-
+          function () {
+            console.log("stompClient.connected.");
+            stompClient.subscribe($gamerInfo.topic,
+              function (message) {
+                // called when the client receives a STOMP message from the server
+                if (message.body) {
+                  alert("got message with body " + message.body)
+                } else {
+                  alert("got empty message");
                 }
-                ,{priority: 9}
+                // alert( message );
+                // (JSON.parse(message.body));
+                // console.log(message.body);
+                //1.receive game play message then place chess player.
+                console.log("received game play info:", $gamerInfo);
+                //2.frozen UI elements,while human player played piece.
+
+                //3.receive game status message.
+
+              }
+              , {priority: 9}
               // {id: $userId}
-              );
-              stompClient.begin( "tx-1" );
-              stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe testing...
-              // stompClient.send($gamerInfo.topic, {}, $gamerInfo.topic);
-              stompClient.commit( "tx-1" );
-            }
-          );
-        };
-        $rootScope.sendToStomp = function ($gamerTopic,$message) {
-          stompClient.send($gamerTopic, {priority: 9}, $message);
-        }
-        $rootScope.disconnectStomp = function () {
-          stompClient.unsubscribe();
-          stompClient.disconnect();
-        }
+            );
+            stompClient.begin("tx-1");
+            stompClient.send($gamerInfo.topic, {priority: 9}, $gamerInfo.topic);//For subscribe testing...
+            // stompClient.send($gamerInfo.topic, {}, $gamerInfo.topic);
+            stompClient.commit("tx-1");
+          }
+        );
+      };
+      $rootScope.sendToStomp = function ($gamerTopic, $message) {
+        stompClient.send($gamerTopic, {priority: 9}, $message);
+      }
+      $rootScope.disconnectStomp = function () {
+        stompClient.unsubscribe();
+        stompClient.disconnect();
+      }
+      $rootScope.playAt_tenuki = function(lastMove){
+        var letter_x = lastMove.charAt(2);
+        var letter_y = lastMove.charAt(3);
+        var n_x = $rootScope.go_string.indexOf(letter_x);
+        var n_y = $rootScope.go_string.indexOf(letter_y);
+        $rootScope.curTenukiGame.playAt(n_x, n_y);
+      }
         //SSE
       var eventSource = null;
       $rootScope.connectSSE = function ($gamerInfo,$jigo) {
@@ -286,11 +296,7 @@ angular.module('app.controllers', [])
             console.log("after SSE,lastMove:",lastMove);
             if(lastMove.indexOf($jigo)==-1){//opponent now
               $ionicLoading.hide();
-              var letter_x = lastMove.charAt(2);
-              var letter_y = lastMove.charAt(3);
-              var n_x = $rootScope.go_string.indexOf(letter_x);
-              var n_y = $rootScope.go_string.indexOf(letter_y);
-              $rootScope.curTenukiGame.playAt(n_x, n_y);
+              $rootScope.playAt_tenuki(lastMove);
             }
           }
         };
@@ -304,8 +310,6 @@ angular.module('app.controllers', [])
       }
       //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
-      var curPlayerId = "unknown";
-      var curVsPlayerId = "unknown";
       var JIGO_TENUKI="B";
       $rootScope.tenukiGameSetup = function($gamerInfo,$playerId,$jigo) {
         if($jigo!=JIGO_TENUKI){
@@ -324,7 +328,9 @@ angular.module('app.controllers', [])
         curVsPlayerId = $rootScope.getVsUserId($gamerInfo,$playerId);
         //
         $rootScope.curTenukiGame = game;
-        $rootScope.connectSSE($gamerInfo, $jigo);
+        if($gamerInfo.type=='HUMAN_VS_HUMAN') {
+          $rootScope.connectSSE($gamerInfo, $jigo);
+        }
         //
         game.callbacks.postRender = function (game) {
           //game.currentState() -- 游戏当前状态
@@ -360,44 +366,27 @@ angular.module('app.controllers', [])
             GameService.updateSgfObj(function (data) {
               //
               console.log("GameService.updateSgfObj:", data);
+              var latestMoves = data.body.split(";");
+              var lastMove = latestMoves[latestMoves.length-1];
+              var isAIturnNow = (lastMove.indexOf(JIGO_TENUKI)!=-1)?true:false;
+              console.log("isAIturnNow?",isAIturnNow);
               //then post to simpleAI server
-              GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
-              if($gamerInfo.type=='AI_VS_HUMAN' || $gamerInfo.type=='HUMAN_VS_AI') {
-                console.log("before GameService.vsSimpleAI,curPlayMessage:",  GameService.curPlayMessage);
-                GameService.vsSimpleAI(function (data) {
-                    console.log("GameService.vsSimpleAI:", data);
-                    var place = data.msg;
-                    curPlayerId = curVsPlayerId;
-                    var letter_x = place.charAt(2);
-                    var letter_y = place.charAt(3);
-                    var n_x = $rootScope.go_string.indexOf(letter_x);
-                    var n_y = $rootScope.go_string.indexOf(letter_y);
-                    game.playAt(n_x, n_y);
+              if(isAIturnNow) {
+                  GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
+                  console.log("before GameService.vsSimpleAI,curPlayMessage:", GameService.curPlayMessage);
+                  GameService.vsSimpleAI(function (data) {
+                    console.log("GameService.vsSimpleAI response:", data);
+                    var moves = data.msg.split(";");
+                    var lastMove = moves[moves.length - 1];
+                    $rootScope.playAt_tenuki(lastMove);
                   });
-                }
+              }
                 //
                 if($gamerInfo.type=='HUMAN_VS_HUMAN') {
-                    console.log("!!!HUMAN_VS_HUMAN!!!");
+                    // console.log("!!!HUMAN_VS_HUMAN!!!");
                     //
                     $ionicLoading.show();
                     //
-                    // GameService.vsPlayerId = curVsPlayerId;
-                    // console.log("before GameService.vsHumanPlayer,curPlayMessage:",  GameService.curPlayMessage);
-                    // GameService.vsHumanPlayer(function (data) {
-                    //     console.log("GameService.vsHumanPlayer:", data);
-                    //     var moves = data.body.split(";");
-                    //     var place = moves[moves.length-1];
-                    //     console.log("before SSE,last move:",place);
-                    //     curPlayerId = curVsPlayerId;
-                    //     var letter_x = place.charAt(2);
-                    //     var letter_y = place.charAt(3);
-                    //     var n_x = $rootScope.go_string.indexOf(letter_x);
-                    //     var n_y = $rootScope.go_string.indexOf(letter_y);
-                    //     game.playAt(n_x, n_y);
-                    //     //
-                    //     $ionicLoading.show();
-                    //     //
-                    // });
                 }
                 });
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
