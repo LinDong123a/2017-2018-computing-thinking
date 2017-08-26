@@ -19,7 +19,7 @@ WORKDIR /app
 
 
 #gnugo install
-RUN ./configure \
+RUN ./configure \ 
 	&& make \
 	&& make install
 

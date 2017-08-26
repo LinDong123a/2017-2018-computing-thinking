@@ -96,12 +96,12 @@ services:
   #   environment:
   #     - "JAVA_OPTS=-Dapi.ip=192.168.0.6"
 
-  # docker run -p 6000:6000 smartkit/godpaper-go-ai-tensorflow --name simpleAI
+  # docker run -p 6000:6000 smartkit/godpaper-go-ai-tensorflow -name simpleAI
   # simpleAI
-  # simpleAI:
-  #   image: smartkit/godpaper-go-ai-tensorflow
-  #   ports:
-  #     - "6000:6000"
+  simpleAI:
+    image: smartkit/godpaper-go-ai-tensorflow:6001
+    ports:
+      - "6001:6001"
   #   container_name: simpleAI
 volumes:
   mariadb_data:
