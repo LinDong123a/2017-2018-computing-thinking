@@ -95,6 +95,7 @@ _getEnvironment = function () {
       , api_context: '/accredit'
       , mqtt_ip: hostname
       , mqtt_port: '1883'
+      , wp_ip: "http://"+hostname
     }
   }
   console.log("out of config _environment:",ofc_environment);

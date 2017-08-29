@@ -223,10 +223,12 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}")
-        public Gamer updateStatusById(@PathVariable String gamerId, @PathVariable int status) {
+        public SgfDto updateStatusById(@PathVariable String gamerId, @PathVariable int status) throws InterruptedException, DockerException, IOException {
                 Gamer updater = repository.findOne(gamerId);
                 updater.setStatus(status);
-                return repository.save(updater);
+                repository.save(updater);
+                //save sgf file.
+                return service.saveSgf(updater,false);
         }
 
         private SgfObj updateSgfObj(String sgfBody, @PathVariable String gamerId) {
