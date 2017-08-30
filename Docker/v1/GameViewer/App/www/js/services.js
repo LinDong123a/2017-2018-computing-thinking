@@ -186,14 +186,6 @@ angular.module('app.services', [])
           callback(data);
         });
       }
-      ,
-      vsSimpleAIJS: function(callback){
-        $http.post(envInfo.sas.host+":6001/",this.curPlayMessage).success(function(data) {
-        // $http.post(envInfo.sas.host+":6001/",JSON.stringify(this.curPlayMessage)).success(function(data) {
-          // console.log("vsSimpleAI success:",data);
-          callback(data);
-        });
-      }
     };
   }])
   .service('UserService', ['$http','envInfo',function($http,envInfo){

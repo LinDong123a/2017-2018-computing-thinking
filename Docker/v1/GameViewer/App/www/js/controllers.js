@@ -174,7 +174,7 @@ angular.module('app.controllers', [])
       $rootScope.close_tenuki = function () {
         $rootScope.modal_board_tenuki.hide();
         //update game status
-        GameService.curGamerStatus = 3;
+        GameService.curGamerStatus = 3;//ended,saved
         GameService.updateStatusById(function (data) {
           console.log("GameService.updateStatusById:", data);
         });
@@ -358,7 +358,7 @@ angular.module('app.controllers', [])
               sMoveInfo = ';W';
             }
             //
-            sMoveInfo += '[' +$rootScope.go_string[y] + $rootScope.go_string[x] + ']';
+            sMoveInfo += '[' +$rootScope.go_string[x] + $rootScope.go_string[y] + ']';
             console.log("sMoveInfo:",sMoveInfo);
             //update sgf object if needed.
             GameService.curGamerId = $gamerInfo.id;
@@ -550,6 +550,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
     // Some endpoint that needs auth
     // var usersURL = 'http://localhost/wp-json/wp/v2/users';
     var postsURL = envInfo.wp.host+'/wp-json/wp/v2/posts';
+    console.log("postsURL:",postsURL);
     WpWikiService.getAuth( base64, postsURL ).then(function(response) {
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.
