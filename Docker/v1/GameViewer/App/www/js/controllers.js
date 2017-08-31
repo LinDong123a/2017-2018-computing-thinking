@@ -371,7 +371,7 @@ angular.module('app.controllers', [])
               var isAIturnNow = (lastMove.indexOf(JIGO_TENUKI)!=-1)?true:false;
               console.log("isAIturnNow?",isAIturnNow);
               //then post to simpleAI server
-              if(isAIturnNow) {
+              if($gamerInfo.type=='HUMAN_VS_AI'|| $gamerInfo.type=='AI_VS_HUMAN' && isAIturnNow) {
                   GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
                   console.log("before GameService.vsSimpleAI,curPlayMessage:", GameService.curPlayMessage);
                   GameService.vsSimpleAI(function (data) {
@@ -381,13 +381,13 @@ angular.module('app.controllers', [])
                     $rootScope.playAt_tenuki(lastMove);
                   });
               }
-                //
-                if($gamerInfo.type=='HUMAN_VS_HUMAN') {
-                    // console.log("!!!HUMAN_VS_HUMAN!!!");
-                    //
-                    $ionicLoading.show();
-                    //
-                }
+              //
+              if($gamerInfo.type=='HUMAN_VS_HUMAN') {
+                  // console.log("!!!HUMAN_VS_HUMAN!!!");
+                  //
+                  $ionicLoading.show();
+                  //
+              }
                 });
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
             //$userId_play_B[cm]
