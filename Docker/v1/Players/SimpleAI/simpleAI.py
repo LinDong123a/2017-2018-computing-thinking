@@ -28,7 +28,7 @@ def AI(msg):
     print(x, y, color)
 
     # Initialize the policy network
-    n = PolicyNetwork(use_cpu=True)
+    n = PolicyNetwork(use_cpu=False)
     print("PolicyNetwork init.")
     print("n,read_file:",n,read_file)
     try:
