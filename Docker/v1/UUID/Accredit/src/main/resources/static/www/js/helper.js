@@ -13,13 +13,13 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '172.20.10.12'
+            api_ip: '192.168.0.6'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip: '172.20.10.12'
+            ,mqtt_ip: '192.168.0.6'
             ,mqtt_port:'1883'
-            ,wp_ip:'172.20.10.12'
-            ,sas_ip:'172.20.10.12'//simpleAIServer
+            ,wp_ip:'192.168.0.6'
+            ,sas_ip:'192.168.0.6'//simpleAIServer
         }
     },
     dev: {

@@ -231,7 +231,7 @@ public class GameController {
                 //merge sgf string.
                 String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",updater,"B?R");
                 String sgfBody = updater.getSgf();
-                updater.setSgf(sgfHeader.concat(sgfBody));
+                updater.setSgf(sgfHeader.concat(sgfBody)+")");
                 return service.saveSgf(updater,false);
         }
 

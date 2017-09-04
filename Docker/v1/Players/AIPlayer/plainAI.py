@@ -25,7 +25,7 @@ def AI(msgs,model=DEFAULT_MODEL_PATH,strategy=None):
     print('AI(lastMsg) parsed:',x, y, color)
 
     # Initialize the policy network
-    n = PolicyNetwork(use_cpu=True)
+    n = PolicyNetwork(use_cpu=False)
     print("PolicyNetwork init.")
     # global read_file
     # read_file = read_file_prefix+str(RANK)+"/savedmodel"

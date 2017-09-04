@@ -371,7 +371,7 @@ angular.module('app.controllers', [])
               var isAIturnNow = (lastMove.indexOf(JIGO_TENUKI)!=-1)?true:false;
               console.log("isAIturnNow?",isAIturnNow);
               //then post to simpleAI server
-              if(isAIturnNow) {
+              if($gamerInfo.type=='HUMAN_VS_AI' || $gamerInfo.type=='AI_VS_HUMAN' && isAIturnNow) {
                   GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
                   console.log("before GameService.vsSimpleAI,curPlayMessage:", GameService.curPlayMessage);
                   GameService.vsSimpleAI(function (data) {

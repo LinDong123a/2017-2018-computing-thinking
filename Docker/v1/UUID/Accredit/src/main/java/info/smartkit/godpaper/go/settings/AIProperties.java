@@ -38,7 +38,7 @@ public class AIProperties {
         private List<String> policys;
 
         public String getPlayer() {
-                return player;
+                return gpu?player+":gpu":player;
         }
 
         public void setPlayer(String player) {
@@ -49,7 +49,7 @@ public class AIProperties {
         private String player;
 
         public String getAgentPrep() {
-                return agentPrep;
+                return gpu?agentPrep+":gpu":agentPrep;
         }
 
         public void setAgentPrep(String agentPrep) {
@@ -57,7 +57,7 @@ public class AIProperties {
         }
 
         public String getAgentTrain() {
-                return agentTrain;
+                return gpu?agentTrain+":gpu":agentTrain;
         }
 
         public void setAgentTrain(String agentTrain) {
@@ -66,10 +66,6 @@ public class AIProperties {
 
         private String agentPrep;
         private String agentTrain;
-
-        @Override public String toString() {
-                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + '}';
-        }
 
         public String getScorer() {
                 return scorer;
@@ -80,4 +76,18 @@ public class AIProperties {
         }
 
         private String scorer;
+
+        @Override public String toString() {
+                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + ", gpu=" + gpu + '}';
+        }
+
+        public boolean isGpu() {
+                return gpu;
+        }
+
+        public void setGpu(boolean gpu) {
+                this.gpu = gpu;
+        }
+
+        private boolean gpu;
 }

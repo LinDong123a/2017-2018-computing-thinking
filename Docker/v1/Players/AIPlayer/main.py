@@ -16,7 +16,7 @@ TRAINING_CHUNK_RE = re.compile(r"train\d+\.chunk.gz")
 
 
 def gtp(strategy, read_file=None):
-    n = PolicyNetwork(use_cpu=True)
+    n = PolicyNetwork(use_cpu=False)
     if strategy == 'random':
         instance = RandomPlayer()
     elif strategy == 'policy':

@@ -122,7 +122,7 @@ public class DockerServiceImpl implements DockerService{
                 LOG.info("Inspect mounts:"+info.mounts().toString());
                 final String logs;
                 //Pause for 15 seconds
-                Thread.sleep(15000);//wait for docker execution.
+                Thread.sleep(30000);//wait for docker execution.
                 try (LogStream stream = dockerClient.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(AgentPrep) logs:"+logs.toString());
