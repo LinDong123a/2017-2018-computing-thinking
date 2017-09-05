@@ -31,7 +31,7 @@ ai:
   agentPrep: smartkit/godpaper-go-ai-agent-mugo-prep
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
   scorer: smartkit/godpaper-go-score-estimator-gnugo
-  gpu: true
+  gpu: false
 ---
 spring:
   profiles: test
