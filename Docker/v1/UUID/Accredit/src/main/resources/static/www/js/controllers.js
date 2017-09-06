@@ -311,6 +311,14 @@ angular.module('app.controllers', [])
       //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
       var JIGO_TENUKI="B";
+      $rootScope.isAITurnNow = function($gamerInfo,lastMove){
+          var isAIturnNow = false;
+          if( $gamerInfo.type=='HUMAN_VS_AI' || $gamerInfo.type=='AI_VS_HUMAN') {
+              isAIturnNow = (lastMove.indexOf(JIGO_TENUKI) != -1) ? true : false;
+          }
+          console.log("$gamerInfo.type:"+$gamerInfo.type+",isAIturnNow?",isAIturnNow);
+          return isAIturnNow;
+      }
       $rootScope.tenukiGameSetup = function($gamerInfo,$playerId,$jigo) {
         if($jigo!=JIGO_TENUKI){
           $ionicLoading.show();//waiting
@@ -358,7 +366,7 @@ angular.module('app.controllers', [])
               sMoveInfo = ';W';
             }
             //
-            sMoveInfo += '[' +$rootScope.go_string[x] + $rootScope.go_string[y] + ']';
+            sMoveInfo += '[' +$rootScope.go_string[y] + $rootScope.go_string[x] + ']';
             console.log("sMoveInfo:",sMoveInfo);
             //update sgf object if needed.
             GameService.curGamerId = $gamerInfo.id;
@@ -368,10 +376,8 @@ angular.module('app.controllers', [])
               console.log("GameService.updateSgfObj:", data);
               var latestMoves = data.body.split(";");
               var lastMove = latestMoves[latestMoves.length-1];
-              var isAIturnNow = (lastMove.indexOf(JIGO_TENUKI)!=-1)?true:false;
-              console.log("isAIturnNow?",isAIturnNow);
               //then post to simpleAI server
-              if($gamerInfo.type=='HUMAN_VS_AI' || $gamerInfo.type=='AI_VS_HUMAN' && isAIturnNow) {
+                if($rootScope.isAITurnNow($gamerInfo,lastMove)) {
                   GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
                   console.log("before GameService.vsSimpleAI,curPlayMessage:", GameService.curPlayMessage);
                   GameService.vsSimpleAI(function (data) {
@@ -381,13 +387,13 @@ angular.module('app.controllers', [])
                     $rootScope.playAt_tenuki(lastMove);
                   });
               }
-                //
-                if($gamerInfo.type=='HUMAN_VS_HUMAN') {
-                    // console.log("!!!HUMAN_VS_HUMAN!!!");
-                    //
-                    $ionicLoading.show();
-                    //
-                }
+              //
+              if($gamerInfo.type=='HUMAN_VS_HUMAN') {
+                  // console.log("!!!HUMAN_VS_HUMAN!!!");
+                  //
+                  $ionicLoading.show();
+                  //
+              }
                 });
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
             //$userId_play_B[cm]
