@@ -79,6 +79,7 @@ angular.module('app.controllers', [])
       $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
       $rootScope.score_tenuki_black = 0;
       $rootScope.score_tenuki_white = 0;
+      $rootScope.gamerInfo = null;
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -279,8 +280,8 @@ angular.module('app.controllers', [])
         stompClient.disconnect();
       }
       $rootScope.playAt_tenuki = function(lastMove){
-        var letter_x = lastMove.charAt(2);
-        var letter_y = lastMove.charAt(3);
+        var letter_x = lastMove.charAt(3);
+        var letter_y = lastMove.charAt(2);
         var n_x = $rootScope.go_string.indexOf(letter_x);
         var n_y = $rootScope.go_string.indexOf(letter_y);
         $rootScope.curTenukiGame.playAt(n_x, n_y);
@@ -366,7 +367,7 @@ angular.module('app.controllers', [])
               sMoveInfo = ';W';
             }
             //
-            sMoveInfo += '[' +$rootScope.go_string[y] + $rootScope.go_string[x] + ']';
+            sMoveInfo += '[' +$rootScope.go_string[x] + $rootScope.go_string[y] + ']';
             console.log("sMoveInfo:",sMoveInfo);
             //update sgf object if needed.
             GameService.curGamerId = $gamerInfo.id;
@@ -466,6 +467,8 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   }
   $scope.hPlayOne = function($gamerInfo, $playerId,$jigo){
     //
+      $rootScope.gamerInfo= $gamerInfo;
+      console.log("$rootScope.gamerInfo:",$rootScope.gamerInfo);
     $rootScope.modal_board_tenuki.show();
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
