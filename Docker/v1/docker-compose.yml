@@ -13,7 +13,7 @@ services:
     labels:
       kompose.service.type: nodeport
     ports:
-      - '80:80'
+      - '90:80'
       - '443:443'
     volumes:
       - 'wordpress_data:/bitnami/wordpress'
@@ -103,6 +103,10 @@ services:
     ports:
       - "6001:6001"
   #   container_name: simpleAI
+  web:
+    image: smartkit/godpaper-go-web
+    ports:
+      - "80:80"
 volumes:
   mariadb_data:
     driver: local
