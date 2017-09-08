@@ -91,7 +91,7 @@ _getEnvironment = function () {
     host: hostname,
     config: {
       api_ip: hostname
-      , api_port: host.split(":")[1]
+      , api_port: '8095'
       , api_context: '/accredit'
       , mqtt_ip: hostname
       , mqtt_port: '1883'
