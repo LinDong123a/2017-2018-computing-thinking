@@ -1,0 +1,22 @@
+<div class="modal">
+    <header class="bar bar-header bar-positive">
+        <h1 class="title">新比赛</h1>
+        <div class="button button-clear" ng-click="modal_gamer_add.hide()">
+            <span class="icon ion-android-close"></span>
+        </div>
+    </header>
+    <ion-content class="has-header" has-header="true" padding="true">
+        <div class="list">
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">类型:</span><select required ng-model='anewGamer.type' ng-options='k as k for (k,v) in $root.gamerTypes'>
+                <option value="">---请选择---</option>
+            </select>
+            </label>
+            <label class="item item-input item-label">
+                <span class="input-label">名称:</span> <input type="text" placeholder="" ng-model="anewGamer.name">
+            </label>
+            <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"
+                     ng-disabled="anewGamer.name==null"  ng-click="qCreateGamer()">确定</button>
+        </div>
+    </ion-content>
+</div>

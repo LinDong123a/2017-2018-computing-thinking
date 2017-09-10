@@ -29,4 +29,5 @@ public interface GamerService {
         SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException, DockerException;
         void connectHumanPlayer(Gamer gamer) throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException;
         String getSgfHeader(String application,String version,Gamer gamer,String result);
+        void createGamerByType(int type,String name);
 }

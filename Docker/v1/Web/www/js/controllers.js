@@ -24,6 +24,15 @@ angular.module('app.controllers', [])
         $rootScope.modal_aier_add = modal;
       });
       //Load the modal from the given template URL
+      $rootScope.modal_gamer_add = null;
+      $ionicModal.fromTemplateUrl("templates/modal_gamer_add.html",
+          {
+              scope: $scope,
+              animation: 'slide-in-up'
+          }).then(function (modal) {
+          $rootScope.modal_gamer_add = modal;
+      });
+      //Load the modal from the given template URL
       $rootScope.modal_aier_train = null;
       $ionicModal.fromTemplateUrl("templates/modal_aier_train.html",
         {
@@ -71,6 +80,7 @@ angular.module('app.controllers', [])
       // $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
       $rootScope.policysObj = {"完全随机": "random", "最佳着法": "best_move", "随机应变": "random_move"};
       $rootScope.userTypes = {"机器玩家": 0, "人类玩家": 1};
+      $rootScope.gamerTypes = {"机器对战": 0, "人机对战": 1,"机人对战": 2,"人人对战": 3};
       $rootScope.boardTypes = ["wgo", "tenuki"];
       $rootScope.tag_vs = "_vs_";
       $rootScope.tag_play = "_play_";
@@ -416,6 +426,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   // envInfo.mqtt.url = envInfo.mqtt.host+envInfo.mqtt.port;
   //
   $scope.envInfo = envInfo;
+  $scope.anewGamer = {name: null, type: null};
   //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
   //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
   $scope.pairAll = function () {
@@ -516,7 +527,20 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       $scope.getAll();//refresh.
     });
   }
+  $scope.addGamer = function () {
+      $rootScope.modal_gamer_add.show();
+  }
+  $scope.qCreateGamer = function () {
+    console.log("createGamer...");
+      $rootScope.modal_gamer_add.hide();
 
+      GameService.qGamerType = $rootScope.gamerTypes[$scope.anewGamer.type];
+      GameService.qGamerName = $scope.anewGamer.name;
+      GameService.qCreateGamer(function(data){
+          console.log("GameService.qCreateGamer:",  data);
+          $scope.getAll();//refresh.
+      });
+  }
   //default calls
   $scope.getAll();
 

@@ -79,6 +79,8 @@ angular.module('app.services', [])
       curPlayMessage:{game_id:"",user_id:"",msg:"",method:"play"},//current simpleAI object.
       vsPlayerId:null,//vs human player id
       curGamerStatus:0,
+      qGamerType:0,
+      qGamerName:"",
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -187,8 +189,8 @@ angular.module('app.services', [])
         });
       }
       ,
-      vsSimpleAIJS: function(callback){
-        $http.post(envInfo.sas.host+":6001/",this.curPlayMessage).success(function(data) {
+      qCreateGamer: function(callback){
+        $http.get(envInfo.api.url+"/game/q/"+this.qGamerType+"/"+this.qGamerName).success(function(data) {
         // $http.post(envInfo.sas.host+":6001/",JSON.stringify(this.curPlayMessage)).success(function(data) {
           // console.log("vsSimpleAI success:",data);
           callback(data);

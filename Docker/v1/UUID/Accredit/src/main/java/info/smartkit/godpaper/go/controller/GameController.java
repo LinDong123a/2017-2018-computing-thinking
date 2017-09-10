@@ -300,5 +300,11 @@ public class GameController {
                 (gamer.getPlayer1().getType() == UserTypes.HUMAN.getIndex() || gamer.getPlayer2().getType() == UserTypes.HUMAN.getIndex());
         }
 
+        @RequestMapping(method = RequestMethod.GET, value="/q/{type}/{name}")
+        public void qCreateGamer(@PathVariable int type,@PathVariable String name)
+        {
+                service.createGamerByType(type,name);
+        }
+
 
 }

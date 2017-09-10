@@ -329,6 +329,7 @@ public class GamerServiceImpl implements GamerService {
                 return header.toString();
         }
 
+
         private String getEscaped(String text)
         {
                 return getEscaped(text, false);
@@ -394,5 +395,26 @@ public class GamerServiceImpl implements GamerService {
                 if(player2.getType()==UserTypes.HUMAN.getIndex()){
                         stompService.publish(gamer.getId(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
                 }
+        }
+        @Override
+        public void createGamerByType(int type,String name) {
+                if (type==GameTypes.AI_VS_AI.getIndex())
+                {
+                        //create two AI players and get ready to play
+
+                }
+                if (type==GameTypes.AI_VS_HUMAN.getIndex())
+                {
+                        //create AI/Human players and get ready to play
+                }
+                if (type==GameTypes.HUMAN_VS_AI.getIndex())
+                {
+                        //create  Human/AI players and get ready to play
+                }
+                if (type==GameTypes.HUMAN_VS_HUMAN.getIndex())
+                {
+                        //create two Human players and get ready to play
+                }
+
         }
 }

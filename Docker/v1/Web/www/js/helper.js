@@ -13,13 +13,12 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '192.168.0.6'
+            api_ip: '192.168.1.92'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip: '192.168.0.6'
+            ,mqtt_ip: '192.168.1.92'
             ,mqtt_port:'1883'
-            ,wp_ip:'192.168.0.6'
-            ,sas_ip:'192.168.0.6'//simpleAIServer
+            ,wp_ip:'192.168.1.92'
         }
     },
     dev: {
@@ -34,7 +33,6 @@ var _environments = {
             ,mqtt_ip:'172.17.0.1'
             ,mqtt_port:'1883'
             ,wp_ip:'172.17.0.1'
-            ,sas_ip:'172.17.0.1'//simpleAIServer
         }
     },
     test: {
@@ -49,7 +47,6 @@ var _environments = {
             ,mqtt_ip:'118.190.152.88'
             ,mqtt_port:'1883'
             ,wp_ip:'118.190.152.88'
-            ,sas_ip:'118.190.152.88'//simpleAIServer
         }
     },
     stage: {
@@ -64,7 +61,6 @@ var _environments = {
             ,mqtt_ip:'47.92.119.102'
             ,mqtt_port:'1883'
             ,wp_ip:'47.92.119.102'
-            ,sas_ip:'47.92.119.102'//simpleAIServer
         }
     }
 };
