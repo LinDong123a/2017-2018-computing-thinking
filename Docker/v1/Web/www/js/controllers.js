@@ -56,7 +56,7 @@ angular.module('app.controllers', [])
         {
           scope: $scope,
           animation: 'slide-in-up',
-          backdropClickToClose: false
+          backdropClickToClose: true
         }).then(function (modal) {
         $rootScope.modal_board_tenuki = modal;
       });
@@ -80,7 +80,7 @@ angular.module('app.controllers', [])
       // $rootScope.policysObj = {"完全随机":"random", "最佳着法":"best_move", "随机应变":"random_move", "蒙特卡洛模拟":"mcts"};
       $rootScope.policysObj = {"完全随机": "random", "最佳着法": "best_move", "随机应变": "random_move"};
       $rootScope.userTypes = {"机器玩家": 0, "人类玩家": 1};
-      $rootScope.gamerTypes = {"机器对战": 0, "人机对战": 1,"机人对战": 2,"人人对战": 3};
+      $rootScope.gamerTypes = {"机器对战": 0, "人机对战": 1,"人人对战": 3};
       $rootScope.boardTypes = ["wgo", "tenuki"];
       $rootScope.tag_vs = "_vs_";
       $rootScope.tag_play = "_play_";
@@ -594,9 +594,10 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         WpWikiService.createPost(function(response) {
           console.log('WpWikiService.createPost response:',response);
           // alert message
+            var htmlTemplate = "<a target='_blank' href='"+response.link+"'><div></p>"+response.link+"<p></div></a>";
           $ionicPopup.alert({
             title: '发布成功！',
-            template: response.link
+            template: htmlTemplate
           });
         });
       }
