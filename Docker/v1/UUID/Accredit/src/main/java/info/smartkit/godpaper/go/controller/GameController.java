@@ -2,6 +2,7 @@ package info.smartkit.godpaper.go.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.PlayMessage;
 import info.smartkit.godpaper.go.dto.SgfDto;
@@ -301,9 +302,9 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.GET, value="/q/{type}/{name}")
-        public void qCreateGamer(@PathVariable int type,@PathVariable String name)
-        {
-                service.createGamerByType(type,name);
+        public Gamer qCreateGamer(@PathVariable int type,@PathVariable String name) throws InterruptedException, DockerException, MqttException, DockerCertificateException {
+
+                return service.createGamerByType(type,name);
         }
 
 

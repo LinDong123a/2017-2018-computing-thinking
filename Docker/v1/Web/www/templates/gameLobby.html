@@ -19,13 +19,14 @@
           -->
             <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList" >
               <div id="gameTableDiv{{lobby.id}}">
-                {{lobby.id}}
+                <p>{{lobby.id}}</p>
               </div>
               <!--<i class="icon-right ion-android-laptop"></i>-->
               <!--
               <h3>ID：{{lobby.player1.id}} _VS_ {{lobby.player2.id}}</h3>
               -->
-              <h3>名称：{{lobby.player1.name}} _VS_ {{lobby.player2.name}}</h3>
+              <p>名称：{{lobby.name}}</p>
+              <p>详情：{{lobby.player1.name}} _VS_ {{lobby.player2.name}}</p>
               <p>类型：{{lobby.type}}</p>
               <p>等级：{{lobby.player1.rank}} _VS_ {{lobby.player2.rank}}</p>
               <p>策略：{{lobby.player1.policy}} _VS_ {{lobby.player2.policy}}</p>

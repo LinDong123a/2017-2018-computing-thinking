@@ -104,7 +104,7 @@ services:
       - "6001:6001"
   #   container_name: simpleAI
   web:
-    image: smartkit/godpaper-go-web
+    image: smartkit/godpaper-go-web:latest
     ports:
       - "80:80"
 volumes:
