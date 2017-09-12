@@ -5,6 +5,7 @@ import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerInfo;
 import com.spotify.docker.client.messages.ContainerStats;
 import info.smartkit.godpaper.go.pojo.Aier;
+import info.smartkit.godpaper.go.pojo.User;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ import java.io.IOException;
  * @see: https://github.com/spotify/docker-client/blob/master/docs/user_manual.m
  */
 public interface DockerService {
-        String runPlayer(String name) throws DockerException, InterruptedException, DockerCertificateException;
+        String runPlayer(User user) throws DockerException, InterruptedException, DockerCertificateException;
 //        String runAgent(String name,String hSgf) throws DockerException, InterruptedException, DockerCertificateException;
         String runScorer(String name) throws DockerException, InterruptedException;
         String trainAgent(Aier aier) throws DockerException, InterruptedException, DockerCertificateException, IOException;

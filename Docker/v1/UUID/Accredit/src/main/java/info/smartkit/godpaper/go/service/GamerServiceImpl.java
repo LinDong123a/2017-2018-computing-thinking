@@ -409,11 +409,11 @@ public class GamerServiceImpl implements GamerService {
                         updaterOne = this.createUserAndTenantRes(new User("AI_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
                                 ,AiPolicies.BEST_MOVE.getName()
                                 ,"180000_KGS_"
-                                ,UserTypes.AI.getIndex()),true);
+                                ,UserTypes.AI.getIndex()),true,true);
                         updaterTwo = this.createUserAndTenantRes(new User("AI_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
                                 ,AiPolicies.BEST_MOVE.getName()
                                 ,"180000_KGS_"
-                                ,UserTypes.AI.getIndex()),true);
+                                ,UserTypes.AI.getIndex()),true,true);
 
                 }
                 if (type==GameTypes.AI_VS_HUMAN.getIndex()||type==GameTypes.HUMAN_VS_AI.getIndex())
@@ -422,18 +422,18 @@ public class GamerServiceImpl implements GamerService {
                         updaterOne = this.createUserAndTenantRes(new User("AI_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
                                 ,AiPolicies.BEST_MOVE.getName()
                                 ,"180000_KGS_"
-                                ,UserTypes.AI.getIndex()),true);
+                                ,UserTypes.AI.getIndex()),true,false);
                         updaterTwo = this.createUserAndTenantRes(new User("HUMAN_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
-                                ,UserTypes.HUMAN.getIndex()),false);
+                                ,UserTypes.HUMAN.getIndex()),false,false);
 
                 }
                 if (type==GameTypes.HUMAN_VS_HUMAN.getIndex())
                 {
                         //create two Human players and get ready to play
                         updaterOne = this.createUserAndTenantRes(new User("HUMAN_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
-                        ,UserTypes.HUMAN.getIndex()),false);
+                        ,UserTypes.HUMAN.getIndex()),false,false);
                         updaterTwo = this.createUserAndTenantRes(new User("HUMAN_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
-                                ,UserTypes.HUMAN.getIndex()),false);
+                                ,UserTypes.HUMAN.getIndex()),false,false);
 
                 }
                 //then pair the game.
@@ -445,23 +445,26 @@ public class GamerServiceImpl implements GamerService {
                 createResult = pairedGames.get(0);
                 //update name
                 createResult.setName(name);
+                createResult.setType(GameTypes.values()[type].toString());
                 return gamerRepository.save(createResult);
 
         }
 
-        private User createUserAndTenantRes(User user,boolean tenanting) throws InterruptedException, DockerException, MqttException, DockerCertificateException {
+        private User createUserAndTenantRes(User user,boolean tenanting,boolean dockering) throws InterruptedException, DockerException, MqttException, DockerCertificateException {
                 User untenantedOne = userRepository.save(user);
                 //tenant resources.
+                if(tenanting) {
+                        userService.tenant(user);
+                }
+                if(dockering){
+                        //run AI player docker
+                        dockerService.runPlayer(user);
+                        //wait for docker execution.
+                        Thread.sleep(15000);
+                }
                 //update one status
                 untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
                 User updater = userRepository.save(untenantedOne);
-                if(tenanting) {
-                        userService.tenant(updater);
-                        //run AI player
-                        dockerService.runPlayer(updater.getName());
-                        //wait for tenant execution.
-                        Thread.sleep(15000);
-                }
                 return updater;
         }
 }

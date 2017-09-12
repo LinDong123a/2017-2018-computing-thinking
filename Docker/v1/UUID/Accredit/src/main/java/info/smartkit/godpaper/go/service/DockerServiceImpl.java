@@ -9,8 +9,10 @@ import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.pojo.Aier;
 import info.smartkit.godpaper.go.pojo.Gamer;
+import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.repository.GamerRepository;
+import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.SgfUtil;
@@ -42,6 +44,7 @@ public class DockerServiceImpl implements DockerService{
         @Autowired ApiProperties apiProperties;
         @Autowired GamerRepository gamerRepository;
         @Autowired GamerService gamerService;
+        @Autowired UserRepository userRepository;
 
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
@@ -53,7 +56,12 @@ public class DockerServiceImpl implements DockerService{
         public DockerServiceImpl() throws DockerCertificateException {
         }
 
-        @Override public String runPlayer(String name) throws DockerException, InterruptedException, DockerCertificateException {
+        @Override public String runPlayer(User user) throws DockerException, InterruptedException, DockerCertificateException {
+                //update user status
+                User updater = userRepository.findOne(user.getId());
+                updater.setStatus(UserStatus.unTENANTED.getIndex()); //for docker player tenanting.
+                User updated = userRepository.save(updater);
+                LOG.info("updated:"+updated.toString());
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
 
 //                final DockerClient docker = DefaultDockerClient.builder()
@@ -85,7 +93,7 @@ public class DockerServiceImpl implements DockerService{
                         .env(envStrings)
                         .hostConfig(hostConfig)
                         .build();
-                final ContainerCreation creation = dockerClient.createContainer(config, name);
+                final ContainerCreation creation = dockerClient.createContainer(config, user.getId());
                 final String id = creation.id();
 
                 // Start container

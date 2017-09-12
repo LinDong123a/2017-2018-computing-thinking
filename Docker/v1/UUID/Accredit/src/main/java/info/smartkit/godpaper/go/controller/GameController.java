@@ -65,6 +65,7 @@ public class GameController {
         @Autowired
         MqttProperties mqttProperties;
         @Autowired ChainCodeProperties chainCodeProperties;
+        @Autowired ApiProperties apiProperties;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
@@ -188,12 +189,12 @@ public class GameController {
         public SseEmitter sseGetSgfById(@PathVariable String gamerId,HttpSession session) {
 
                 SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-
+//TODO:thread stop business logical.
                 Thread t1 = new Thread(() ->{
                         try {
                                 int i = 0;
                                 while(++i<=10000){
-                                        Thread.sleep(5000);
+                                        Thread.sleep(apiProperties.getSse());
                                         System.out.println("SSE sgf Sending....");
                                         try{
                                                 Gamer gamer = gamerRepository.findOne(gamerId);
