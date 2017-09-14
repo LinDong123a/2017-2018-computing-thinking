@@ -146,12 +146,13 @@ angular.module('app.controllers', [])
         });
       };
       $rootScope.iRefreshOneTable = function () {
-        $rootScope.intervalRefresh = !$rootScope.intervalRefresh;
-        if ($rootScope.intervalRefresh) {
-          $rootScope.refreshTablePromise = $interval(intervalRefreshTable, 1000);
-        } else {
-          $interval.cancel($rootScope.refreshTablePromise);
-        }
+        // $rootScope.intervalRefresh = !$rootScope.intervalRefresh;
+        // if ($rootScope.intervalRefresh) {
+        //   $rootScope.refreshTablePromise = $interval(intervalRefreshTable, 1000);
+        // } else {
+        //   $interval.cancel($rootScope.refreshTablePromise);
+        // }
+          $rootScope.getOneTable('wgo');
       };
 
       $rootScope.updateEnvInfo = function () {
@@ -237,7 +238,7 @@ angular.module('app.controllers', [])
         // var client = Stomp.client( "ws://"+envInfo.mqtt.host+":61614/stomp", "v11.stomp" );
         // client.connect( "", "",
         //   function() {
-        //   //FIXME:max of topiv name string length.
+        //   //FIXME:max of topic name string length.
         //     client.subscribe($gamerInfo.topic,
         //       function( message ) {
         //         alert( message );
@@ -414,10 +415,10 @@ angular.module('app.controllers', [])
       }
   }])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location','$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location','$ionicPopup','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location, $ionicPopup) {
+function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location, $ionicPopup,Enum) {
   //
   //Dynamic host modification
   // envInfo.mqtt.host = $location.host();
@@ -426,7 +427,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   // envInfo.mqtt.url = envInfo.mqtt.host+envInfo.mqtt.port;
   //
   $scope.envInfo = envInfo;
-  $scope.anewGamer = {name: null, type: null};
+  $scope.anewGamer = {name:Enum.getUUID(6), type: null};
   //GameStatus:STANDBY("standby", 0), PAIRED("paired", 1), PLAYING("playing", 2), ENDED("ended", 3),SAVED("saved", 4);
   //UserStatus:unTENANTED("untenanted", 0), STANDBY("standby", 2), PLAYING("playing", 3),TENANTED("tenanted",1);
   $scope.pairAll = function () {
@@ -528,7 +529,9 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     });
   }
   $scope.addGamer = function () {
+      $scope.anewGamer = {name:Enum.getUUID(6), type: null};
       $rootScope.modal_gamer_add.show();
+      $rootScope.placeholder_gamer = $scope.placeholder_aier = Enum.getTimestamp();
   }
   $scope.qCreateGamer = function () {
     console.log("createGamer...");

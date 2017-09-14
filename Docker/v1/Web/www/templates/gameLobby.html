@@ -1,7 +1,9 @@
 <ion-view title="大厅" id="page2">
   <ion-nav-buttons side="right">
+    <!--
     <button class="button ion-android-send" ng-show="false" ng-click="rPlayAll()">随机多局比赛
     </button>
+    -->
     <button class="button ion-ios-game-controller-b" ng-click="addGamer()">创建
     </button>
     <button class="button ion-android-people" ng-click="pairAll()">配对
@@ -18,9 +20,6 @@
           <div class="flex-container wrap">
           -->
             <ion-item class="item-avatar item-icon-left" id="gameLobby-list-item" ng-repeat="lobby in lobbyList" >
-              <div id="gameTableDiv{{lobby.id}}">
-                <p>{{lobby.id}}</p>
-              </div>
               <!--<i class="icon-right ion-android-laptop"></i>-->
               <!--
               <h3>ID：{{lobby.player1.id}} _VS_ {{lobby.player2.id}}</h3>

@@ -13,7 +13,7 @@
             </select>
             </label>
             <label class="item item-input item-label">
-                <span class="input-label">名称:</span> <input type="text" placeholder="" ng-model="anewGamer.name">
+                <span class="input-label">名称:</span> <input type="text" placeholder="" ng-model="anewGamer.name" required>
             </label>
             <button  class="button button-stable  button-block icon-left ion-ios-checkmark-empty"
                      ng-disabled="anewGamer.name==null"  ng-click="qCreateGamer()">确定</button>
