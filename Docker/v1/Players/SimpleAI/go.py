@@ -198,9 +198,9 @@ class LibertyTracker():
 
         self._handle_captures(captured_stones)
 
-        # suicide is illegal
-        if len(new_group.liberties) == 0:
-            raise IllegalMove
+        #TODO: suicide is illegal
+        # if len(new_group.liberties) == 0:
+            # raise IllegalMove
 
         return captured_stones
 
@@ -331,8 +331,8 @@ class Position():
             return False
         if move == self.ko:
             return False
-        if self.is_move_suicidal(move):
-            return False
+        if self.is_move_suicidal(move):#TODO:only for suicidal move raise illigal.
+            return True
 
         return True
 
