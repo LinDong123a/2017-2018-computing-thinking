@@ -56,7 +56,7 @@ angular.module('app.controllers', [])
         {
           scope: $scope,
           animation: 'slide-in-up',
-          backdropClickToClose: true
+          backdropClickToClose: false
         }).then(function (modal) {
         $rootScope.modal_board_tenuki = modal;
       });
@@ -176,6 +176,16 @@ angular.module('app.controllers', [])
           $rootScope.aierList = data;
         });
       }
+      //
+      $rootScope.getAllGames = function(){
+          GameService.getAll(function(data){
+              console.log("GameService.getAll:",  data);
+              $scope.lobbyList  = data;
+              console.log("$scope.lobbyList:",  $scope.lobbyList);
+              //
+          });
+      };
+      //
       $rootScope.score_tenuki = function ($event) {
         var scoreObj = $rootScope.curTenukiGame.score();
         console.log("$rootScope.curTenukiGame.score():", scoreObj);
@@ -189,6 +199,7 @@ angular.module('app.controllers', [])
         GameService.curGamerStatus = 3;
         GameService.updateStatusById(function (data) {
           console.log("GameService.updateStatusById:", data);
+            $rootScope.getAllGames();//refresh.
         });
       }
       //MQTT related
@@ -336,6 +347,11 @@ angular.module('app.controllers', [])
           $ionicLoading.show();//waiting
         }
         var boardElement = document.querySelector(".tenuki-board");
+        //clear history.
+          while (boardElement.firstChild) {
+              boardElement.removeChild(boardElement.firstChild);
+          }
+
         // console.log("boardElement:",boardElement);
         var game = new tenuki.Game(boardElement);
         // console.log("boardElement game:",game);
@@ -505,14 +521,6 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       console.log("$scope.lobbyList:",  $scope.lobbyList);
     });
   }
-  $scope.getAll = function(){
-    GameService.getAll(function(data){
-      console.log("GameService.getAll:",  data);
-      $scope.lobbyList  = data;
-      console.log("$scope.lobbyList:",  $scope.lobbyList);
-      //
-    });
-  }
   $scope.toGameTableView  = function($gid,bType){
     console.log("$scope.toGameTableView called.");
     $rootScope.curGamerId = $gid;
@@ -525,7 +533,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     GameService.curGamerId = $gamer.id;
     GameService.deleteOne(function(data){
       console.log("GameService.deleteOne:",  data);
-      $scope.getAll();//refresh.
+        $rootScope.getAllGames();//refresh.
     });
   }
   $scope.addGamer = function () {
@@ -541,11 +549,11 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       GameService.qGamerName = $scope.anewGamer.name;
       GameService.qCreateGamer(function(data){
           console.log("GameService.qCreateGamer:",  data);
-          $scope.getAll();//refresh.
+          $rootScope.getAllGames();//refresh.
       });
   }
   //default calls
-  $scope.getAll();
+    $rootScope.getAllGames();//refresh.
 
 }])
 
