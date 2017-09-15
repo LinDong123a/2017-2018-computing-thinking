@@ -102,7 +102,7 @@ services:
     image: smartkit/godpaper-go-ai-tensorflow:6001
     ports:
       - "6001:6001"
-  #   container_name: simpleAI
+  #  Web
   # web:
   #   image: smartkit/godpaper-go-web
   #   ports:

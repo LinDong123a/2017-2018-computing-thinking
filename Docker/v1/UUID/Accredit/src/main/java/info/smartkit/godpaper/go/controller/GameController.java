@@ -38,9 +38,8 @@ import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeoutException;
 
 import static org.bouncycastle.cms.RecipientId.password;
@@ -140,6 +139,10 @@ public class GameController {
 //                                stompService.unsubscribe();
 //                        }
 //                }
+                Thread t1 = sseEmitterThreads.get(gamerId);
+                if(t1.isAlive()){
+                        t1.interrupt();
+                }
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
         public void deleteAll() throws MqttException, StompException {
@@ -185,11 +188,14 @@ public class GameController {
                 service.randomPlaySome(gamerNum);
         }
 
+        private static Map<String, Thread> sseEmitterThreads = new Hashtable<String, Thread>();
+//        private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
         @RequestMapping(method = RequestMethod.GET, value="/sse/sgf/{gamerId}")
-        public SseEmitter sseGetSgfById(@PathVariable String gamerId,HttpSession session) {
+        public SseEmitter sseSgfById(@PathVariable String gamerId,HttpSession session) {
 
                 SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-//TODO:thread stop business logical.
+                List<SseEmitter> deadEmitters = new ArrayList<>();
+                //
                 Thread t1 = new Thread(() ->{
                         try {
                                 int i = 0;
@@ -206,16 +212,29 @@ public class GameController {
                                         }catch(ClientAbortException cae){
                                                 cae.printStackTrace();
                                                 i = 10000;
+//                                                deadEmitters.add(emitter);
                                         }
                                 }
+//                                this.emitters.remove(deadEmitters);
                                 emitter.complete();
                         } catch (IOException | InterruptedException e) {
                                 e.printStackTrace();
                         }
                 });
                 t1.start();
+                sseEmitterThreads.put(gamerId,t1);
 
                 return emitter;
+        }
+
+        @RequestMapping(method = RequestMethod.DELETE, value="/sse/sgf/{gamerId}")
+        public boolean sseSgfById(@PathVariable String gamerId) {
+                //thread stop business logical.
+                Thread t1 = sseEmitterThreads.get(gamerId);
+                if(t1.isAlive()){
+                        t1.interrupt();
+                }
+                return t1.isInterrupted();
         }
 
         @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")

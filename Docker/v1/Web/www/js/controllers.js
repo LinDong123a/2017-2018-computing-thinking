@@ -200,6 +200,12 @@ angular.module('app.controllers', [])
         GameService.updateStatusById(function (data) {
           console.log("GameService.updateStatusById:", data);
             $rootScope.getAllGames();//refresh.
+           //
+            GameService.endSseGame(function (data) {
+                console.log("GameService.endSseGame result:", data);
+                //TODO:notify opponent player(close and refresh).
+                //@see:https://github.com/mrniko/netty-socketio-demo
+            });
         });
       }
       //MQTT related
@@ -321,6 +327,9 @@ angular.module('app.controllers', [])
               $ionicLoading.hide();
               $rootScope.playAt_tenuki(lastMove);
             }
+          }
+          if (event.eventPhase == EventSource.CLOSED) {
+              console.debug("Event Source Closed.");
           }
         };
       }
@@ -460,7 +469,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     GameService.playOne(function(data){
       console.log("GameService.playOne:",  data);
       //then refresh
-      $scope.getAll();
+      $rootScope.getAllGames();
     });
   }
   $scope.playAll = function(){
@@ -468,7 +477,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     GameService.playAll(function(data){
       console.log("GameService.playAll:",  data);
       //then refresh
-      $scope.getAll();
+        $rootScope.getAllGames();
     });
   }
   $scope.rPlayAll = function(){
@@ -487,7 +496,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
         GameService.rPlayAll(function(data){
           console.log("GameService.rPlayAll:",  data);
           //then refresh
-          $scope.getAll();
+            $rootScope.getAllGames();
         });
       }
       //

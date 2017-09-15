@@ -147,11 +147,11 @@ angular.module('app.services', [])
         });
       }
       ,
-      getSgfStr: function(callback){
-        $http.get(envInfo.api.url+"/game/sse/sgf/"+this.curGamerId).success(function(data) {
-          console.log("sse gamer sgf:",data);
-          callback(data);
-        });
+      endSseGame: function(callback){
+          $http.delete(envInfo.api.url+"/game/sse/sgf/"+this.curGamerId).success(function(data) {
+              // console.log("end sse gamer result:",data);
+              callback(data);
+          });
       }
       ,
       tenantUser:function(callback){
