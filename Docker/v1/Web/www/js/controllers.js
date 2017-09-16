@@ -314,6 +314,20 @@ angular.module('app.controllers', [])
         var n_y = $rootScope.go_string.indexOf(letter_y);
         $rootScope.curTenukiGame.playAt(n_x, n_y);
       }
+      //SocketIO
+        var socket =  io.connect('http://192.168.0.6:9092');
+
+        socket.on('connect', function() {
+            console.log("SocketIO client has connected to the server");
+        });
+
+        // socket.on('chatevent', function(data) {
+        //     output('<span class="username-msg">' + data.userName + ':</span> ' + data.message);
+        // });
+        //
+        // socket.on('disconnect', function() {
+        //     output('<span class="disconnect-msg">The client has disconnected!</span>');
+        // });
         //SSE
       var eventSource = null;
       $rootScope.connectSSE = function ($gamerInfo,$jigo) {

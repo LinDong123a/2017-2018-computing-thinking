@@ -12,10 +12,7 @@ import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
-import info.smartkit.godpaper.go.service.DockerService;
-import info.smartkit.godpaper.go.service.GamerService;
-import info.smartkit.godpaper.go.service.MqttService;
-import info.smartkit.godpaper.go.service.StompService;
+import info.smartkit.godpaper.go.service.*;
 import info.smartkit.godpaper.go.settings.*;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.http.NameValuePair;
@@ -65,6 +62,8 @@ public class GameController {
         MqttProperties mqttProperties;
         @Autowired ChainCodeProperties chainCodeProperties;
         @Autowired ApiProperties apiProperties;
+
+        @Autowired SocketIoService socketIoService;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
@@ -191,7 +190,7 @@ public class GameController {
         private static Map<String, Thread> sseEmitterThreads = new Hashtable<String, Thread>();
 //        private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
         @RequestMapping(method = RequestMethod.GET, value="/sse/sgf/{gamerId}")
-        public SseEmitter sseSgfById(@PathVariable String gamerId,HttpSession session) {
+        public SseEmitter getSseSgfById(@PathVariable String gamerId,HttpSession session) {
 
                 SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
                 List<SseEmitter> deadEmitters = new ArrayList<>();
@@ -227,14 +226,25 @@ public class GameController {
                 return emitter;
         }
 
+
+        @RequestMapping(method = RequestMethod.GET, value="/sio/sgf/{gamerId}")
+        public void getSioSgfById(@PathVariable String gamerId) {
+                socketIoService.connect(gamerId);
+        }
+
         @RequestMapping(method = RequestMethod.DELETE, value="/sse/sgf/{gamerId}")
-        public boolean sseSgfById(@PathVariable String gamerId) {
+        public boolean delSseSgfById(@PathVariable String gamerId) {
                 //thread stop business logical.
                 Thread t1 = sseEmitterThreads.get(gamerId);
                 if(t1.isAlive()){
                         t1.interrupt();
                 }
                 return t1.isInterrupted();
+        }
+
+        @RequestMapping(method = RequestMethod.DELETE, value="/sio/sgf/{gamerId}")
+        public void delSioSgfById(@PathVariable String gamerId) {
+                socketIoService.disconnect(gamerId);
         }
 
         @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")

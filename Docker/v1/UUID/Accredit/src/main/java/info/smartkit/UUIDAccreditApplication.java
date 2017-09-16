@@ -1,7 +1,10 @@
 package info.smartkit;
 
+import com.corundumstudio.socketio.Configuration;
+import com.corundumstudio.socketio.SocketIOServer;
 import info.smartkit.godpaper.go.UUIDAccreditChainCode;
 import info.smartkit.godpaper.go.service.ChainCodeService;
+import info.smartkit.godpaper.go.service.SocketIoService;
 import info.smartkit.godpaper.go.settings.ChainCodeProperties;
 import info.smartkit.godpaper.go.settings.ChainCodeVariables;
 import org.apache.log4j.LogManager;
@@ -25,7 +28,8 @@ public class UUIDAccreditApplication{
 	private static Logger LOG = LogManager.getLogger(UUIDAccreditApplication.class);
 
 	@Autowired ChainCodeProperties chainCodeProperties;
-	public static void main(String[] args) {
+	@Autowired SocketIoService socketIoService;
+	public static void main(String[] args) throws InterruptedException {
 		System.setProperty("https.protocols", "TLSv1.1");
 		SpringApplication.run(UUIDAccreditApplication.class, args);
 //		ApplicationContext context = new AnnotationConfigApplicationContext( StompConfig.class );
@@ -36,6 +40,14 @@ public class UUIDAccreditApplication{
 			new UUIDAccreditChainCode().start(null);
 		}
 		//ChainCode deploy default?
+		//Testing code...
+		Configuration config = new Configuration();
+		config.setHostname("192.168.0.6");
+		config.setPort(9092);
+		final SocketIOServer server = new SocketIOServer(config);
+		server.start();
+		Thread.sleep(Integer.MAX_VALUE);
+		server.stop();
 	}
 
 //	@Value("${db_rebuild}")private Boolean db_rebuildMongoData;
