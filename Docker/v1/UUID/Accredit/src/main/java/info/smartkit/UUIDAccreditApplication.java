@@ -1,16 +1,19 @@
 package info.smartkit;
 
+import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.Configuration;
+import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.listener.DataListener;
 import info.smartkit.godpaper.go.UUIDAccreditChainCode;
-import info.smartkit.godpaper.go.service.ChainCodeService;
+import info.smartkit.godpaper.go.dto.PlayMessage;
 import info.smartkit.godpaper.go.service.SocketIoService;
 import info.smartkit.godpaper.go.settings.ChainCodeProperties;
 import info.smartkit.godpaper.go.settings.ChainCodeVariables;
+import info.smartkit.godpaper.go.settings.SocketIoVariables;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -40,14 +43,21 @@ public class UUIDAccreditApplication{
 			new UUIDAccreditChainCode().start(null);
 		}
 		//ChainCode deploy default?
-		//Testing code...
+		//SocketIO...
 		Configuration config = new Configuration();
-		config.setHostname("192.168.0.6");
-		config.setPort(9092);
-		final SocketIOServer server = new SocketIOServer(config);
-		server.start();
+		config.setHostname(SocketIoVariables.ip);
+		config.setPort(SocketIoVariables.port);
+		SocketIoVariables.server = new SocketIOServer(config);
+		SocketIoVariables.server.addEventListener("playEvent", PlayMessage.class, new DataListener<PlayMessage>() {
+			@Override
+			public void onData(SocketIOClient client, PlayMessage data, AckRequest ackRequest) {
+				SocketIoVariables.server.getBroadcastOperations().sendEvent("playEvent", data);
+			}
+		});
+
+		SocketIoVariables.server.start();
 		Thread.sleep(Integer.MAX_VALUE);
-		server.stop();
+		SocketIoVariables.server.stop();
 	}
 
 //	@Value("${db_rebuild}")private Boolean db_rebuildMongoData;

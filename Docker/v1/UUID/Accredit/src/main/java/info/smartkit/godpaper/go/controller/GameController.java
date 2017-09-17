@@ -227,9 +227,9 @@ public class GameController {
         }
 
 
-        @RequestMapping(method = RequestMethod.GET, value="/sio/sgf/{gamerId}")
-        public void getSioSgfById(@PathVariable String gamerId) {
-                socketIoService.connect(gamerId);
+        @RequestMapping(method = RequestMethod.GET, value="/sio/sgf/{gamerId}/{playerId}")
+        public void joinSioSgfById(@PathVariable String gamerId,@PathVariable String playerId) {
+                socketIoService.join(UUID.fromString(playerId),gamerId);
         }
 
         @RequestMapping(method = RequestMethod.DELETE, value="/sse/sgf/{gamerId}")
@@ -242,14 +242,22 @@ public class GameController {
                 return t1.isInterrupted();
         }
 
-        @RequestMapping(method = RequestMethod.DELETE, value="/sio/sgf/{gamerId}")
-        public void delSioSgfById(@PathVariable String gamerId) {
-                socketIoService.disconnect(gamerId);
+        @RequestMapping(method = RequestMethod.DELETE, value="/sio/sgf/{gamerId}/{playerId}")
+        public void leaveSioSgfById(@PathVariable String gamerId,@PathVariable String playerId) {
+                socketIoService.leave(UUID.fromString(playerId),gamerId);
         }
 
-        @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")
-        public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId) {
+        @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}/{playerId}")
+        public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId, @PathVariable String playerId) {
                 SgfObj sgfObjUpdate = updateSgfObj(sgfObj.getBody(), gamerId);
+                //SocketIO broadcasting
+                PlayMessage playMessage = new PlayMessage();
+                playMessage.setGame_id(gamerId);
+                playMessage.setUser_id(playerId);
+                playMessage.setMethod("play");
+                playMessage.setMsg(sgfObj.getBody());
+//                socketIoService.emit(playMessage.getMethod(),playMessage);
+                SocketIoVariables.server.getBroadcastOperations().sendEvent("playEvent", playMessage);
                 return sgfObjUpdate;
         }
 

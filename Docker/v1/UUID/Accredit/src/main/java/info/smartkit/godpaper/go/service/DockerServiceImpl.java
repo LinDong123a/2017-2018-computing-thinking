@@ -1,6 +1,5 @@
 package info.smartkit.godpaper.go.service;
 
-import com.shekhargulati.reactivex.docker.client.RxDockerClient;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
@@ -8,12 +7,10 @@ import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.pojo.Aier;
-import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
-import info.smartkit.godpaper.go.service.GamerService;
 import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import info.smartkit.godpaper.go.utils.StringUtil;
@@ -37,7 +34,8 @@ import java.util.List;
 @Service
 public class DockerServiceImpl implements DockerService{
 
-        @Autowired AIProperties aiProperties;
+        @Autowired
+        AiProperties aiProperties;
         @Autowired MqttProperties mqttProperties;
         @Autowired ServerProperties serverProperties;
         @Autowired AierRepository aierRepository;

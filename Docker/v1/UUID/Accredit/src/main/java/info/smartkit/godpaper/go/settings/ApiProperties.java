@@ -17,6 +17,7 @@ public class ApiProperties {
 
         public void setIp(String ip) {
                 this.ip = ip;
+                SocketIoVariables.ip = ip;
         }
 
         public String getUrl() {

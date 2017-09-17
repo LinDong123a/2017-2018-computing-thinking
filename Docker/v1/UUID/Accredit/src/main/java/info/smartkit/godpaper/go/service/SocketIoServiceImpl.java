@@ -5,8 +5,11 @@ import com.corundumstudio.socketio.listener.*;
 import com.corundumstudio.socketio.*;
 import info.smartkit.godpaper.go.dto.PlayMessage;
 import info.smartkit.godpaper.go.settings.ApiProperties;
+import info.smartkit.godpaper.go.settings.SocketIoVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Created by smartkit on 16/09/2017.
@@ -14,41 +17,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class SocketIoServiceImpl implements SocketIoService{
 
-        @Autowired ApiProperties apiProperties;
-        private Configuration config = new Configuration();
-        SocketIOServer socketIOServer;
-
-        @Override public void connect(String clientId) {
-//
-                config.setHostname(apiProperties.getIp());
-                config.setPort(9092);
-                config.setContext(clientId);
-                socketIOServer = new SocketIOServer(config);
-                socketIOServer.start();
+        @Override
+        public void join(UUID clientId, String roomId) {
+                SocketIoVariables.server.getClient(clientId).joinRoom(roomId);
         }
 
-        @Override public void subscribe(String topic) {
-                //
-                socketIOServer.addEventListener(topic, PlayMessage.class, new DataListener<PlayMessage>() {
-                        @Override
-                        public void onData(SocketIOClient client, PlayMessage data, AckRequest ackRequest) {
-                                // broadcast messages to all clients
-                                socketIOServer.getBroadcastOperations().sendEvent(topic, data);
-                        }
-                });
+        @Override
+        public void leave(UUID clientId,String roomId) {
+                SocketIoVariables.server.getClient(clientId).leaveRoom(roomId);
         }
 
-        @Override public void publish(String topic, String content, int qos) {
-                // broadcast messages to all clients
-                socketIOServer.getBroadcastOperations().sendEvent(topic, content);
+        @Override
+        public void emitIn(String roomId,String someFunc, PlayMessage playMessage) {
+                SocketIoVariables.server.getRoomOperations(roomId).sendEvent(someFunc,playMessage);
+
         }
 
-        @Override public void disconnect(String clientId) {
-//        TODO:socketIOServer.getClient(clientId).
-                socketIOServer.stop();
+        @Override
+        public void emitTo(UUID clientId,String someFunc, PlayMessage playMessage) {
+                SocketIoVariables.server.getClient(clientId).sendEvent(someFunc,playMessage);
         }
 
-        @Override public void unsubscribe(String topic) {
-// TODO:               socketIOServer.(topic);
+        @Override
+        public void emit(String someFunc, PlayMessage playMessage) {
+                SocketIoVariables.server.getBroadcastOperations().sendEvent(someFunc,playMessage);
         }
 }

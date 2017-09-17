@@ -89,7 +89,7 @@ angular.module('app.controllers', [])
       $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
       $rootScope.score_tenuki_black = 0;
       $rootScope.score_tenuki_white = 0;
-      $rootScope.gamerInfo = null;
+      $rootScope.gamerInfo = {};
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -207,6 +207,7 @@ angular.module('app.controllers', [])
                 //@see:https://github.com/mrniko/netty-socketio-demo
             });
         });
+        $rootScope.socketIO.leave($rootScope.gamerInfo.id);
       }
       //MQTT related
       //connect
@@ -315,15 +316,36 @@ angular.module('app.controllers', [])
         $rootScope.curTenukiGame.playAt(n_x, n_y);
       }
       //SocketIO
-        var socket =  io.connect('http://192.168.0.6:9092');
+        $rootScope.socketIO =  io.connect('http://'+envInfo.api.host+":9092");
+        $rootScope.socketIO.on('connect', function() {
+            // console.log("SocketIO:",io);
+            console.log("SocketIO web client has connected to the server,$rootScope.socketIO:",$rootScope.socketIO);
 
-        socket.on('connect', function() {
-            console.log("SocketIO client has connected to the server");
+            $rootScope.socketIO.on('playEvent', function(data) {
+                console.log( "playEvent:",data);
+                console.log("data.method:",data.method);
+                switch(data.method){
+                    case 'join':
+                    //
+                    $rootScope.gamerInfo.id = data.game_id;
+
+                    case 'play':
+                    //
+
+                    case 'leave':
+                    //
+
+                    default:
+                      break;
+                }
+            });
+            // //for testing...
+            // var jsonObject = {game_id: 'userName',
+            //     user_id:"user_id",method:'method',
+            //     msg: 'message'};
+            // $rootScope.socketIO.emit('playEvent', jsonObject);
         });
-
-        // socket.on('chatevent', function(data) {
-        //     output('<span class="username-msg">' + data.userName + ':</span> ' + data.message);
-        // });
+        //
         //
         // socket.on('disconnect', function() {
         //     output('<span class="disconnect-msg">The client has disconnected!</span>');
@@ -388,7 +410,7 @@ angular.module('app.controllers', [])
         //
         $rootScope.curTenukiGame = game;
         if($gamerInfo.type=='HUMAN_VS_HUMAN') {
-          $rootScope.connectSSE($gamerInfo, $jigo);
+          // $rootScope.connectSSE($gamerInfo, $jigo);
         }
         //
         game.callbacks.postRender = function (game) {
@@ -422,6 +444,7 @@ angular.module('app.controllers', [])
             //update sgf object if needed.
             GameService.curGamerId = $gamerInfo.id;
             GameService.curSgfObj = {header: null, body: sMoveInfo};
+            GameService.curPlayerId  = $playerId;
             GameService.updateSgfObj(function (data) {
               //
               console.log("GameService.updateSgfObj:", data);
@@ -535,7 +558,12 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     //   //then refresh
     //   $scope.getAll();
     // });
-
+    //socket.join('some room');
+      //for testing...
+      var playMessage = {game_id: $gamerInfo.id,
+          user_id:$playerId,method:'join',
+          msg: $jigo};
+      $rootScope.socketIO.emit('playEvent', playMessage);
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){

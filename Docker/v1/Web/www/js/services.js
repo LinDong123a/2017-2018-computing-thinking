@@ -81,6 +81,7 @@ angular.module('app.services', [])
       curGamerStatus:0,
       qGamerType:0,
       qGamerName:"",
+        curPlayerId:null,
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -162,7 +163,7 @@ angular.module('app.services', [])
       }
       ,
       updateSgfObj: function(callback){
-        $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId,this.curSgfObj).success(function(data) {
+        $http.put(envInfo.api.url+"/game/sgf/"+this.curGamerId+"/"+this.curPlayerId,this.curSgfObj).success(function(data) {
           // console.log("updateSgfObj:",data);
           callback(data);
         });

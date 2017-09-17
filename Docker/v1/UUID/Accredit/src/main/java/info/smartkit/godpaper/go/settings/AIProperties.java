@@ -14,8 +14,8 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "ai")
-public class AIProperties {
-        private static Logger LOG = LogManager.getLogger(AIProperties.class);
+public class AiProperties {
+        private static Logger LOG = LogManager.getLogger(AiProperties.class);
 
 
         public List<String> getPolicys() {
