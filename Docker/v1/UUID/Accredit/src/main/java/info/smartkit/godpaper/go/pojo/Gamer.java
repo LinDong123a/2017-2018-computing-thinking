@@ -107,6 +107,10 @@ public class Gamer {
                 return UserTypes.values()[player1.getType()].getName()+"_VS_"+UserTypes.values()[player2.getType()].getName();
         }
 
+        public User getPlayer(String userId) {
+                return (this.getPlayer1().getId()==userId)?this.getPlayer1():this.getPlayer2();
+        }
+
         public void setType(String type) {
                 this.type = type;
         }

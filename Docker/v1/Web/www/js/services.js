@@ -62,7 +62,6 @@ angular.module('app.services', [])
           callback(data);
         })
       }
-
     }
   }])
 
@@ -81,7 +80,8 @@ angular.module('app.services', [])
       curGamerStatus:0,
       qGamerType:0,
       qGamerName:"",
-        curPlayerId:null,
+      curPlayerId:null,
+      curPlayerStatus:-1,
       pairAll: function(callback){
         $http.get(envInfo.api.url+"/game/pair").success(function(data) {
           console.log("paired gamers:",data);
@@ -195,6 +195,13 @@ angular.module('app.services', [])
         // $http.post(envInfo.sas.host+":6001/",JSON.stringify(this.curPlayMessage)).success(function(data) {
           // console.log("vsSimpleAI success:",data);
           callback(data);
+        });
+      }
+      ,
+      updateUserStatusById: function(callback){
+        $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curPlayerStatus+"/"+this.curPlayerId).success(function(data) {
+            console.log("curPlayerStatus:",data);
+            callback(data);
         });
       }
     };
@@ -356,6 +363,12 @@ angular.module('app.services', [])
           name: "HUMANvsHUMAN",
           index: 2
         }
+      ]
+      ,userStatus:[
+          {name:"standby", index:0}
+          ,{name:"untenanted",index: 1}
+          ,{name:"tenanted",index:2}
+          ,{name:"playing",index: 3}
       ]
       , getUUID: function (len) {
         // http://www.ietf.org/rfc/rfc4122.txt

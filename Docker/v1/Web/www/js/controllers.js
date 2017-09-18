@@ -89,7 +89,8 @@ angular.module('app.controllers', [])
       $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
       $rootScope.score_tenuki_black = 0;
       $rootScope.score_tenuki_white = 0;
-      $rootScope.gamerInfo = {};
+      $rootScope.gamerInfo = {id:"",title:""};
+        //UserStatus unTENANTED("untenanted", 1), STANDBY("standby", 0), PLAYING("playing", 3),TENANTED("tenanted",2);
       // store the interval promise
       var moveIndex = 0;
       var player = null;
@@ -327,13 +328,31 @@ angular.module('app.controllers', [])
                 switch(data.method){
                     case 'join':
                     //
-                    $rootScope.gamerInfo.id = data.game_id;
-
+                    $rootScope.gamerInfo.id += data.game_id;
+                    //update player status.
+                        GameService.curGamerId = data.game_id;
+                    GameService.curPlayerId = data.user_id;
+                    GameService.curPlayerStatus = Enum.userStatus[3].index;
+                    // console.log(Enum.userStatus,GameService.curPlayerStatus,Enum.userStatus[3]);
+                    GameService.updateUserStatusById(function (data) {
+                        console.log("GameService.updateUserStatusById:", data);
+                        $rootScope.getAllGames();//refresh.
+                    });
                     case 'play':
                     //
 
                     case 'leave':
                     //
+                    $rootScope.gamerInfo.id -= data.game_id;
+                    //update player status.
+                        GameService.curGamerId = data.game_id;
+                    GameService.curUserId = data.user_id;
+                    GameService.curPlayerStatus = Enum.userStatus[0].index;
+                    console.log("UserService:",UserService);
+                    GameService.updateUserStatusById(function (data) {
+                        console.log("GameService.updateUserStatusById:", data);
+                        $rootScope.getAllGames();//refresh.
+                    });
 
                     default:
                       break;

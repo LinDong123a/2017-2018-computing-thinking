@@ -274,6 +274,13 @@ public class GameController {
                 return service.saveSgf(updater,false);
         }
 
+        @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}/{userId}")
+        public Gamer updateStatusByUserId(@PathVariable String gamerId, @PathVariable int status,@PathVariable String userId) throws InterruptedException, DockerException, IOException {
+                Gamer updater = repository.findOne(gamerId);
+                updater.getPlayer(userId).setStatus(status);
+                return repository.save(updater);
+        }
+
         private SgfObj updateSgfObj(String sgfBody, @PathVariable String gamerId) {
                 Gamer gamer  = repository.findOne(gamerId);
                 String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",gamer,"B?R");
