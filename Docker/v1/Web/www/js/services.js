@@ -199,8 +199,8 @@ angular.module('app.services', [])
       }
       ,
       updateUserStatusById: function(callback){
-        $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curPlayerStatus+"/"+this.curPlayerId).success(function(data) {
-            console.log("curPlayerStatus:",data);
+        $http.put(envInfo.api.url+"/game/"+this.curGamerId+"/"+this.curPlayerId+"/"+this.curPlayerStatus).success(function(data) {
+            // console.log("curPlayerStatus:",data);
             callback(data);
         });
       }

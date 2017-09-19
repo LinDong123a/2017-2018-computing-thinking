@@ -108,7 +108,7 @@ public class Gamer {
         }
 
         public User getPlayer(String userId) {
-                return (this.getPlayer1().getId()==userId)?this.getPlayer1():this.getPlayer2();
+                return this.getPlayer1().getId().equals(userId)?this.getPlayer1():this.getPlayer2();
         }
 
         public void setType(String type) {

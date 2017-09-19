@@ -90,28 +90,16 @@ angular.module('app.controllers', [])
       $rootScope.score_tenuki_black = 0;
       $rootScope.score_tenuki_white = 0;
       $rootScope.gamerInfo = {id:"",title:""};
+      //players
+      $rootScope.curPlayer = {id:null,name:null};
+      $rootScope.curPlayer1 = {id:null,name:null};
+      $rootScope.curPlayer2 = {id:null,name:null};
         //UserStatus unTENANTED("untenanted", 1), STANDBY("standby", 0), PLAYING("playing", 3),TENANTED("tenanted",2);
       // store the interval promise
       var moveIndex = 0;
       var player = null;
       var gameTableDiv = null;
       $rootScope.tableInfo = null;
-      $rootScope.intervalRefresh = false;
-      // store the interval promise.
-      $rootScope.refreshTablePromise = null;
-      // stops any running interval to avoid two intervals running at the same time
-      $interval.cancel($rootScope.refreshTablePromise);
-
-      //
-      function intervalRefreshTable() {
-        moveIndex++;
-        player = new WGo.BasicPlayer(gameTableDiv, {
-          sgf: $rootScope.tableInfo.sgf
-          , move: moveIndex
-          , enableWheel: false
-        });
-      }
-
       //common functions.
       $rootScope.renderGameTable = function ($tableInfo, bType) {
         $rootScope.tableInfo = $tableInfo;
@@ -145,15 +133,6 @@ angular.module('app.controllers', [])
           $rootScope.renderGameTable(data, bType);
           //
         });
-      };
-      $rootScope.iRefreshOneTable = function () {
-        // $rootScope.intervalRefresh = !$rootScope.intervalRefresh;
-        // if ($rootScope.intervalRefresh) {
-        //   $rootScope.refreshTablePromise = $interval(intervalRefreshTable, 1000);
-        // } else {
-        //   $interval.cancel($rootScope.refreshTablePromise);
-        // }
-          $rootScope.getOneTable('wgo');
       };
 
       $rootScope.updateEnvInfo = function () {
@@ -199,16 +178,16 @@ angular.module('app.controllers', [])
         //update game status
         GameService.curGamerStatus = 3;
         GameService.updateStatusById(function (data) {
-          console.log("GameService.updateStatusById:", data);
-            $rootScope.getAllGames();//refresh.
-           //
-            GameService.endSseGame(function (data) {
-                console.log("GameService.endSseGame result:", data);
-                //TODO:notify opponent player(close and refresh).
-                //@see:https://github.com/mrniko/netty-socketio-demo
-            });
+          $rootScope.gamerInfo = data;
+            console.log("GameService.updateStatusById:", $updatedGamerInfo);
+            //
+            $rootScope.updateGameUserStatus($updatedGamerInfo.id,$rootScope.curPlayer1.id,0);
         });
-        $rootScope.socketIO.leave($rootScope.gamerInfo.id);
+        //player leave game.
+          var playMessage = {game_id: $rootScope.gamerInfo.id,
+              user_id:$playerId,method:'leave',
+              msg: ''};
+          $rootScope.socketIO.emit('playEvent', playMessage);
       }
       //MQTT related
       //connect
@@ -316,6 +295,16 @@ angular.module('app.controllers', [])
         var n_y = $rootScope.go_string.indexOf(letter_y);
         $rootScope.curTenukiGame.playAt(n_x, n_y);
       }
+      $rootScope.updateGameUserStatus = function ($gamerId,$playerId,$status) {
+          GameService.curGamerId = $gamerId;
+          GameService.curPlayerId = $playerId;
+          GameService.curPlayerStatus = $status;
+          GameService.updateUserStatusById(function (data) {
+              console.log("GameService.updateUserStatusById:", data);
+              $rootScope.getAllGames();//refresh.
+          });
+      }
+
       //SocketIO
         $rootScope.socketIO =  io.connect('http://'+envInfo.api.host+":9092");
         $rootScope.socketIO.on('connect', function() {
@@ -324,45 +313,27 @@ angular.module('app.controllers', [])
 
             $rootScope.socketIO.on('playEvent', function(data) {
                 console.log( "playEvent:",data);
-                console.log("data.method:",data.method);
                 switch(data.method){
                     case 'join':
                     //
-                    $rootScope.gamerInfo.id += data.game_id;
-                    //update player status.
-                        GameService.curGamerId = data.game_id;
-                    GameService.curPlayerId = data.user_id;
-                    GameService.curPlayerStatus = Enum.userStatus[3].index;
-                    // console.log(Enum.userStatus,GameService.curPlayerStatus,Enum.userStatus[3]);
-                    GameService.updateUserStatusById(function (data) {
-                        console.log("GameService.updateUserStatusById:", data);
-                        $rootScope.getAllGames();//refresh.
-                    });
+                        console.log("join room:",data,",$rootScope.curPlayer:",$rootScope.curPlayer);
+                    if($rootScope.curPlayer1 == null) {
+                        $rootScope.curPlayer1 = $rootScope.gamerInfo.player1;
+                    }else{
+                        $rootScope.curPlayer2 = $rootScope.gamerInfo.player2;
+                    }
+                    //
                     case 'play':
                     //
 
                     case 'leave':
                     //
-                    $rootScope.gamerInfo.id -= data.game_id;
-                    //update player status.
-                        GameService.curGamerId = data.game_id;
-                    GameService.curUserId = data.user_id;
-                    GameService.curPlayerStatus = Enum.userStatus[0].index;
-                    console.log("UserService:",UserService);
-                    GameService.updateUserStatusById(function (data) {
-                        console.log("GameService.updateUserStatusById:", data);
-                        $rootScope.getAllGames();//refresh.
-                    });
+                    $rootScope.modal_board_tenuki.hide();
 
                     default:
                       break;
                 }
             });
-            // //for testing...
-            // var jsonObject = {game_id: 'userName',
-            //     user_id:"user_id",method:'method',
-            //     msg: 'message'};
-            // $rootScope.socketIO.emit('playEvent', jsonObject);
         });
         //
         //
@@ -420,10 +391,8 @@ angular.module('app.controllers', [])
         var game = new tenuki.Game(boardElement);
         // console.log("boardElement game:",game);
         game.setup({
-          scoring: "area" // default is "territory"
+          scoring: "territory" // default is "territory"
         });
-        ////default jigo equal to black!
-        curPlayerId = $playerId;
         // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
         curVsPlayerId = $rootScope.getVsUserId($gamerInfo,$playerId);
         //
@@ -558,7 +527,9 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       //
     });
   }
-  $scope.hPlayOne = function($gamerInfo, $playerId,$jigo){
+  $scope.hPlayOne = function($gamerInfo, $player,$jigo){
+//
+    $rootScope.curPlayer = $player;
     //
       $rootScope.gamerInfo= $gamerInfo;
       console.log("$rootScope.gamerInfo:",$rootScope.gamerInfo);
@@ -567,7 +538,7 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     // window.board = new tenuki.Game({ element: boardElement });
     //0.game set up.
     // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
-    $rootScope.tenukiGameSetup($gamerInfo,$playerId,$jigo);
+    $rootScope.tenukiGameSetup($gamerInfo,$player.id,$jigo);
     //1.stomp connect
     // $rootScope.connectStomp($gameInfo, $userId);
     //2.
@@ -578,9 +549,11 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     //   $scope.getAll();
     // });
     //socket.join('some room');
-      //for testing...
+      //and update status
+      $rootScope.updateGameUserStatus($gamerInfo.id,$player.id,3);
+      //player join room...
       var playMessage = {game_id: $gamerInfo.id,
-          user_id:$playerId,method:'join',
+          user_id:$player.id,method:'join',
           msg: $jigo};
       $rootScope.socketIO.emit('playEvent', playMessage);
   }

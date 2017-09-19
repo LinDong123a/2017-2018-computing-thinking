@@ -139,7 +139,7 @@ public class GameController {
 //                        }
 //                }
                 Thread t1 = sseEmitterThreads.get(gamerId);
-                if(t1.isAlive()){
+                if(t1!=null && t1.isAlive()){
                         t1.interrupt();
                 }
         }
@@ -262,19 +262,19 @@ public class GameController {
         }
 
         @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}")
-        public SgfDto updateStatusById(@PathVariable String gamerId, @PathVariable int status) throws InterruptedException, DockerException, IOException {
+        public Gamer updateStatusById(@PathVariable String gamerId, @PathVariable int status) throws InterruptedException, DockerException, IOException {
                 Gamer updater = repository.findOne(gamerId);
-                updater.setStatus(status);
-                repository.save(updater);
                 //save sgf file.
                 //merge sgf string.
                 String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",updater,"B?R");
                 String sgfBody = updater.getSgf();
                 updater.setSgf(sgfHeader.concat(sgfBody)+")");
-                return service.saveSgf(updater,false);
+                service.saveSgf(updater,false);
+                updater.setStatus(status);
+               return repository.save(updater);
         }
 
-        @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}/{userId}")
+        @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{userId}/{status}")
         public Gamer updateStatusByUserId(@PathVariable String gamerId, @PathVariable int status,@PathVariable String userId) throws InterruptedException, DockerException, IOException {
                 Gamer updater = repository.findOne(gamerId);
                 updater.getPlayer(userId).setStatus(status);
