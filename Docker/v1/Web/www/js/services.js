@@ -123,7 +123,7 @@ angular.module('app.services', [])
       },
       getAll: function(callback){
         $http.get(envInfo.api.url+"/game").success(function(data) {
-          console.log("all gamers:",data);
+          // console.log("all gamers:",data);
           callback(data);
         });
       },
@@ -143,7 +143,7 @@ angular.module('app.services', [])
       ,
       deleteOne: function(callback){
         $http.delete(envInfo.api.url+"/game/"+this.curGamerId).success(function(data) {
-          console.log("gamer one:",data);
+          // console.log("gamer one:",data);
           callback(data);
         });
       }
@@ -247,7 +247,7 @@ angular.module('app.services', [])
       },
       getAll: function(callback){
         $http.get(envInfo.api.url+"/ai").success(function(data) {
-          console.log("all aiers:",data);
+          // console.log("all aiers:",data);
           callback(data);
         });
       },

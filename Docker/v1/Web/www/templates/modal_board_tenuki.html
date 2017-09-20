@@ -1,7 +1,7 @@
 <!--<div class="modal" class="fullscreen-modal">-->
   <div class="modal" style="top:30px;width: 608px;height: 650px;">
   <header class="bar bar-header bar-positive">
-    <h1 class="title">{{$root.curPlayer.name}} VS {{$root.curPlayer.name}}</h1>
+    <h1 class="title">{{curGamer.player1.name}} VS {{curGamer.player2.name}}</h1>
     <button class="button ion-android-alarm-clock" ng-click="" disabled>时间
     </button>
     <button class="button ion-android-star-half" ng-click="$root.score_tenuki($event)">评分
@@ -11,13 +11,13 @@
     </button>
     -->
 
-    <!--
-    <div class="button button-clear" ng-click="$root.modal_board_tenuki.hide()">
-      <span class="icon ion-android-close">结束</span>
-    </div>
-    -->
-    <button class="button" ng-click="$root.close_tenuki()">保存结束
+
+    <button class="button" ng-click="$root.save_tenuki()">保存
     </button>
+    <div class="button button-clear" ng-click="$root.close_tenuki()">
+      <span class="icon ion-android-close"></span>
+    </div>
+
 
   </header>
 

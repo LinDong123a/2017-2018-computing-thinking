@@ -292,6 +292,8 @@ public class GameController {
                 }
                 //
                 gamer.setSgf(newSgf);
+                //status update
+                gamer.setStatus(GameStatus.PLAYING.getIndex());
                 repository.save(gamer);
                 //
                 return new SgfObj(sgfHeader,newSgf);

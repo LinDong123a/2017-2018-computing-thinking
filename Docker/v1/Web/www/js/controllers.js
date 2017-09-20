@@ -89,11 +89,11 @@ angular.module('app.controllers', [])
       $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
       $rootScope.score_tenuki_black = 0;
       $rootScope.score_tenuki_white = 0;
-      // $rootScope.gamerInfo;//FIXME:not working.@see SharedObjects service
+      // $rootScope.gamerInfo;//notice:only for tenuki board display.using SharedObjects service
       //players
       // $rootScope.curPlayer;
-      $rootScope.curPlayer1;
-      $rootScope.curPlayer2;
+      // $rootScope.curPlayer1;
+      // $rootScope.curPlayer2;
         //UserStatus unTENANTED("untenanted", 1), STANDBY("standby", 0), PLAYING("playing", 3),TENANTED("tenanted",2);
       // store the interval promise
       var moveIndex = 0;
@@ -143,7 +143,7 @@ angular.module('app.controllers', [])
 
       $rootScope.getAiers = function () {
         AierService.getAll(function (data) {
-          console.log("AierService.getAll:", data);
+          // console.log("AierService.getAll:", data);
           $rootScope.aierList = data;
           console.log("$rootScope.aierList:", $rootScope.aierList);
         });
@@ -159,7 +159,7 @@ angular.module('app.controllers', [])
       //
       $rootScope.getAllGames = function(){
           GameService.getAll(function(data){
-              console.log("GameService.getAll:",  data);
+              // console.log("GameService.getAll:",  data);
               $scope.lobbyList  = data;
               console.log("$scope.lobbyList:",  $scope.lobbyList);
               //
@@ -175,21 +175,21 @@ angular.module('app.controllers', [])
       }
       $rootScope.close_tenuki = function () {
         $rootScope.modal_board_tenuki.hide();
-        //update game status
-        GameService.curGamerStatus = 3;
-        console.log("SharedObjects.curGamer:",SharedObjects.curGamer,",SharedObjects.curPlayer:",SharedObjects.curPlayer);
-        $rootScope.updateGameUserStatus(SharedObjects.curGamer.id,SharedObjects.curPlayer.id,0);
-        // GameService.updateStatusById(function (data) {
-        //   $rootScope.gamerInfo = data;
-        //     console.log("GameService.updateStatusById:", $updatedGamerInfo);
-        //     //
-        //     $rootScope.updateGameUserStatus($updatedGamerInfo.id,$rootScope.curPlayer1.id,0);
-        // });
-        //player leave game.
-          var playMessage = {game_id: SharedObjects.curGamer.id,
-              user_id:SharedObjects.curPlayer.id,method:'leave',
-              msg: ''};
-          $rootScope.socketIO.emit('playEvent', playMessage);
+        // console.log("SharedObjects.curGamer:",SharedObjects.curGamer,",SharedObjects.curPlayer:",SharedObjects.curPlayer);
+        $rootScope.updateUserStatusById(SharedObjects.curGamer.id,SharedObjects.curPlayer.id,0);
+        //emit player leave game.
+        var playMessage = {game_id: SharedObjects.curGamer.id,
+            user_id:SharedObjects.curPlayer.id,method:'leave',
+            msg: ''};
+        $rootScope.socketIO.emit('playEvent', playMessage);
+      }
+      $rootScope.save_tenuki = function () {
+          $rootScope.modal_board_tenuki.hide();
+          //update game status
+          GameService.curGamerStatus = 3;
+          GameService.updateStatusById(function (data) {
+              console.log("GameService.updateStatusById:", data);
+          });
       }
       //MQTT related
       //connect
@@ -297,7 +297,7 @@ angular.module('app.controllers', [])
         var n_y = $rootScope.go_string.indexOf(letter_y);
         $rootScope.curTenukiGame.playAt(n_x, n_y);
       }
-      $rootScope.updateGameUserStatus = function ($gamerId,$playerId,$status) {
+      $rootScope.updateUserStatusById = function ($gamerId,$playerId,$status) {
           GameService.curGamerId = $gamerId;
           GameService.curPlayerId = $playerId;
           GameService.curPlayerStatus = $status;
@@ -314,27 +314,23 @@ angular.module('app.controllers', [])
             console.log("SocketIO web client has connected to the server,$rootScope.socketIO:",$rootScope.socketIO);
 
             $rootScope.socketIO.on('playEvent', function(data) {
-                console.log( "playEvent:",data);
-                switch(data.method){
-                    case 'join':
-                    //
-                        console.log("join room:",data,",$rootScope.curPlayer:",$rootScope.curPlayer);
-                    if($rootScope.curPlayer1 == null) {
-                        $rootScope.curPlayer1 = $rootScope.gamerInfo.player1;
+                // console.log( "playEvent:",data);
+                if('join'==data.method){
+                    //     console.log("join room:",data,",SharedObjects.curPlayer:",SharedObjects.curPlayer);
+                    if(SharedObjects.curPlayer1 == null) {
+                        SharedObjects.curPlayer1 = SharedObjects.curGamer.player1;
                     }else{
-                        $rootScope.curPlayer2 = $rootScope.gamerInfo.player2;
+                        SharedObjects.curPlayer2 = SharedObjects.curGamer.player2;
                     }
-                    //
-                    case 'play':
-                    //
-
-                    case 'leave':
-                    //
-                    $rootScope.modal_board_tenuki.hide();
-
-                    default:
-                      break;
+                }else if('play'==data.method){
+                    console.log( "playEvent:",data);
                 }
+                else if('leave'==data.method){
+                    console.log( "leave room:",data);
+                }else{
+                  console.error("UNKOWN playEvent.method.");
+                }
+
             });
         });
         //
@@ -351,8 +347,11 @@ angular.module('app.controllers', [])
             var moves = event.data.split(";");
             var lastMove = moves[moves.length-1];
             console.log("after SSE,lastMove:",lastMove);
-            if(lastMove.indexOf($jigo)==-1){//opponent now
-              $ionicLoading.hide();
+
+            if(lastMove.indexOf($jigo)==-1){//opponent only
+                if($jigo!=null) {//player only
+                    $ionicLoading.hide();
+                }
               $rootScope.playAt_tenuki(lastMove);
             }
           }
@@ -396,12 +395,13 @@ angular.module('app.controllers', [])
           scoring: "territory" // default is "territory"
         });
         // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
-          $rootScope.getVsUserId($gamerInfo,$playerId);
+          // $rootScope.getVsUserId($gamerInfo,$playerId);
         //
         $rootScope.curTenukiGame = game;
         if($gamerInfo.type=='HUMAN_VS_HUMAN') {
-          // $rootScope.connectSSE($gamerInfo, $jigo);
+          $rootScope.connectSSE($gamerInfo, $jigo);
         }
+        if($jigo==null)return;
         //
         game.callbacks.postRender = function (game) {
           //game.currentState() -- 游戏当前状态
@@ -529,14 +529,12 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
       //
     });
   }
+  $scope.curGamer;
   $scope.hPlayOne = function($gamerInfo, $player,$jigo){
-//
-      SharedObjects.curPlayer = $player;
-    //
-    //   $rootScope.gamerInfo= $gamerInfo;
-    //   console.log("$rootScope.gamerInfo:",$rootScope.gamerInfo);
-      SharedObjects.curGamer = $gamerInfo;
-      console.log("SharedObjects.curGamer:",SharedObjects.curGamer);
+//update shared objects
+    SharedObjects.curPlayer = $player;
+    $scope.curGamer = SharedObjects.curGamer = $gamerInfo;
+    console.log("SharedObjects.curGamer:",SharedObjects.curGamer);
     $rootScope.modal_board_tenuki.show();
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
@@ -554,12 +552,19 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
     // });
     //socket.join('some room');
       //and update status
-      $rootScope.updateGameUserStatus($gamerInfo.id,$player.id,3);
+      $rootScope.updateUserStatusById($gamerInfo.id,$player.id,3);
       //player join room...
       var playMessage = {game_id: $gamerInfo.id,
           user_id:$player.id,method:'join',
           msg: $jigo};
       $rootScope.socketIO.emit('playEvent', playMessage);
+  }
+  $scope.hWatchOne = function($gamerInfo){
+    $rootScope.modal_board_tenuki.show();
+    $rootScope.tenukiGameSetup($gamerInfo,null,null);
+    var historyMoves = [];
+    $rootScope.playAt_tenuki(lastMove);
+
   }
   $scope.dismissAll = function(){
     LobbyService.dismissAll(function(data){
@@ -769,7 +774,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
     function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,AierService,Enum) {
-      console.info("envInfo:",envInfo);
+      // console.info("envInfo:",envInfo);
 //
       $scope.createAier = function () {
         //
@@ -796,5 +801,5 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
         });
       }
       //default calls
-      $rootScope.getAiers();
+      // $rootScope.getAiers();
     }])

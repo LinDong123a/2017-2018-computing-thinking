@@ -13,12 +13,12 @@ var _environments = {
             /**
              * Add any config properties you want in here for this environment
              */
-            api_ip: '192.168.0.6'
+            api_ip: '192.168.1.139'
             ,api_port:'8095'
             ,api_context:'/accredit'
-            ,mqtt_ip: '192.168.0.6'
+            ,mqtt_ip: '192.168.1.139'
             ,mqtt_port:'1883'
-            ,wp_ip:'192.168.0.6'
+            ,wp_ip:'192.168.1.139'
         }
     },
     dev: {
@@ -69,9 +69,9 @@ _getEnvironment = function () {
     var slashes = protocol.concat("//");
     // var host = slashes.concat(window.location.hostname);
     var host = window.location.host;
-    console.log("host:"+host);
+    // console.log("host:"+host);
     var hostname = window.location.hostname;
-    console.log("hostname:"+hostname);
+    // console.log("hostname:"+hostname);
     if (_environment) {
         return _environment;
     }
@@ -94,7 +94,7 @@ _getEnvironment = function () {
         ,wp_ip: hostname
     }
   }
-  console.log("out of config _environment:",ofc_environment);
+  // console.log("out of config _environment:",ofc_environment);
   return _environment;
   // return "local";//default
 };
@@ -106,6 +106,6 @@ DynamicEnvironment.get = function (property) {
     var result = ofc_environment.config[property];
   }
     //var result = _environments["test"].config[property];
-    console.log("DynamicEnvironment.get():",result);
+    // console.log("DynamicEnvironment.get():",result);
     return result;
 };

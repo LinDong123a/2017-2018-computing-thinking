@@ -43,10 +43,10 @@
                       ng-disabled="lobby.player1.status==3">执黑</button>
               <button class="icon-righ ion-android-hand" ng-show="lobby.status==1 && lobby.type=='HUMAN_VS_HUMAN'" ng-click="hPlayOne(lobby,lobby.player2,'W')"
                       ng-disabled="lobby.player2.status==3">执白</button>
-              <button class="icon-righ ion-android-hand" ng-show="lobby.status==2 && lobby.type=='HUMAN_VS_HUMAN'" ng-click="hWatchOne(lobby)">观看</button>
-              <button class="icon-righ ion-eye" ng-show="lobby.status!=1 && lobby.type=='AI_VS_HUMAN' || lobby.type=='HUMAN_VS_AI'" ng-click="toGameTableView(lobby.id,'wgo')">观看</button>
-              <button class="icon-right ion-eye" ng-show="lobby.status!=1 && lobby.type=='AI_VS_AI'" ng-click="toGameTableView(lobby.id,'wgo')">观看</button>
-                <button class="icon-right ion-eye" ng-show="lobby.status!=1 && lobby.type=='HUMAN_VS_HUMAN'" ng-click="toGameTableView(lobby.id,'wgo')">观看</button>
+              <button class="icon-righ ion-eye" ng-show="lobby.status==2 && lobby.type=='HUMAN_VS_HUMAN'" ng-click="hWatchOne(lobby)">直播</button>
+              <button class="icon-righ ion-eye" ng-show="lobby.status!=1 && lobby.type=='AI_VS_HUMAN' || lobby.type=='HUMAN_VS_AI'" ng-click="toGameTableView(lobby.id,'wgo')">结果</button>
+              <button class="icon-right ion-ios-eye-outline" ng-show="lobby.status!=1 && lobby.type=='AI_VS_AI'" ng-click="toGameTableView(lobby.id,'wgo')">结果</button>
+                <button class="icon-right ion-ios-eye-outline" ng-show="lobby.status!=1 && lobby.type=='HUMAN_VS_HUMAN'" ng-click="toGameTableView(lobby.id,'wgo')">结果</button>
               <ion-option-button class="button-assertive" ng-click="deleteOne(lobby)">删除</ion-option-button>
             </ion-item>
       </ion-list>
