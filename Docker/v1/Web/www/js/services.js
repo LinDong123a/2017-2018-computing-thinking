@@ -345,6 +345,10 @@ angular.module('app.services', [])
         }
       };
     })
+// Create the factory that share the Fact
+.factory('SharedObjects', function(){
+    return { curGamer:{},curPlayer:{},curPlayer1:{},curPlayer2:{} };
+})
   //@see http://stackoverflow.com/questions/16627860/angular-js-and-ng-swith-when-emulating-enum
   .factory('Enum', [function () {
     var service = {

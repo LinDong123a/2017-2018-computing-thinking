@@ -1,9 +1,9 @@
 angular.module('app.controllers', [])
 
-  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp','envInfo','$ionicLoading','$ionicPopover',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+  .controller('appMainCtrl', ['$rootScope','$scope', '$stateParams','envInfo','$ionicModal','ChainCodeService','UserService','GameService','Enum','AierService','$interval','MqttClient','$stomp','envInfo','$ionicLoading','$ionicPopover','SharedObjects',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp,envInfo,$ionicLoading,$ionicPopover) {
+    function ($rootScope,$scope, $stateParams,envInfo,$ionicModal,ChainCodeService,UserService,GameService,Enum,AierService,$interval,MqttClient,$stomp,envInfo,$ionicLoading,$ionicPopover,SharedObjects) {
       console.info("appMainCtrl init.");
       // Load the modal from the given template URL
       $rootScope.modal_settings = null;
@@ -89,11 +89,11 @@ angular.module('app.controllers', [])
       $rootScope.go_string = 'abcdefghijklmnopqrstuvwxyz';
       $rootScope.score_tenuki_black = 0;
       $rootScope.score_tenuki_white = 0;
-      $rootScope.gamerInfo = {id:"",title:""};
+      // $rootScope.gamerInfo;//FIXME:not working.@see SharedObjects service
       //players
-      $rootScope.curPlayer = {id:null,name:null};
-      $rootScope.curPlayer1 = {id:null,name:null};
-      $rootScope.curPlayer2 = {id:null,name:null};
+      // $rootScope.curPlayer;
+      $rootScope.curPlayer1;
+      $rootScope.curPlayer2;
         //UserStatus unTENANTED("untenanted", 1), STANDBY("standby", 0), PLAYING("playing", 3),TENANTED("tenanted",2);
       // store the interval promise
       var moveIndex = 0;
@@ -177,15 +177,17 @@ angular.module('app.controllers', [])
         $rootScope.modal_board_tenuki.hide();
         //update game status
         GameService.curGamerStatus = 3;
-        GameService.updateStatusById(function (data) {
-          $rootScope.gamerInfo = data;
-            console.log("GameService.updateStatusById:", $updatedGamerInfo);
-            //
-            $rootScope.updateGameUserStatus($updatedGamerInfo.id,$rootScope.curPlayer1.id,0);
-        });
+        console.log("SharedObjects.curGamer:",SharedObjects.curGamer,",SharedObjects.curPlayer:",SharedObjects.curPlayer);
+        $rootScope.updateGameUserStatus(SharedObjects.curGamer.id,SharedObjects.curPlayer.id,0);
+        // GameService.updateStatusById(function (data) {
+        //   $rootScope.gamerInfo = data;
+        //     console.log("GameService.updateStatusById:", $updatedGamerInfo);
+        //     //
+        //     $rootScope.updateGameUserStatus($updatedGamerInfo.id,$rootScope.curPlayer1.id,0);
+        // });
         //player leave game.
-          var playMessage = {game_id: $rootScope.gamerInfo.id,
-              user_id:$playerId,method:'leave',
+          var playMessage = {game_id: SharedObjects.curGamer.id,
+              user_id:SharedObjects.curPlayer.id,method:'leave',
               msg: ''};
           $rootScope.socketIO.emit('playEvent', playMessage);
       }
@@ -394,7 +396,7 @@ angular.module('app.controllers', [])
           scoring: "territory" // default is "territory"
         });
         // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
-        curVsPlayerId = $rootScope.getVsUserId($gamerInfo,$playerId);
+          $rootScope.getVsUserId($gamerInfo,$playerId);
         //
         $rootScope.curTenukiGame = game;
         if($gamerInfo.type=='HUMAN_VS_HUMAN') {
@@ -465,10 +467,10 @@ angular.module('app.controllers', [])
       }
   }])
 
-.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location','$ionicPopup','Enum',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gameLobbyCtrl', ['$scope','$rootScope','$stateParams', '$ionicModal','LobbyService','envInfo','$location','GameService','$location','$ionicPopup','Enum','SharedObjects',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location, $ionicPopup,Enum) {
+function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbyService,GameService,$location, $ionicPopup,Enum,SharedObjects) {
   //
   //Dynamic host modification
   // envInfo.mqtt.host = $location.host();
@@ -529,10 +531,12 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   }
   $scope.hPlayOne = function($gamerInfo, $player,$jigo){
 //
-    $rootScope.curPlayer = $player;
+      SharedObjects.curPlayer = $player;
     //
-      $rootScope.gamerInfo= $gamerInfo;
-      console.log("$rootScope.gamerInfo:",$rootScope.gamerInfo);
+    //   $rootScope.gamerInfo= $gamerInfo;
+    //   console.log("$rootScope.gamerInfo:",$rootScope.gamerInfo);
+      SharedObjects.curGamer = $gamerInfo;
+      console.log("SharedObjects.curGamer:",SharedObjects.curGamer);
     $rootScope.modal_board_tenuki.show();
     // var boardElement = document.getElementById("tenuki-board");
     // window.board = new tenuki.Game({ element: boardElement });
