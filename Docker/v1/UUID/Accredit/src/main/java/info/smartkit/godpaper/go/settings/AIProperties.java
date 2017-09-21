@@ -77,10 +77,6 @@ public class AiProperties {
 
         private String scorer;
 
-        @Override public String toString() {
-                return "AIProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + ", gpu=" + gpu + '}';
-        }
-
         public boolean isGpu() {
                 return gpu;
         }
@@ -90,4 +86,19 @@ public class AiProperties {
         }
 
         private boolean gpu;
+
+        @Override public String toString() {
+                return "AiProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + ", gpu=" + gpu + ", port=" + port
+                        + '}';
+        }
+
+        public int getPort() {
+                return port;
+        }
+
+        public void setPort(int port) {
+                this.port = port;
+        }
+
+        private int port;
 }

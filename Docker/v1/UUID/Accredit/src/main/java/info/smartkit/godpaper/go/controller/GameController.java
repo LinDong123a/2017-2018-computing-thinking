@@ -64,6 +64,7 @@ public class GameController {
         @Autowired ApiProperties apiProperties;
 
         @Autowired SocketIoService socketIoService;
+        @Autowired AiProperties aiProperties;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
@@ -323,7 +324,7 @@ public class GameController {
                 HttpEntity<Object> request = new HttpEntity<>(vars, headers);
 //
                 ResponseEntity<String> response = restTemplate
-                        .exchange("http://" + mqttProperties.getIp() + ":6001/", HttpMethod.POST, request, String.class);
+                        .exchange("http://" + mqttProperties.getIp() + ":"+aiProperties.getPort(), HttpMethod.POST, request, String.class);
                 LOG.debug("response:" + response.toString());
                 //
                 ObjectMapper objectMapper = new ObjectMapper();
