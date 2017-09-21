@@ -103,6 +103,11 @@ services:
     ports:
       - "6001:6001"
   #   container_name: simpleAI
+   # simpleAI
+  darknetGo:
+    image: smartkit/godpaper-go-ai-darknet:latest
+    ports:
+      - "6005:6005"
   web:
     image: smartkit/godpaper-go-web:latest
     ports:
