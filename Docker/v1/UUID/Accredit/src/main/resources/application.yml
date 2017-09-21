@@ -33,3 +33,4 @@ ai:
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
   scorer: smartkit/godpaper-go-score-estimator-gnugo
   gpu: false
+  port: 6005
