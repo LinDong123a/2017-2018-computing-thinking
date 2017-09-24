@@ -139,10 +139,7 @@ public class GameController {
 //                                stompService.unsubscribe();
 //                        }
 //                }
-                Thread t1 = sseEmitterThreads.get(gamerId);
-                if(t1!=null && t1.isAlive()){
-                        t1.interrupt();
-                }
+                stopSseThread(gamerId);
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
         public void deleteAll() throws MqttException, StompException {
@@ -188,7 +185,6 @@ public class GameController {
                 service.randomPlaySome(gamerNum);
         }
 
-        private static Map<String, Thread> sseEmitterThreads = new Hashtable<String, Thread>();
 //        private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
         @RequestMapping(method = RequestMethod.GET, value="/sse/sgf/{gamerId}")
         public SseEmitter getSseSgfById(@PathVariable String gamerId,HttpSession session) {
@@ -222,7 +218,7 @@ public class GameController {
                         }
                 });
                 t1.start();
-                sseEmitterThreads.put(gamerId,t1);
+                GameVariables.sseThreads.put(gamerId,t1);
 
                 return emitter;
         }
@@ -233,14 +229,17 @@ public class GameController {
                 socketIoService.join(UUID.fromString(playerId),gamerId);
         }
 
-        @RequestMapping(method = RequestMethod.DELETE, value="/sse/sgf/{gamerId}")
-        public boolean delSseSgfById(@PathVariable String gamerId) {
+        private boolean stopSseThread(@PathVariable String gamerId) {
                 //thread stop business logical.
-                Thread t1 = sseEmitterThreads.get(gamerId);
-                if(t1.isAlive()){
-                        t1.interrupt();
+                Thread t1 = GameVariables.sseThreads.get(gamerId);
+
+                if(t1!=null){
+                        if(t1.isAlive()){
+                                t1.interrupt();
+                                return t1.isInterrupted();
+                        }
                 }
-                return t1.isInterrupted();
+                return true;
         }
 
         @RequestMapping(method = RequestMethod.DELETE, value="/sio/sgf/{gamerId}/{playerId}")
@@ -279,6 +278,10 @@ public class GameController {
         public Gamer updateStatusByUserId(@PathVariable String gamerId, @PathVariable int status,@PathVariable String userId) throws InterruptedException, DockerException, IOException {
                 Gamer updater = repository.findOne(gamerId);
                 updater.getPlayer(userId).setStatus(status);
+                if(status>GameStatus.PLAYING.getIndex())
+                {
+                        stopSseThread(gamerId);
+                }
                 return repository.save(updater);
         }
 

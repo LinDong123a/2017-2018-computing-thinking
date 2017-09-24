@@ -103,10 +103,10 @@ services:
     ports:
       - "6001:6001"
   #  Web
-  # web:
-  #   image: smartkit/godpaper-go-web
-  #   ports:
-  #     - "80:80"
+  web:
+    image: smartkit/godpaper-go-web
+    ports:
+      - "80:80"
 volumes:
   mariadb_data:
     driver: local
