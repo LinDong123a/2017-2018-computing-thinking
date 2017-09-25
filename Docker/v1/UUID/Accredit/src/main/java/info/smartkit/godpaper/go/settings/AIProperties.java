@@ -87,11 +87,6 @@ public class AiProperties {
 
         private boolean gpu;
 
-        @Override public String toString() {
-                return "AiProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + ", gpu=" + gpu + ", port=" + port
-                        + '}';
-        }
-
         public int getPort() {
                 return port;
         }
@@ -101,4 +96,19 @@ public class AiProperties {
         }
 
         private int port;
+
+        @Override public String toString() {
+                return "AiProperties{" + "ranks=" + ranks + ", policys=" + policys + ", player='" + player + '\'' + ", agentPrep='" + agentPrep + '\'' + ", agentTrain='" + agentTrain + '\'' + ", scorer='" + scorer + '\'' + ", gpu=" + gpu + ", port=" + port
+                        + ", name='" + name + '\'' + '}';
+        }
+
+        public String getName() {
+                return name;
+        }
+
+        public void setName(String name) {
+                this.name = name;
+        }
+
+        private String name;
 }

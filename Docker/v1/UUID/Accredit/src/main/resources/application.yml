@@ -3,7 +3,7 @@ spring:
   profiles.active: local
 ---
 api:
-  ip: 192.168.1.139
+  ip: 192.168.0.6
   url: http://${api.ip}:${server.port}${server.contextPath}/
   sse: 3000
 spring:
@@ -33,4 +33,5 @@ ai:
   agentTrain: smartkit/godpaper-go-ai-agent-mugo-train
   scorer: smartkit/godpaper-go-score-estimator-gnugo
   gpu: false
-  port: 6005
+  port: 6006
+  name: DarknetGo

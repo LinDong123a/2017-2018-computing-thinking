@@ -65,7 +65,7 @@ public class MqttServiceImpl implements MqttService,MqttCallback {
                 MqttMessage message = new MqttMessage(content.getBytes());
                 message.setQos(qos);
                 mqttClient.publish(topic, message);
-                LOG.info("MQTT  Message published to:"+topic+",MSG:"+content);
+                LOG.info("MQTT  SgfMessage published to:"+topic+",MSG:"+content);
 //                sampleClient.disconnect();
 //                LOG.info("MqttClient Disconnected");
 

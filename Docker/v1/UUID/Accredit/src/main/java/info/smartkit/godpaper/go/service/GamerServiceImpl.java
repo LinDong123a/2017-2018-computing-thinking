@@ -52,6 +52,7 @@ public class GamerServiceImpl implements GamerService {
         @Autowired UserService userService;
         @Autowired StompService stompService;
         @Autowired MqttProperties mqttProperties;
+        @Autowired AiProperties aiProperties;
 
         private static final String ENCODING = "UTF-8";
         private static final String VERSION = "0.0.1";
@@ -419,7 +420,7 @@ public class GamerServiceImpl implements GamerService {
                 if (type==GameTypes.AI_VS_HUMAN.getIndex()||type==GameTypes.HUMAN_VS_AI.getIndex())
                 {
                         //create AI/Human players and get ready to play
-                        updaterOne = this.createUserAndTenantRes(new User("AI_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
+                        updaterOne = this.createUserAndTenantRes(new User("AI_"+aiProperties.getName()
                                 ,AiPolicies.BEST_MOVE.getName()
                                 ,"180000_KGS_"
                                 ,UserTypes.AI.getIndex()),true,false);

@@ -562,8 +562,16 @@ function ($rootScope,$scope, $stateParams,$ionicModal,envInfo,$location,LobbySer
   $scope.hWatchOne = function($gamerInfo){
     $rootScope.modal_board_tenuki.show();
     $rootScope.tenukiGameSetup($gamerInfo,null,null);
-    var historyMoves = [];
-    $rootScope.playAt_tenuki(lastMove);
+    //get sgf by gamer id.
+      GameService.curGamerId = $gamerInfo.id;
+      GameService.getSgf(function (data) {
+          var historyMoves = data;
+          console.log("historyMoves:",data);
+          // $rootScope.playAt_tenuki(lastMove);
+
+      })
+
+
 
   }
   $scope.dismissAll = function(){

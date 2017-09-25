@@ -148,13 +148,6 @@ angular.module('app.services', [])
         });
       }
       ,
-      endSseGame: function(callback){
-          $http.delete(envInfo.api.url+"/game/sse/sgf/"+this.curGamerId).success(function(data) {
-              // console.log("end sse gamer result:",data);
-              callback(data);
-          });
-      }
-      ,
       tenantUser:function(callback){
         $http.get(envInfo.api.url+"/user/tenant/"+this.tenUserId).success(function(data) {
           console.log("one user tenanted.:",data);
@@ -172,13 +165,6 @@ angular.module('app.services', [])
       vsSimpleAI: function(callback){
         $http.post(envInfo.api.url+"/game/ai/simple/"+this.curGamerId,this.curPlayMessage).success(function(data) {
           // console.log("vsSimpleAI success:",data);
-          callback(data);
-        });
-      }
-      ,
-      vsHumanPlayer: function(callback){
-        $http.post(envInfo.api.url+"/game/human/"+this.vsPlayerId,this.curPlayMessage).success(function(data) {
-          console.log("vsHumanPlayer success:",data);
           callback(data);
         });
       }
@@ -315,6 +301,7 @@ angular.module('app.services', [])
         var $http = $http || $injector.get('$http');
         if ($http.pendingRequests.length === 0) {
           $injector.get('$ionicLoading').hide();
+            //@see:https://github.com/ionic-team/ionic/issues/9069
         }
       };
 
