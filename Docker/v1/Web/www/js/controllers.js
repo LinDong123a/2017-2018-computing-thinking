@@ -119,8 +119,6 @@ angular.module('app.controllers', [])
 
           //Stomp
           // $rootScope.connectStomp($tableInfo,$tableInfo.player1.name);
-          //SSE
-          // $rootScope.connectSSE($tableInfo,$tableInfo.player1.name);
         }
 
       };
@@ -340,7 +338,9 @@ angular.module('app.controllers', [])
         // });
         //SSE
       var eventSource = null;
+        var JIGO_TENUKI="B";
       $rootScope.connectSSE = function ($gamerInfo,$jigo) {
+        console.log("$rootScope.connectSSE:",$gamerInfo,$jigo);
         eventSource = new EventSource(envInfo.api.url+"/game/sse/sgf/"+$gamerInfo.id);
         eventSource.onmessage = function(event) {
           if(event.data) {
@@ -348,11 +348,9 @@ angular.module('app.controllers', [])
             var lastMove = moves[moves.length-1];
             console.log("after SSE,lastMove:",lastMove);
 
-            if(lastMove.indexOf($jigo)==-1){//opponent only
-                if($jigo!=null) {//player only
-                    $ionicLoading.hide();
-                }
-              $rootScope.playAt_tenuki(lastMove);
+            if(lastMove.indexOf($jigo)==-1){//opponent turn now
+                $ionicLoading.hide();
+                $rootScope.playAt_tenuki(lastMove);
             }
           }
           if (event.eventPhase == EventSource.CLOSED) {
@@ -369,7 +367,7 @@ angular.module('app.controllers', [])
       }
       //tenuki game setup
       //@see: https://www.npmjs.com/package/tenuki
-      var JIGO_TENUKI="B";
+      //
       $rootScope.isAITurnNow = function($gamerInfo,lastMove){
           var isAIturnNow = false;
           if( $gamerInfo.type=='HUMAN_VS_AI' || $gamerInfo.type=='AI_VS_HUMAN') {
@@ -378,16 +376,14 @@ angular.module('app.controllers', [])
           console.log("$gamerInfo.type:"+$gamerInfo.type+",isAIturnNow?",isAIturnNow);
           return isAIturnNow;
       }
+      //
       $rootScope.tenukiGameSetup = function($gamerInfo,$playerId,$jigo) {
-        if($jigo!=JIGO_TENUKI){
-          $ionicLoading.show();//waiting
-        }
+        console.log("$rootScope.tenukiGameSetup:",$gamerInfo,$playerId,$jigo);
         var boardElement = document.querySelector(".tenuki-board");
         //clear history.
-          while (boardElement.firstChild) {
-              boardElement.removeChild(boardElement.firstChild);
-          }
-
+        while (boardElement.firstChild) {
+            boardElement.removeChild(boardElement.firstChild);
+        }
         // console.log("boardElement:",boardElement);
         var game = new tenuki.Game(boardElement);
         // console.log("boardElement game:",game);
@@ -396,12 +392,17 @@ angular.module('app.controllers', [])
         });
         // console.log("$gamerInfo,$playerId:",$gamerInfo,$playerId);
           // $rootScope.getVsUserId($gamerInfo,$playerId);
-        //
+        //SSE connect.
         $rootScope.curTenukiGame = game;
         if($gamerInfo.type=='HUMAN_VS_HUMAN') {
           $rootScope.connectSSE($gamerInfo, $jigo);
         }
-        if($jigo==null)return;
+          // console.log(JIGO_TENUKI,$jigo,($jigo!=JIGO_TENUKI));
+          if($jigo!=JIGO_TENUKI){
+              $ionicLoading.show();//opponent player waiting
+          } else if($jigo==null){//spectator only waiting
+              return;
+          }
         //
         game.callbacks.postRender = function (game) {
           //game.currentState() -- 游戏当前状态

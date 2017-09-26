@@ -45,7 +45,7 @@ angular.module('app.routes', [])
       }
     })
 
-$urlRouterProvider.otherwise('/page1/page0')
+$urlRouterProvider.otherwise('/page1/page2')
 
 
 });

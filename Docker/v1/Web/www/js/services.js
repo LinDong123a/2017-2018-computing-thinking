@@ -307,7 +307,7 @@ angular.module('app.services', [])
 
       return {
         request: function (config) {
-          $injector.get('$ionicLoading').show({delay:100});
+          $injector.get('$ionicLoading').show();
 
           // Handle adding the access_token or auth request.
 

@@ -107,7 +107,7 @@ services:
   darknetGo:
     image: smartkit/godpaper-go-ai-darknet:latest
     ports:
-      - "6005:6005"
+      - "6006:6006"
   web:
     image: smartkit/godpaper-go-web:latest
     ports:
