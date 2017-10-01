@@ -8,7 +8,7 @@ https://www.gnu.org/software/gnugo/gnugo_1.html#SEC2
 
 http://homepages.cwi.nl/~aeb/go/sgfutils/html/sgfcount.html
 
-### 安装GitLab、Jenkins、Docker等一系列基础环境
+#### 安装GitLab、Wiki、Jenkins、Docker、NetLogo、Netlyfy、Jupiter、Modelica、等一系列基础环境
 
 #### 建立自己的 Docker Registry，私有的Docker镜像服务，用于存储我们自己的Docker镜像仓库（Repository）
 
