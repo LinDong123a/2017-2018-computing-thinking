@@ -1,5 +1,4 @@
 version: '2'
-
 services:
   mariadb:
     image: 'bitnami/mariadb:latest'
@@ -7,18 +6,30 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - 'mariadb_data:/bitnami'
-  application:
+  mediawiki:
+    image: 'bitnami/mediawiki:latest'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - 'mediawiki_data:/bitnami'
+    depends_on:
+      - mariadb
+  piwik:
     image: 'bitnami/piwik:latest'
     ports:
       - '81:80'
-      - '443:443'
+      - '444:443'
     volumes:
       - 'piwik_data:/bitnami'
     depends_on:
-      - mariadb
-
+      - mediawiki   
 volumes:
   mariadb_data:
+    driver: local
+  mediawiki_data:
     driver: local
   piwik_data:
     driver: local
