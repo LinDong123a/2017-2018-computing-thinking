@@ -1,7 +1,7 @@
 version: '2'
 services:
   mariadb:
-    image: 'bitnami/mariadb:latest'
+    image: '101.6.160.51:8123/mariadb:latest'
     volumes:
       - 'mariadb_data:/bitnami/mariadb'
     environment:
@@ -9,7 +9,7 @@ services:
       - MARIADB_DATABASE=bitnami_wordpress
       - ALLOW_EMPTY_PASSWORD=yes
   wordpress:
-    image: 'bitnami/wordpress:latest'
+    image: '101.6.160.51:8123/wordpress:latest'
     labels:
       kompose.service.type: nodeport
     ports:
@@ -29,12 +29,12 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
   #hyperledger    
   membersrvc:
-    image: hyperledger/fabric-membersrvc
+    image: 101.6.160.51:8123/fabric-membersrvc
     ports:
       - "7054:7054"
     command: membersrvc
   vp0:
-    image: hyperledger/fabric-peer:x86_64-1.0.0-rc1
+    image: 101.6.160.51:8123/fabric-peer:x86_64-1.0.0-rc1
     #image: hyperledger/fabric-peer
     ports:
       - "7050:7050"
@@ -57,14 +57,14 @@ services:
     command: sh -c "sleep 5; peer node start --peer-chaincodedev"
   #mongodb  
   mongodb:
-    image: smartkit/godpaper-go-mongodb
+    image: 101.6.160.51:8123/godpaper-go-mongodb
     ports:
       - "27017:27017"
     container_name: mongodb
     # command: --smallfiles --nojournal
   #activemq
   activemq:
-    image: smartkit/godpaper-go-message-broker-activemq
+    image: 101.6.160.51:8123/godpaper-go-message-broker-activemq
     ports:
       - "1883:1883"
       - "8161:8161"
@@ -75,7 +75,7 @@ services:
     container_name: activemq
   #uuid-accredit
   uuid-accredit:
-    image: smartkit/godpaper-go-uuid-accredit:latest
+    image: 101.6.160.51:8123/godpaper-go-uuid-accredit:latest
     depends_on:
       - vp0
       - mongodb
@@ -98,19 +98,19 @@ services:
       - "JAVA_OPTS=-Dai.port=6006"
       - "JAVA_OPTS=-Dai.name=DarknetGo"
 
-  # docker run -p 6000:6000 smartkit/godpaper-go-ai-tensorflow -name simpleAI
+  # docker run -p 6000:6000 101.6.160.51:8123/godpaper-go-ai-tensorflow -name simpleAI
   # MuGo
   muGoAI:
-    image: smartkit/godpaper-go-ai-tensorflow:6001
+    image: 101.6.160.51:8123/godpaper-go-ai-tensorflow:6001
     ports:
       - "6001:6001"
    # DarknetGo
   darknetGo:
-    image: smartkit/godpaper-go-ai-darknet:latest
+    image: 101.6.160.51:8123/godpaper-go-ai-darknet:latest
     ports:
       - "6006:6006"
   web:
-    image: smartkit/godpaper-go-web:latest
+    image: 101.6.160.51:8123/godpaper-go-web:latest
     ports:
       - "80:80"
 volumes:
