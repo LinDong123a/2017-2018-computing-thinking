@@ -41,7 +41,7 @@ RUN usermod --append -G mediagoblin mediagoblin
 # MediaGoblin code and setup
 RUN mkdir -p /srv/mediagoblin
 WORKDIR /srv/mediagoblin
-RUN git clone git://git.savannah.gnu.org/mediagoblin.git -b stable --depth 1
+RUN git clone git://git.savannah.gnu.org/mediagoblin.git -b v0.9.0 --depth 1
 RUN chown -hR mediagoblin:www-data /srv/mediagoblin
 WORKDIR /srv/mediagoblin/mediagoblin
 RUN git submodule init && git submodule update

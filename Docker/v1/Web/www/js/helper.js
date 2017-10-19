@@ -7,20 +7,6 @@ var DynamicEnvironment = DynamicEnvironment || {};
 var _environment;
 var ofc_environment;
 var _environments = {
-    local: {
-        host: 'localhost',
-        config: {
-            /**
-             * Add any config properties you want in here for this environment
-             */
-            api_ip: '192.168.0.6'
-            ,api_port:'8095'
-            ,api_context:'/accredit'
-            ,mqtt_ip: '192.168.0.6'
-            ,mqtt_port:'1883'
-            ,wp_ip:'192.168.0.6'
-        }
-    },
     dev: {
         host: '172.17.0.1',
         config: {

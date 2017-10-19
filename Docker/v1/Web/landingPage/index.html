@@ -13,8 +13,15 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+
+		<script>
+            function setHref() {
+                document.getElementById('id_btn_wordpress').href = window.location.protocol + "//" + window.location.hostname + ":90";
+                document.getElementById('id_btn_accredit').href = window.location.protocol + "//" + window.location.hostname + ":8095/accredit/swagger-ui.html";
+            }
+		</script>
 	</head>
-	<body>
+	<body onload="setHref()">>
 
 		<!-- Header -->
 			<header id="header">
@@ -24,8 +31,8 @@
 
 		<!-- Links -->
 
-				<p><a href="http://118.190.82.172:90" target="_blank"><input type="submit" value="Wordpress for blog" /></a></p>
-				<p><a href="http://118.190.82.172:8095/accredit/swagger-ui.html" target="_blank"><input type="submit" value="SwaggerUI API for developers" /></a></p>
+				<p><a id="id_btn_wordpress" target="_blank"><input type="submit" value="Wordpress for blog" /></a></p>
+				<p><a id="id_btn_accredit"  target="_blank"><input type="submit" value="SwaggerUI API for developers" /></a></p>
 				<p><a href="www/index.html" target="_blank"><input type="submit" value="AI playground for everyone" /></a></p>			
 
 		<!-- Footer -->
