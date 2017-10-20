@@ -1,3 +1,3 @@
 # @see
 
-https://github.com/sameersbn/docker-gitlab
+https://docs.gitlab.com/omnibus/docker/
