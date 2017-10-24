@@ -11,7 +11,7 @@ services:
     labels:
       kompose.service.type: nodeport
     ports:
-      - '80:80'
+      - '81:80'
       - '443:443'
     volumes:
       - 'mediawiki_data:/bitnami'
@@ -20,16 +20,29 @@ services:
   piwik:
     image: 'bitnami/piwik:latest'
     ports:
-      - '81:80'
+      - '82:80'
       - '444:443'
     volumes:
       - 'piwik_data:/bitnami'
     depends_on:
-      - mediawiki
+      - mediawiki   
+  netlify:
+    image: smartkit/godpaper-da-netlify:latest
+    ports:
+      - "80:80"
+  jenkins:
+    image: jenkins
+    ports:
+      - "83:8080"
+      - "50000:50000"
+    volumes:
+      - 'jenkins_data:/var/jenkins_home'
 volumes:
   mariadb_data:
     driver: local
   mediawiki_data:
     driver: local
   piwik_data:
+    driver: local
+  jenkins_data:
     driver: local
