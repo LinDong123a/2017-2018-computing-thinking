@@ -61,8 +61,8 @@ services:
     labels:
       kompose.service.type: nodeport
     ports:
-      - '86:80'
-      - '443:443'
+      - '80:80'
+      - '445:443'
     volumes:
       - 'phabricator_data:/bitnami'
     depends_on:

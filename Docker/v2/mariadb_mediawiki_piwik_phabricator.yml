@@ -7,7 +7,7 @@ services:
     volumes:
       - 'mariadb_data:/bitnami'
     ports:
-      - '3307:3306'
+      - '3306:3306'
   mediawiki:
     image: 'bitnami/mediawiki:latest'
     labels:
@@ -34,7 +34,7 @@ services:
       kompose.service.type: nodeport
     ports:
       - '80:80'
-      - '443:443'
+      - '445:443'
     volumes:
       - 'phabricator_data:/bitnami'
     depends_on:
