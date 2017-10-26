@@ -1,3 +1,3 @@
 # @see
 
-https://github.com/yesnault/docker-phabricator
+https://github.com/bitnami/bitnami-docker-phabricator

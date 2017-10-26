@@ -28,10 +28,23 @@ services:
       - 'piwik_data:/bitnami'
     depends_on:
       - mediawiki
+  phabricator:
+    image: 'bitnami/phabricator:latest'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - 'phabricator_data:/bitnami'
+    depends_on:
+      - mariadb
 volumes:
   mariadb_data:
     driver: local
   mediawiki_data:
     driver: local
   piwik_data:
+    driver: local
+  phabricator_data:
     driver: local

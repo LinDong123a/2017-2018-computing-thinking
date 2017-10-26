@@ -6,6 +6,8 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - 'mariadb_data:/bitnami'
+    ports:
+      - '3307:3306'
   mediawiki:
     image: 'bitnami/mediawiki:latest'
     labels:
@@ -54,14 +56,17 @@ services:
         - /sys:/sys:ro
         - /var/lib/docker/:/var/lib/docker:ro
         # - /dev/disk/:/dev/disk:ro
-  phabricator-mysql:
-     image: yesnault/docker-phabricator-mysql
-     ports:
-       - "3306:3306"
   phabricator:
-     image: yesnault/docker-phabricator
-     ports:
-       - "86:80"
+    image: 'bitnami/phabricator:latest'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '86:80'
+      - '443:443'
+    volumes:
+      - 'phabricator_data:/bitnami'
+    depends_on:
+      - mariadb
   jupyterhub:
     image: jupyterhub/jupyterhub
     ports:
@@ -236,4 +241,6 @@ volumes:
   jenkins_data:
     driver: local
   nexus_data:
+    driver: local
+  phabricator_data:
     driver: local
