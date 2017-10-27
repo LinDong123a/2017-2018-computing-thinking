@@ -13,7 +13,7 @@ services:
     labels:
       kompose.service.type: nodeport
     ports:
-      - '80:80'
+      - '82:80'
       - '443:443'
     volumes:
       - 'mediawiki_data:/bitnami'
@@ -33,7 +33,7 @@ services:
     labels:
       kompose.service.type: nodeport
     ports:
-      - '86:80'
+      - '80:80'
       - '445:443'
     volumes:
       - 'phabricator_data:/bitnami'
