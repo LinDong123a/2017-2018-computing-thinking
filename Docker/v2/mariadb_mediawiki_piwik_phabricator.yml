@@ -37,9 +37,9 @@ services:
       - '445:443'
     volumes:
       - 'phabricator_data:/bitnami'
-    environment: 
-      - PHABRICATOR_HOST=101.6.160.51
-      - MARIADB_HOST=101.6.160.51
+    #environment: 
+     # - PHABRICATOR_HOST=101.6.160.51
+     # - MARIADB_HOST=101.6.160.51
     depends_on:
       - piwik
 volumes:
