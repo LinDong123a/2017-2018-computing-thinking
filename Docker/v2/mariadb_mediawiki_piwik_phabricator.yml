@@ -38,7 +38,7 @@ services:
     volumes:
       - 'phabricator_data:/bitnami'
     depends_on:
-      - mariadb
+      - piwik
 volumes:
   mariadb_data:
     driver: local
