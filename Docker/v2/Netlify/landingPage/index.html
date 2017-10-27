@@ -29,28 +29,48 @@
                 document.getElementById('id_btn_gitlab').href = window.location.protocol + "//" + window.location.hostname + ":91";
             }
 		</script>
+		<style type="text/css">
+			.wrapper {
+				display: grid;
+			    grid-gap: 10px;
+					grid-template-columns: 100px 100px 100px 100px 100px 100px;
+					/*background-color: #fff;*/
+					color: #444;
+				}
+
+			.box {
+				/*
+				background-color: #444;
+				*/
+				color: #fff;
+				border-radius: 5px;
+				padding: 0px;
+				font-size: 150%;
+
+			}
+		</style>
 	</head>
-	<body onload="setHref()">>
+	<body onload="setHref()">
 
 		<!-- Header -->
 			<header id="header">
-				<h1>ToyhouseGo</h1>
-				 Yet Another ToyhouseGo's landing page. 
+				<h1>ToyhouseMicroServices</h1>
+				 Yet Another ToyhouseMicroServices' landing page. 
 			</header>
 
 		<!-- Links -->
-				 <p><a id="id_btn_wiki" target="_blank"><input type="submit" value="Wiki" /></a></p>
-				 <p><a id="id_btn_piwik"  target="_blank"><input type="submit" value="Piwik" /></a></p>
-				 <p><a id="id_btn_jenkins" target="_blank"><input type="submit" value="Jenkins" /></a></p> 		
-				 <p><a id="id_btn_nexus" target="_blank"><input type="submit" value="Nexus" /></a></p> 
-				 <p><a id="id_btn_cadvisor"  target="_blank"><input type="submit" value="cAdvisor" /></a></p> 
-				 <p><a id="id_btn_phabricator" target="_blank"><input type="submit" value="Phabricator" /></a></p> 			
-				 <p><a id="id_btn_jupyter" target="_blank"><input type="submit" value="Juypter" /></a></p> 
-				 <p><a id="id_btn_modelica"  target="_blank"><input type="submit" value="OpenModelica" /></a></p>	
-				 <p><a id="id_btn_netlogo"  target="_blank"><input type="submit" value="NetLogo" /></a></p>
-				 <p><a id="id_btn_hyper_ledger"  target="_blank"><input type="submit" value="HyperLedger" /></a></p>
-				 <p><a id="id_btn_gitlab" target="_blank"><input type="submit" value="Gitlab" /></a> 		
-
+			<div class="wrapper">
+				<div class="box c"><p><a id="id_btn_phabricator" target="_blank"><input type="submit" value="Phabricator" /></a></p></div>
+				<div class="box a"><p><a id="id_btn_wiki" target="_blank"><input type="submit" value="Mediawiki" /></a></p></div>
+				<div class="box b"><p><a id="id_btn_piwik"  target="_blank"><input type="submit" value="Piwik" /></a></p></div>
+				<div class="box d"><p><a id="id_btn_jupyter" target="_blank"><input type="submit" value="JuypterHub" /></a></p> </div>
+				<div class="box e"><p><a id="id_btn_netlogo"  target="_blank"><input type="submit" value="NetLogo" /></a></p></div>
+				<div class="box f"><p><a id="id_btn_modelica"  target="_blank"><input type="submit" value="OpenModelica" /></a></p></div>
+				<div class="box e"><p><a id="id_btn_jenkins" target="_blank"><input type="submit" value="Jenkins" /></a></p> </div>
+				<div class="box f"><p><a id="id_btn_nexus" target="_blank"><input type="submit" value="Nexus" /></a></p> </div>
+				<div class="box f"><p><a id="id_btn_gitlab" target="_blank"><input type="submit" value="Gitlab" /></a></div>
+					<div class="box d"><p><a id="id_btn_hyper_ledger"  target="_blank"><input type="submit" value="HyperLedger" /></a></p></div>
+			</div>
 		<!-- Footer -->
 			<footer id="footer">
 				<ul class="icons">

@@ -42,6 +42,10 @@ services:
      # - MARIADB_HOST=101.6.160.51
     depends_on:
       - piwik
+  netlify:
+    image: smartkit/godpaper-da-netlify:latest
+    ports:
+      - "80:80"
 volumes:
   mariadb_data:
     driver: local

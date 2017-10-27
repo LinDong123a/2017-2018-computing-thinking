@@ -46,6 +46,7 @@
 
 	body {
 		-webkit-text-size-adjust: none;
+		grid-column: 5; grid-row: 3;
 	}
 
 /* Box Model */
