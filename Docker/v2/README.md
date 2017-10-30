@@ -1,8 +1,6 @@
 
 #### Architecture
 
-![Screenshot of v2Framework](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v2/Documents/1.jpg)
-
 ![Screenshot of v2Framework](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v2/Documents/2.jpg)
 
 
@@ -16,5 +14,7 @@
 
 
 #### Reference
+
+![Screenshot of v2Framework](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v2/Documents/1.jpg)
 
 https://blog.catscarlet.com/201612022593.html
