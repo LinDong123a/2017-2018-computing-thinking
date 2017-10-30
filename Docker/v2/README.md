@@ -1,12 +1,10 @@
-# onlinego.com
-OGS的网页端
 
-# score-estimator
-计算围棋得分
+#### Architecture
 
-https://www.gnu.org/software/gnugo/gnugo_1.html#SEC2
+![Screenshot of v2Framework](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v2/Documents/1.jpg
 
-http://homepages.cwi.nl/~aeb/go/sgfutils/html/sgfcount.html
+![Screenshot of v2Framework](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v2/Documents/2.jpg)
+
 
 #### 安装GitLab、Wiki、Jenkins、Docker、NetLogo、Netlify、Jupiter、OpenModelica、等一系列基础环境
 
@@ -16,14 +14,7 @@ http://homepages.cwi.nl/~aeb/go/sgfutils/html/sgfcount.html
 
 #### 使用Docker Compose在目的机上进行集成环境部署
 
+
+#### Reference
+
 https://blog.catscarlet.com/201612022593.html
-
-
-# Jenkins
-
-```
-docker run -d -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
-```
-## Jenkins-Docker
-
-https://addops.cn/post/jenkins-docker-01.html
