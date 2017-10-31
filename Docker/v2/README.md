@@ -5,7 +5,7 @@
 
 #### 0. 从WIKI网页开始，阅读说明使用文档，包含系统说明以及Phabricator项目管理的软件功能开发和问题跟踪，或进入Jenkins首页；
 
-#### 1. 使用Jenkins(包括本身)安装GitLab、Wiki、Piwik、Jenkins、Nexus3、HyperLedger(本地)、Docker、NetLogo、Hugo、Netlify、Jupyter、OpenModelica、ELK等一系列基础环境;
+#### 1. 使用Jenkins(包括本身)安装GitLab、Wiki、Piwik、Jenkins、Nexus3、HyperLedger(本地)、Docker、NetLogo、Hugo、Netlify、JupyterHub、OpenModelica、ELK等一系列基础环境;
 
 #### 2. 建立自己的 Docker Registry，私有的Docker镜像服务，用于存储我们自己的Docker镜像仓库（Repository）;
 
