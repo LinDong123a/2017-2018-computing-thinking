@@ -3,7 +3,7 @@
 
 ![Screenshot of v2Framework](https://raw.githubusercontent.com/yangboz/2017-2018-computing-thinking/master/Docker/v2/Documents/2.jpg)
 
-#### 0. 从WIKI网页开始，点击说明文档链接，包含全部只是以及Phabricator的软件问题跟踪，进入Jenkins首页；
+#### 0. 从WIKI网页开始，阅读说明使用文档，包含系统说明以及Phabricator项目管理的软件功能开发和问题跟踪，获进入Jenkins首页；
 
 #### 1. 使用Jenkins(包括本身)安装GitLab、Wiki、Piwik、Jenkins、Nexus3、HyperLedger(本地)、Docker、NetLogo、Hugo、Netlify、Jupyter、OpenModelica、ELK等一系列基础环境;
 
