@@ -1,5 +1,6 @@
 package info.smartkit;
 
+import ch.qos.logback.classic.helpers.MDCInsertingServletFilter;
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOClient;
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -75,6 +77,20 @@ public class UUIDAccreditApplication{
 			factory.setResources(new Resource[]{});
 		}
 		return factory;
+	}
+
+	/**
+	 * A servlet filter that inserts various values retrieved from the incoming http
+	 * request into the MDC
+	 *
+	 * @return {@link FilterRegistrationBean}
+	 */
+	@Bean
+	public FilterRegistrationBean userInsertingMdcFilterRegistrationBean() {
+		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+		MDCInsertingServletFilter userFilter = new MDCInsertingServletFilter();
+		registrationBean.setFilter(userFilter);
+		return registrationBean;
 	}
 
 }
