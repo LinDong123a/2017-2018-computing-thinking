@@ -70,7 +70,7 @@ services:
   jupyterhub:
     image: jupyterhub/jupyterhub
     ports:
-      - "87:8000"
+      - "8000:8000"
   # modelica:
   # netlogo:
   #   image: sonatype/nexus3:latest

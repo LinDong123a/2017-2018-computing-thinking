@@ -37,15 +37,11 @@ services:
       - '445:443'
     volumes:
       - 'phabricator_data:/bitnami'
-    #environment: 
-     # - PHABRICATOR_HOST=101.6.160.51
+    environment: 
+     - PHABRICATOR_HOST=http://docker.toyhouse.cc
      # - MARIADB_HOST=101.6.160.51
     depends_on:
       - piwik
-  netlify:
-    image: smartkit/godpaper-da-netlify:latest
-    ports:
-      - "80:80"
 volumes:
   mariadb_data:
     driver: local
