@@ -27,6 +27,9 @@
                 document.getElementById('id_btn_netlogo').href = window.location.protocol + "//" + window.location.hostname + ":89";
                 document.getElementById('id_btn_hyper_ledger').href = window.location.protocol + "//" + window.location.hostname + ":90";
                 document.getElementById('id_btn_gitlab').href = window.location.protocol + "//" + window.location.hostname + ":10080";
+                document.getElementById('id_btn_resource_space').href = window.location.protocol + "//" + window.location.hostname + ":91";
+                document.getElementById('id_btn_elk').href = window.location.protocol + "//" + window.location.hostname + ":5601";
+                // document.getElementById('id_btn_netlify').href = window.location.protocol + "//" + window.location.hostname + ":1313";
             }
 		</script>
 		<style type="text/css">
@@ -42,7 +45,7 @@
 				  /* Define Auto Row size */
 				  grid-auto-rows: 100px; 
 				  /*Define our columns */
-				  grid-template-columns: 1fr 1fr 1fr;
+				  grid-template-columns: 1fr 1fr 1fr 1fr;
 				  /* you can also write grid-template-columns: repeat(3, 1fr) because we want 3 columns on repeat. */ 
 				  grid-gap: 1em;
 				}
@@ -62,7 +65,9 @@
 			<main>
 				<p><a id="id_btn_phabricator" target="_blank"><input type="submit" value="Phabricator" /></a></p>
 				<p><a id="id_btn_wiki" target="_blank"><input type="submit" value="Mediawiki" /></a></p>
+				<p><a id="id_btn_resource_space" target="_blank"><input type="submit" value="ResourceSpace" /></a></p>
 				<p><a id="id_btn_piwik"  target="_blank"><input type="submit" value="Piwik" /></a></p>
+				<p><a id="id_btn_netlify" target="_blank"><input type="submit" value="Netlify" /></a></p>
 				<p><a id="id_btn_jupyter" target="_blank"><input type="submit" value="JuypterHub" /></a></p>
 				<p><a id="id_btn_netlogo"  target="_blank"><input type="submit" value="NetLogo" /></a></p>
 				<p><a id="id_btn_modelica"  target="_blank"><input type="submit" value="OpenModelica" /></a></p>
@@ -71,6 +76,7 @@
 				<p><a id="id_btn_nexus" target="_blank"><input type="submit" value="Nexus" /></a></p>
 				<p><a id="id_btn_gitlab" target="_blank"><input type="submit" value="Gitlab" /></a></p>
 				<p><a id="id_btn_hyper_ledger"  target="_blank"><input type="submit" value="HyperLedger" /></a></p>
+				<p><a id="id_btn_elk"  target="_blank"><input type="submit" value="ELK" /></a></p>
 			</main>
 		<!-- Footer -->
 			<footer id="footer">

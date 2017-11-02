@@ -2,9 +2,9 @@ version: '2'
 services:
 
  web:
-  image: smartkit/eip-elk-spring-boot
+  image: smartkit/godpaper-go-uuid-accredit:latest
   ports:
-   - "8080:8080"
+   - "9080:8080"
   links:
    - logstash
   networks:
