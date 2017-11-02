@@ -12,8 +12,6 @@ import info.smartkit.godpaper.go.service.SocketIoService;
 import info.smartkit.godpaper.go.settings.ChainCodeProperties;
 import info.smartkit.godpaper.go.settings.ChainCodeVariables;
 import info.smartkit.godpaper.go.settings.SocketIoVariables;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +21,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 //@see: https://www.3pillarglobal.com/insights/building-a-microservice-architecture-with-spring-boot-and-docker-part-i
@@ -30,7 +30,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class UUIDAccreditApplication{
 
-	private static Logger LOG = LogManager.getLogger(UUIDAccreditApplication.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UUIDAccreditApplication.class);
 
 	@Autowired ChainCodeProperties chainCodeProperties;
 	@Autowired SocketIoService socketIoService;
