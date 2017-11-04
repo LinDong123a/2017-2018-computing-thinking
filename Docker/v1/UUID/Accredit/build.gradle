@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.2.0.RELEASE'
+		springBootVersion = '1.5.2.RELEASE'
 		springRestDocsVersion = '1.0.0.RELEASE'
 	}
 	repositories {
@@ -68,6 +68,11 @@ dependencies {
 	compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.8.RELEASE'
 	compile ('org.apache.activemq:activemq-all:5.10.0')
 	compile 'org.projectodd.stilts:stilts-stomp-client:0.1.41-SNAPSHOT'
+	compile 'com.corundumstudio.socketio:netty-socketio:1.7.7'
+	compile 'net.logstash.logback:logstash-logback-encoder:4.6'
+	compile 'ch.qos.logback:logback-classic:1.1.11'
+	compile 'org.springframework.boot:spring-boot:1.5.2.RELEASE'
+	compile 'org.springframework.boot:spring-boot-actuator:1.5.2.RELEASE'
 }
 
 task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {

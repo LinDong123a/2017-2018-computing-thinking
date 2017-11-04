@@ -174,7 +174,7 @@ angular.module('app.controllers', [])
       $rootScope.close_tenuki = function () {
         $rootScope.modal_board_tenuki.hide();
         //update game status
-        GameService.curGamerStatus = 3;
+        GameService.curGamerStatus = 3;//ended,saved
         GameService.updateStatusById(function (data) {
           console.log("GameService.updateStatusById:", data);
         });
@@ -358,7 +358,7 @@ angular.module('app.controllers', [])
               sMoveInfo = ';W';
             }
             //
-            sMoveInfo += '[' +$rootScope.go_string[y] + $rootScope.go_string[x] + ']';
+            sMoveInfo += '[' +$rootScope.go_string[x] + $rootScope.go_string[y] + ']';
             console.log("sMoveInfo:",sMoveInfo);
             //update sgf object if needed.
             GameService.curGamerId = $gamerInfo.id;
@@ -371,7 +371,7 @@ angular.module('app.controllers', [])
               var isAIturnNow = (lastMove.indexOf(JIGO_TENUKI)!=-1)?true:false;
               console.log("isAIturnNow?",isAIturnNow);
               //then post to simpleAI server
-              if(isAIturnNow) {
+              if($gamerInfo.type=='HUMAN_VS_AI'|| $gamerInfo.type=='AI_VS_HUMAN' && isAIturnNow) {
                   GameService.curPlayMessage = {game_id: $gamerInfo.id, user_id: $playerId, msg: sMoveInfo};
                   console.log("before GameService.vsSimpleAI,curPlayMessage:", GameService.curPlayMessage);
                   GameService.vsSimpleAI(function (data) {
@@ -381,13 +381,13 @@ angular.module('app.controllers', [])
                     $rootScope.playAt_tenuki(lastMove);
                   });
               }
-                //
-                if($gamerInfo.type=='HUMAN_VS_HUMAN') {
-                    // console.log("!!!HUMAN_VS_HUMAN!!!");
-                    //
-                    $ionicLoading.show();
-                    //
-                }
+              //
+              if($gamerInfo.type=='HUMAN_VS_HUMAN') {
+                  // console.log("!!!HUMAN_VS_HUMAN!!!");
+                  //
+                  $ionicLoading.show();
+                  //
+              }
                 });
             // var moveInfo = game.currentState().color + " played[ " + game.currentState().playedPoint.y + "," + game.currentState().playedPoint.x+"]";
             //$userId_play_B[cm]
@@ -550,6 +550,7 @@ function ($rootScope,$scope,envInfo,TableService,ChainCodeService,$ionicModal,Ga
     // Some endpoint that needs auth
     // var usersURL = 'http://localhost/wp-json/wp/v2/users';
     var postsURL = envInfo.wp.host+'/wp-json/wp/v2/posts';
+    console.log("postsURL:",postsURL);
     WpWikiService.getAuth( base64, postsURL ).then(function(response) {
         console.log('WpWikiService.getAuth response:',response);
         //then post a article.

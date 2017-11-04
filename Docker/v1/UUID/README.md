@@ -24,5 +24,5 @@ then
 ```
 docker build -t smartkit/godpaper-go-uuid-accredit .
 ```
-###Verify
+### Verify
 http://127.0.0.1:8095/accredit/swagger-ui.html#/user-controller

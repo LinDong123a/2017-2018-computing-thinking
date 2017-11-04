@@ -17,6 +17,7 @@ public class ApiProperties {
 
         public void setIp(String ip) {
                 this.ip = ip;
+                SocketIoVariables.ip = ip;
         }
 
         public String getUrl() {
@@ -29,4 +30,14 @@ public class ApiProperties {
 
         private String ip;
         private String url;
+
+        public int getSse() {
+                return sse;
+        }
+
+        public void setSse(int sse) {
+                this.sse = sse;
+        }
+
+        private int sse;
 }

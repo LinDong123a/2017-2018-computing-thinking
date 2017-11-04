@@ -2,6 +2,7 @@ package info.smartkit.godpaper.go.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.PlayMessage;
 import info.smartkit.godpaper.go.dto.SgfDto;
@@ -11,13 +12,10 @@ import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.repository.GamerRepository;
 import info.smartkit.godpaper.go.repository.UserRepository;
-import info.smartkit.godpaper.go.service.DockerService;
-import info.smartkit.godpaper.go.service.GamerService;
-import info.smartkit.godpaper.go.service.MqttService;
-import info.smartkit.godpaper.go.service.StompService;
+import info.smartkit.godpaper.go.service.*;
+import info.smartkit.godpaper.go.service.sse.ScheduledService;
 import info.smartkit.godpaper.go.settings.*;
 import org.apache.catalina.connector.ClientAbortException;
-import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -29,20 +27,18 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.jms.JMSException;
 import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-
-import static org.bouncycastle.cms.RecipientId.password;
 
 /**
  * Created by smartkit on 22/06/2017.
@@ -64,6 +60,10 @@ public class GameController {
         @Autowired
         MqttProperties mqttProperties;
         @Autowired ChainCodeProperties chainCodeProperties;
+        @Autowired ApiProperties apiProperties;
+
+        @Autowired SocketIoService socketIoService;
+        @Autowired AiProperties aiProperties;
 
         @RequestMapping(method = RequestMethod.POST)
         public Gamer createOne(@RequestBody Gamer gamer) throws IOException, InterruptedException, URISyntaxException, TimeoutException, StompException, JMSException {
@@ -138,6 +138,7 @@ public class GameController {
 //                                stompService.unsubscribe();
 //                        }
 //                }
+                stopSseEmitter(gamerId);
         }
         @RequestMapping(method = RequestMethod.DELETE, value="/")
         public void deleteAll() throws MqttException, StompException {
@@ -183,49 +184,116 @@ public class GameController {
                 service.randomPlaySome(gamerNum);
         }
 
+//        private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+        @Autowired
+        private ScheduledService scheduledService;
         @RequestMapping(method = RequestMethod.GET, value="/sse/sgf/{gamerId}")
-        public SseEmitter sseGetSgfById(@PathVariable String gamerId,HttpSession session) {
+        public ResponseBodyEmitter getSseSgfById(@PathVariable String gamerId,HttpSession session) {
+//                SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+//                //
+//                Thread t1 = new Thread(() ->{
+//                        try {
+//                                int i = 0;
+//                                int max =10;
+////                                int max = apiProperties.getSse()*361;
+//                                while(++i<=max){
+//                                        Thread.sleep(apiProperties.getSse());
+//                                        System.out.println(gamerId+",SSE sgf Sending...."+i);
+//                                        try{
+//                                                Gamer gamer = gamerRepository.findOne(gamerId);
+//                                                if(gamer!=null) {
+//                                                        emitter.send(gamer.getSgf(),MediaType.TEXT_PLAIN);
+//                                                }else{
+//                                                        LOG.warn("Not found with this gamerId:"+gamerId);
+//                                                }
+//                                        }catch(ClientAbortException cae){
+//                                                cae.printStackTrace();
+//                                                i = max;
+//                                        }
+//                                }
+//                                emitter.complete();
+//                        } catch (IOException | InterruptedException e) {
+//                                e.printStackTrace();
+//                        }
+//                });
+//                t1.start();
 
-                SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-
-                Thread t1 = new Thread(() ->{
-                        try {
-                                int i = 0;
-                                while(++i<=10000){
-                                        Thread.sleep(5000);
-                                        System.out.println("SSE sgf Sending....");
-                                        try{
-                                                Gamer gamer = gamerRepository.findOne(gamerId);
-                                                if(gamer!=null) {
-                                                        emitter.send(gamer.getSgf());
-                                                }else{
-                                                        LOG.warn("Not found with this gamerId.");
-                                                }
-                                        }catch(ClientAbortException cae){
-                                                cae.printStackTrace();
-                                                i = 10000;
-                                        }
+                final SseEmitter emitter = new SseEmitter();
+                ExecutorService service = Executors.newSingleThreadExecutor();
+                service.execute(() -> {
+                        int max = apiProperties.getSse()*361;
+                        for (int i = 0; i < max; i++) {
+                                try {
+                                        Gamer gamer = gamerRepository.findOne(gamerId);
+                                        emitter.send(gamer.getSgf(),MediaType.TEXT_PLAIN);
+                                        System.out.println(gamerId+",SSE sgf Sending...."+i);
+                                        Thread.sleep(500);
+                                } catch (Exception e) {
+                                        e.printStackTrace();
+                                        emitter.completeWithError(e);
+                                        return;
                                 }
-                                emitter.complete();
-                        } catch (IOException | InterruptedException e) {
-                                e.printStackTrace();
                         }
+                        emitter.complete();
                 });
-                t1.start();
-
+                //
+                if(GameVariables.sseEmitters.get(gamerId)==null) {
+//                        SseEmitter sseEmitter = scheduledService.getInfiniteMessages(gamerId);
+                        GameVariables.sseEmitters.put(gamerId, emitter);
+                }
                 return emitter;
         }
 
-        @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}")
-        public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId) {
+
+        @RequestMapping(method = RequestMethod.GET, value="/sio/sgf/{gamerId}/{playerId}")
+        public void joinSioSgfById(@PathVariable String gamerId,@PathVariable String playerId) {
+                socketIoService.join(UUID.fromString(playerId),gamerId);
+        }
+
+        private void stopSseEmitter(@PathVariable String gamerId) {
+                SseEmitter sseEmitter = GameVariables.sseEmitters.get(gamerId);
+                if(sseEmitter!=null) {
+                        sseEmitter.complete();
+                }
+        }
+
+        @RequestMapping(method = RequestMethod.DELETE, value="/sio/sgf/{gamerId}/{playerId}")
+        public void leaveSioSgfById(@PathVariable String gamerId,@PathVariable String playerId) {
+                socketIoService.leave(UUID.fromString(playerId),gamerId);
+        }
+
+        @RequestMapping(method = RequestMethod.PUT, value="/sgf/{gamerId}/{playerId}")
+        public SgfObj updateSgfById(@RequestBody SgfObj sgfObj, @PathVariable String gamerId, @PathVariable String playerId) {
                 SgfObj sgfObjUpdate = updateSgfObj(sgfObj.getBody(), gamerId);
+                //SocketIO broadcasting
+                PlayMessage playMessage = new PlayMessage();
+                playMessage.setGame_id(gamerId);
+                playMessage.setUser_id(playerId);
+                playMessage.setMethod("play");
+                playMessage.setMsg(sgfObj.getBody());
+//                socketIoService.emit(playMessage.getMethod(),playMessage);
+                SocketIoVariables.server.getBroadcastOperations().sendEvent("playEvent", playMessage);
                 return sgfObjUpdate;
         }
 
         @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{status}")
-        public Gamer updateStatusById(@PathVariable String gamerId, @PathVariable int status) {
+        public Gamer updateStatusById(@PathVariable String gamerId, @PathVariable int status) throws InterruptedException, DockerException, IOException {
                 Gamer updater = repository.findOne(gamerId);
+                //save sgf file.
+                //merge sgf string.
+                String sgfHeader  = service.getSgfHeader(chainCodeProperties.getChainName(),"0.0.1",updater,"B?R");
+                String sgfBody = updater.getSgf();
+                updater.setSgf(sgfHeader.concat(sgfBody)+")");
+                service.saveSgf(updater,false);
                 updater.setStatus(status);
+               return repository.save(updater);
+        }
+
+        @RequestMapping(method = RequestMethod.PUT, value="/{gamerId}/{userId}/{status}")
+        public Gamer updateStatusByUserId(@PathVariable String gamerId, @PathVariable int status,@PathVariable String userId) throws InterruptedException, DockerException, IOException {
+                Gamer updater = repository.findOne(gamerId);
+//                updater.setStatus(GameStatus.PLAYING.getIndex());
+                updater.getPlayer(userId).setStatus(status);
                 return repository.save(updater);
         }
 
@@ -240,6 +308,8 @@ public class GameController {
                 }
                 //
                 gamer.setSgf(newSgf);
+                //status update
+                gamer.setStatus(GameStatus.PLAYING.getIndex());
                 repository.save(gamer);
                 //
                 return new SgfObj(sgfHeader,newSgf);
@@ -269,7 +339,7 @@ public class GameController {
                 HttpEntity<Object> request = new HttpEntity<>(vars, headers);
 //
                 ResponseEntity<String> response = restTemplate
-                        .exchange("http://" + mqttProperties.getIp() + ":6001/", HttpMethod.POST, request, String.class);
+                        .exchange("http://" + mqttProperties.getIp() + ":"+aiProperties.getPort(), HttpMethod.POST, request, String.class);
                 LOG.debug("response:" + response.toString());
                 //
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -292,6 +362,12 @@ public class GameController {
         private boolean hasHumanPlayer(Gamer gamer) {
                 return
                 (gamer.getPlayer1().getType() == UserTypes.HUMAN.getIndex() || gamer.getPlayer2().getType() == UserTypes.HUMAN.getIndex());
+        }
+
+        @RequestMapping(method = RequestMethod.GET, value="/q/{type}/{name}")
+        public Gamer qCreateGamer(@PathVariable int type,@PathVariable String name) throws InterruptedException, DockerException, MqttException, DockerCertificateException {
+
+                return service.createGamerByType(type,name);
         }
 
 

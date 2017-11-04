@@ -1,6 +1,5 @@
 package info.smartkit.godpaper.go.service;
 
-import com.shekhargulati.reactivex.docker.client.RxDockerClient;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.LogStream;
@@ -8,10 +7,10 @@ import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.*;
 import info.smartkit.godpaper.go.pojo.Aier;
-import info.smartkit.godpaper.go.pojo.Gamer;
+import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.AierRepository;
 import info.smartkit.godpaper.go.repository.GamerRepository;
-import info.smartkit.godpaper.go.service.GamerService;
+import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 import info.smartkit.godpaper.go.utils.StringUtil;
@@ -35,13 +34,15 @@ import java.util.List;
 @Service
 public class DockerServiceImpl implements DockerService{
 
-        @Autowired AIProperties aiProperties;
+        @Autowired
+        AiProperties aiProperties;
         @Autowired MqttProperties mqttProperties;
         @Autowired ServerProperties serverProperties;
         @Autowired AierRepository aierRepository;
         @Autowired ApiProperties apiProperties;
         @Autowired GamerRepository gamerRepository;
         @Autowired GamerService gamerService;
+        @Autowired UserRepository userRepository;
 
 
         private static Logger LOG = LogManager.getLogger(DockerServiceImpl.class);
@@ -53,7 +54,12 @@ public class DockerServiceImpl implements DockerService{
         public DockerServiceImpl() throws DockerCertificateException {
         }
 
-        @Override public String runPlayer(String name) throws DockerException, InterruptedException, DockerCertificateException {
+        @Override public String runPlayer(User user) throws DockerException, InterruptedException, DockerCertificateException {
+                //update user status
+                User updater = userRepository.findOne(user.getId());
+                updater.setStatus(UserStatus.unTENANTED.getIndex()); //for docker player tenanting.
+                User updated = userRepository.save(updater);
+                LOG.info("updated:"+updated.toString());
                 // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
 
 //                final DockerClient docker = DefaultDockerClient.builder()
@@ -85,7 +91,7 @@ public class DockerServiceImpl implements DockerService{
                         .env(envStrings)
                         .hostConfig(hostConfig)
                         .build();
-                final ContainerCreation creation = dockerClient.createContainer(config, name);
+                final ContainerCreation creation = dockerClient.createContainer(config, user.getId());
                 final String id = creation.id();
 
                 // Start container
@@ -122,7 +128,7 @@ public class DockerServiceImpl implements DockerService{
                 LOG.info("Inspect mounts:"+info.mounts().toString());
                 final String logs;
                 //Pause for 15 seconds
-                Thread.sleep(15000);//wait for docker execution.
+                Thread.sleep(30000);//wait for docker execution.
                 try (LogStream stream = dockerClient.logs(id, DockerClient.LogsParam.stdout(), DockerClient.LogsParam.stderr())) {
                         logs = stream.readFully();
                         LOG.info("Docker(AgentPrep) logs:"+logs.toString());

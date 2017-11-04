@@ -11,7 +11,8 @@ version: '2'
 
 services:
   vp:  # vp node no needing membersrvc
-    image: hyperledger/fabric-peer:latest
+    image: hyperledger/fabric-peer:x86_64-1.0.0-rc1
+   #image: hyperledger/fabric-peer:latest
    #image: yeasy/hyperledger-fabric-peer:0.6-dp
    #image: hyperledger/fabric-peer:x86_64-0.6.1-preview
    #image: ibmblockchain/fabric-peer:x86_64-0.6.1-preview

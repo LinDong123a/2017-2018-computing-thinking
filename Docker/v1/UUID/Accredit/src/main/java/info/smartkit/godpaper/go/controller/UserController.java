@@ -1,6 +1,8 @@
 package info.smartkit.godpaper.go.controller;
 
 import com.spotify.docker.client.exceptions.DockerException;
+import info.smartkit.godpaper.go.dto.SgfDto;
+import info.smartkit.godpaper.go.pojo.Gamer;
 import info.smartkit.godpaper.go.pojo.User;
 import info.smartkit.godpaper.go.repository.UserRepository;
 import info.smartkit.godpaper.go.service.ChainCodeService;
@@ -17,6 +19,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**

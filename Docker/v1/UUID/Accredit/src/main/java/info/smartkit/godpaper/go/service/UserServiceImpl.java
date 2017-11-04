@@ -23,7 +23,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository repository;
 
-    @Autowired AIProperties aiProperties;
+    @Autowired
+    AiProperties aiProperties;
 
     @Autowired MqttService mqttService;
     @Autowired DockerService dockerService;

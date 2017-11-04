@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.service;
 
+import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import info.smartkit.godpaper.go.dto.SgfDto;
 import info.smartkit.godpaper.go.pojo.Gamer;
@@ -29,4 +30,5 @@ public interface GamerService {
         SgfDto updateSgf(String gamerId,String resultStr) throws IOException, InterruptedException, DockerException;
         void connectHumanPlayer(Gamer gamer) throws InterruptedException, SSLException, URISyntaxException, TimeoutException, JMSException, StompException;
         String getSgfHeader(String application,String version,Gamer gamer,String result);
+        Gamer createGamerByType(int type,String name) throws InterruptedException, DockerException, MqttException, DockerCertificateException;
 }

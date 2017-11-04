@@ -1,5 +1,6 @@
 package info.smartkit.godpaper.go.service;
 
+import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import com.toomasr.sgf4j.Sgf;
 import info.smartkit.godpaper.go.dto.SgfDto;
@@ -11,6 +12,7 @@ import info.smartkit.godpaper.go.settings.*;
 import info.smartkit.godpaper.go.utils.SgfUtil;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -50,6 +52,7 @@ public class GamerServiceImpl implements GamerService {
         @Autowired UserService userService;
         @Autowired StompService stompService;
         @Autowired MqttProperties mqttProperties;
+        @Autowired AiProperties aiProperties;
 
         private static final String ENCODING = "UTF-8";
         private static final String VERSION = "0.0.1";
@@ -329,6 +332,7 @@ public class GamerServiceImpl implements GamerService {
                 return header.toString();
         }
 
+
         private String getEscaped(String text)
         {
                 return getEscaped(text, false);
@@ -394,5 +398,74 @@ public class GamerServiceImpl implements GamerService {
                 if(player2.getType()==UserTypes.HUMAN.getIndex()){
                         stompService.publish(gamer.getId(), vsTitle,MqttQoS.EXCATLY_ONCE.getIndex());
                 }
+        }
+        @Override
+        public Gamer createGamerByType(int type,String name) throws InterruptedException, DockerException, MqttException, DockerCertificateException {
+                Gamer createResult = null;
+                User updaterOne = null;
+                User updaterTwo = null;
+                if (type==GameTypes.AI_VS_AI.getIndex())
+                {
+                        //create two AI players and get ready to play
+                        updaterOne = this.createUserAndTenantRes(new User("AI_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
+                                ,AiPolicies.BEST_MOVE.getName()
+                                ,"180000_KGS_"
+                                ,UserTypes.AI.getIndex()),true,true);
+                        updaterTwo = this.createUserAndTenantRes(new User("AI_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
+                                ,AiPolicies.BEST_MOVE.getName()
+                                ,"180000_KGS_"
+                                ,UserTypes.AI.getIndex()),true,true);
+
+                }
+                if (type==GameTypes.AI_VS_HUMAN.getIndex()||type==GameTypes.HUMAN_VS_AI.getIndex())
+                {
+                        //create AI/Human players and get ready to play
+                        updaterOne = this.createUserAndTenantRes(new User("AI_"+aiProperties.getName()
+                                ,AiPolicies.BEST_MOVE.getName()
+                                ,"180000_KGS_"
+                                ,UserTypes.AI.getIndex()),true,false);
+                        updaterTwo = this.createUserAndTenantRes(new User("HUMAN_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
+                                ,UserTypes.HUMAN.getIndex()),false,false);
+
+                }
+                if (type==GameTypes.HUMAN_VS_HUMAN.getIndex())
+                {
+                        //create two Human players and get ready to play
+                        updaterOne = this.createUserAndTenantRes(new User("HUMAN_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
+                        ,UserTypes.HUMAN.getIndex()),false,false);
+                        updaterTwo = this.createUserAndTenantRes(new User("HUMAN_"+RandomStringUtils.randomAlphanumeric(6).toLowerCase()
+                                ,UserTypes.HUMAN.getIndex()),false,false);
+
+                }
+                //then pair the game.
+                List<User> tenantedUsers = new ArrayList<>();
+                tenantedUsers.add(updaterOne);
+                tenantedUsers.add(updaterTwo);
+                List<Gamer> pairedGames = this.pairAll(tenantedUsers);
+                LOG.info("pairedGames("+pairedGames.size()+"):"+pairedGames.toString());
+                createResult = pairedGames.get(0);
+                //update name
+                createResult.setName(name);
+                createResult.setType(GameTypes.values()[type].toString());
+                return gamerRepository.save(createResult);
+
+        }
+
+        private User createUserAndTenantRes(User user,boolean tenanting,boolean dockering) throws InterruptedException, DockerException, MqttException, DockerCertificateException {
+                User untenantedOne = userRepository.save(user);
+                //tenant resources.
+                if(tenanting) {
+                        userService.tenant(user);
+                }
+                if(dockering){
+                        //run AI player docker
+                        dockerService.runPlayer(user);
+                        //wait for docker execution.
+                        Thread.sleep(15000);
+                }
+                //update one status
+                untenantedOne.setStatus(UserStatus.TENANTED.getIndex());
+                User updater = userRepository.save(untenantedOne);
+                return updater;
         }
 }

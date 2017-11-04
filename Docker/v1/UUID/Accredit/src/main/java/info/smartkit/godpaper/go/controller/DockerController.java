@@ -40,13 +40,10 @@ public class DockerController {
         public User runPlayer(@PathVariable String userId) throws MqttException, InterruptedException, DockerException, DockerCertificateException {
                 //update user status
                 User updater = userRepository.findOne(userId);
-                updater.setStatus(UserStatus.unTENANTED.getIndex());
-                User updated = userRepository.save(updater);
-                LOG.info("updated:"+updated.toString());
                 //
-                dockerService.runPlayer(userId);
+                dockerService.runPlayer(updater);
                 //
-                return updated;
+                return updater;
 
         }
 

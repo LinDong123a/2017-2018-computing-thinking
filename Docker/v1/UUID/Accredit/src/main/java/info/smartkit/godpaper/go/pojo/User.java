@@ -19,6 +19,17 @@ public class User {
     private String id;
     private String email;
 
+    public User( String name,  int type) {
+        this.name = name;
+        this.type = type;
+    }
+    public User( String name, String policy, String rank, int type) {
+        this.name = name;
+        this.policy = policy;
+        this.rank = rank;
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
