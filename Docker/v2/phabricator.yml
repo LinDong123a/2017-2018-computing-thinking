@@ -1,0 +1,14 @@
+version: '2'
+services:
+  phabricator:
+    image: 'bitnami/phabricator:latest'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '83:80'
+      - '443:443'
+    volumes:
+      - 'phabricator_data:/bitnami'
+volumes:
+  phabricator_data:
+    driver: local
