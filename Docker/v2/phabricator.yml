@@ -6,7 +6,6 @@ services:
       kompose.service.type: nodeport
     ports:
       - '83:80'
-      - '443:443'
     volumes:
       - 'phabricator_data:/bitnami'
 volumes:
