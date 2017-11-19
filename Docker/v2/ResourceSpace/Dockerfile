@@ -1,48 +1,72 @@
-FROM ubuntu:trusty
-MAINTAINER Michael Steinacher (mstein921@googlemail.com)
+FROM phusion/baseimage:0.9.16
+MAINTAINER Michael Harris <neosar60@gmail.com>
 
-# Install packages
+# Set correct environment variables.
+ENV HOME /root
+
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
+
+# Update System
+RUN apt-get update
+RUN apt-get -y upgrade
+
+# Install locales
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt \
-  			php5-gd php5-mysql subversion imagemagick \
-  			ghostscript antiword xpdf libav-tools libimage-exiftool-perl && \
-  apt-get clean -y && \
-  rm -rf /var/lib/apt/lists/* && \
-  echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN locale-gen cs_CZ.UTF-8
+RUN locale-gen de_DE.UTF-8
+RUN locale-gen es_ES.UTF-8
+RUN locale-gen fr_FR.UTF-8
+RUN locale-gen it_IT.UTF-8
+RUN locale-gen pl_PL.UTF-8
+RUN locale-gen pt_BR.UTF-8
+RUN locale-gen ru_RU.UTF-8
+RUN locale-gen sl_SI.UTF-8
+RUN locale-gen uk_UA.UTF-8
 
-# Add image configuration and scripts
-ADD start-apache2.sh /start-apache2.sh
-ADD start-mysqld.sh /start-mysqld.sh
-ADD run.sh /run.sh
-RUN chmod 755 /*.sh
-ADD my.cnf /etc/mysql/conf.d/my.cnf
-ADD supervisord-apache2.conf /etc/supervisor/conf.d/supervisord-apache2.conf
-ADD supervisord-mysqld.conf /etc/supervisor/conf.d/supervisord-mysqld.conf
+# Add FFMPEG Repo
+RUN add-apt-repository ppa:mc3man/trusty-media
+RUN apt-get update
 
-# Remove pre-installed database
-RUN rm -rf /var/lib/mysql/*
+# Install apache, PHP, and supplimentary programs. curl and lynx-cur are for debugging the container.
+RUN apt-get -y install apache2 php5 php5-dev php5-gd php5-mysql subversion vim nano imagemagick ghostscript \
+        antiword xpdf mysql-client libav-tools postfix libimage-exiftool-perl cron wget ffmpeg zip php5-imap
 
-# config to enable .htaccess
-ADD apache_default /etc/apache2/sites-available/000-default.conf
+# Enable apache mods.
+RUN a2enmod php5
 RUN a2enmod rewrite
 
-# Add MySQL utils
-ADD create_mysql_admin_user.sh /create_mysql_admin_user.sh
-RUN chmod 755 /*.sh
+# Manually set up the apache environment variables
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
 
-# Configure /app folder with sample app
-RUN svn co http://svn.resourcespace.org/svn/rs/trunk /app
-RUN mkdir -p /app/filestore && rm -fr /var/www/html && ln -s /app /var/www/html
-RUN chmod 777 /app/filestore && chmod 777 /app/include
+# Modify php.ini
+RUN sed -i -e "s/upload_max_filesize\s*=\s*2M/upload_max_filesize = 1G/g" /etc/php5/apache2/php.ini
+RUN sed -i -e "s/post_max_size\s*=\s*8M/post_max_size = 1G/g" /etc/php5/apache2/php.ini
+RUN sed -i -e "s/max_execution_time\s*=\s*30/max_execution_time = 1000/g" /etc/php5/apache2/php.ini
+RUN sed -i -e "s/memory_limit\s*=\s*128M/memory_limit = 1G/g" /etc/php5/apache2/php.ini
 
-#Environment variables to configure php
-ENV PHP_UPLOAD_MAX_FILESIZE 500M
-ENV PHP_POST_MAX_SIZE 500M
-ENV PHP_MEMORY_LIMIT 256M
+# Setup site
+WORKDIR /var/www/html
+RUN rm index.html
+RUN svn co http://svn.montala.net/svn/resourcespace .
+RUN mkdir filestore
+RUN chmod 777 filestore
+RUN chmod -R 777 include
 
-# Add volumes for MySQL 
-VOLUME  ["/etc/mysql", "/var/lib/mysql", "/app/filestore" ]
+# Add to Startup Items
+RUN mkdir /etc/service/apache2
+COPY conf/apache2.sh /etc/service/apache2/run
+RUN chmod a+x /etc/service/apache2/run
 
-EXPOSE 80 3306
-CMD ["/run.sh"]
+WORKDIR /
+RUN ln -s /var/www/html/include include
+RUN ln -s /var/www/html/filestore filestore
+
+VOLUME /include
+VOLUME /filestore
+
+EXPOSE 80
