@@ -4,7 +4,7 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>logstash:5000</destination>
+        <destination>localhost:5000</destination>
 
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
@@ -19,7 +19,7 @@
                         {
                         <!-- we can add some custom fields to be sent with all the log entries.-->
                         <!--make filtering easier in Logstash-->
-                        "appName": "elk-demo",
+                        "appName": "elk-toyhouse-go",
                         "appVersion": "1.0"
                         }
                     </pattern>
