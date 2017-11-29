@@ -71,7 +71,16 @@ services:
     image: jupyterhub/jupyterhub
     ports:
       - "8000:8000"
-  # modelica:
+  jupyter-openmodelica:
+    restart: always
+    image: 'smartkit/jupyter-openmodelica'
+    ports:
+      - '8888:8888'
+  openmodelica-webbook:
+    restart: always
+    image: 'smartkit/omwebbook'
+    ports:
+      - '88:80'
   # netlogo:
   #   image: sonatype/nexus3:latest
   #   ports:
