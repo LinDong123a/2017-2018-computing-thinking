@@ -1,0 +1,22 @@
+containers:
+- name: openldap
+  image: osixia/openldap
+  ports:
+    - containerPort: 389
+    - containerPort: 636
+- name: phpldapadmin
+  image: osixia/phpldapadmin
+  ports:
+    - containerPort: 80
+  env:
+  - name: PHPLDAPADMIN_HTTPS
+    value: "false"
+  - name: PHPLDAPADMIN_LDAP_HOSTS
+    value: 35.202.112.20
+  spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: jupyterhub-ldap
