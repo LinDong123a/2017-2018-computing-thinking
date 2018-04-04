@@ -1,5 +1,9 @@
 # 2017-2018-computing-thinking
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/smartkit/godpaper-go-ai-player.svg?maxAge=2592000)](https://hub.docker.com/r/smartkit/godpaper-go-ai-player/)
+[![Docker Stars](https://img.shields.io/docker/stars/smartkit/godpaper-go-ai-player.svg?maxAge=2592000)](https://hub.docker.com/r/smartkit/godpaper-go-ai-player/)
+[![Docker Layers](https://images.microbadger.com/badges/image/smartkit/godpaper-go-ai-player.svg)](https://microbadger.com/images/smartkit/godpaper-go-ai-player "Get your own image badge on microbadger.com")
+
 ## Docker+CI/CD+Microservices
 
 ### Ubuntu+Python+Flask+Wgo.js
