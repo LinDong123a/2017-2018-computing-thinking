@@ -4,7 +4,7 @@
 [![Docker Stars](https://img.shields.io/docker/stars/smartkit/godpaper-go-ai-player.svg?maxAge=2592000)](https://hub.docker.com/r/smartkit/godpaper-go-ai-player/)
 [![Docker Layers](https://images.microbadger.com/badges/image/smartkit/godpaper-go-ai-player.svg)](https://microbadger.com/images/smartkit/godpaper-go-ai-player "Get your own image badge on microbadger.com")
 
-## Docker+CI/CD+Microservices
+## Quick Docker DEMOs
 
 ### Ubuntu+Python+Flask+Wgo.js
 
