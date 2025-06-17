@@ -3,7 +3,7 @@ numpy
 pygtp>=0.4
 sgf==0.5
 tensorflow>=1.1
-protobuf==3.18.3
+protobuf==4.25.8
 six==1.10.0
 Flask==2.3.2
 flask-socketio
